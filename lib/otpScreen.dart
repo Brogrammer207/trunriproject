@@ -57,7 +57,7 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xffFF9933),
+        backgroundColor: Color(0xffFF730A),
         leading: GestureDetector(
           onTap: (){
             Get.back();
@@ -77,7 +77,7 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
               Container(
                 height: size.height,
                 width: size.width,
-                decoration: const BoxDecoration(color: Color(0xffFF9933)),
+                decoration: const BoxDecoration(color: Color(0xffFF730A)),
                 padding: EdgeInsets.symmetric(horizontal: size.width * .02, vertical: size.height * .06),
                 child: Column(
                   children: [
@@ -158,7 +158,7 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
           padding: const EdgeInsets.all(15.0).copyWith(bottom: 10),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xffFF9933),
+                backgroundColor: Color(0xffFF730A),
                 shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(2))),
                 textStyle: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,

@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
-        color: const Color(0xffE9EAF7),
+        color: const Color(0xFFF2EDE2),
         height: size.height,
         width: size.width,
         child: Stack(
@@ -30,10 +30,11 @@ class _SplashScreenState extends State<SplashScreen> {
                     bottomLeft: Radius.circular(40),
                     bottomRight: Radius.circular(40),
                   ),
-                  color: Color(0xffFF9933),
+                  color: Color(0xffFF730A),
                   image: DecorationImage(
+                    fit: BoxFit.cover,
                     image: AssetImage(
-                      "assets/images/indian.png",
+                      "assets/images/taj.png",
                     ),
                   ),
                 ),
@@ -74,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         width: size.width,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
-                          color: const Color(0xffEBEBF2).withOpacity(0.9),
+                          color: const Color(0xffFFDDBE),
                           border: Border.all(
                             color: Colors.white,
                           ),
@@ -95,7 +96,7 @@ class _SplashScreenState extends State<SplashScreen> {
                                 height: size.height * 0.08,
                                 width: size.width / 2.2,
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Color(0xffFFEDD6),
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: const Center(
