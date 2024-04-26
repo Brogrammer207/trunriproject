@@ -75,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         width: size.width,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
-                          color: const Color(0xffFFDDBE),
+                          color: const Color(0xffD1B57D),
                           border: Border.all(
                             color: Colors.white,
                           ),
@@ -96,7 +96,7 @@ class _SplashScreenState extends State<SplashScreen> {
                                 height: size.height * 0.08,
                                 width: size.width / 2.2,
                                 decoration: BoxDecoration(
-                                  color: Color(0xffFFEDD6),
+                                  color: const Color(0xff253242),
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: const Center(
@@ -105,7 +105,7 @@ class _SplashScreenState extends State<SplashScreen> {
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20,
-                                      color: Color(0xff353047),
+                                      color: Color(0xffFFFAFA),
                                     ),
                                   ),
                                 ),
@@ -125,7 +125,7 @@ class _SplashScreenState extends State<SplashScreen> {
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,
-                                    color: Color(0xff353047),
+                                    color: Color(0xffFFFAFA),
                                   ),
                                 ),
                               ),

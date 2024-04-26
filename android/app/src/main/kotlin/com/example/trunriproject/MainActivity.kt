@@ -1,4 +1,4 @@
-package com.example.trunriproject
+package com.trunriproject.trunriproject
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -20,6 +20,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
+          // color: Color(0xFFF2EDE2)
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             colors: [
@@ -32,9 +33,18 @@ class _SignInScreenState extends State<SignInScreen> {
         child: SafeArea(
             child: ListView(
               children: [
-                SizedBox(height: size.height * 0.03),
+                SizedBox(height: size.height * 0.05),
                 const Text(
-                  "Hello Indian!",
+                  "Hello",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    color: Color(0xff353047),
+                  ),
+                ),
+                const Text(
+                  "Indian!",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -44,7 +54,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
                 const SizedBox(height: 15),
                 const Text(
-                  "Wellcome back vou've\nbeen missed!",
+                  "Wellcome back you've\nbeen missed!",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 27, color: Color(0xff6F6B7A), height: 1.2),
                 ),
@@ -113,16 +123,18 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: size.height * 0.06),
+                      SizedBox(height: size.height * 0.02),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           socialIcon("assets/images/google.png",),
+                          const SizedBox(width: 10,),
                           socialIcon("assets/images/apple.png"),
+                          const SizedBox(width: 10,),
                           socialIcon("assets/images/facebook.png"),
                         ],
                       ),
-                      SizedBox(height: size.height * 0.07),
+                      SizedBox(height: size.height * 0.03),
                        Text.rich(
                         TextSpan(
                             text: "Not a member? ",
