@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "742206392917",
+    "firebase_url": "https://trunri-default-rtdb.firebaseio.com",
+    "project_id": "trunri",
+    "storage_bucket": "trunri.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:742206392917:android:58a999fac051f6b34822dc",
+        "android_client_info": {
+          "package_name": "com.trunriproject.trunriproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "742206392917-l5po1ajlfijn80ivmqfosm0olenssur6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trunriproject.trunriproject",
+            "certificate_hash": "b1e37641cecf137e0ce967443a1d2d3622cefed5"
+          }
+        },
+        {
+          "client_id": "742206392917-1co66ffgp4f6k5k7ei5vvoi2vhtd16h3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5O-ybMzkRGKDCWjsJqL_C6tPqHUPAc5s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "742206392917-1co66ffgp4f6k5k7ei5vvoi2vhtd16h3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

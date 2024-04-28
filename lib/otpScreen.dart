@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
-
+import 'package:trunriproject/homepage.dart';
+import 'package:trunriproject/widgets/helper.dart';
 
 class NewOtpScreen extends StatefulWidget {
   static String route = "/OtpScreen";
@@ -18,10 +20,11 @@ class NewOtpScreen extends StatefulWidget {
 }
 
 class _NewOtpScreenState extends State<NewOtpScreen> {
-  final TextEditingController _otpController = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
 
   RxInt timerInt = 30.obs;
   Timer? timer;
+  EmailOTP myauth = EmailOTP();
 
   setTimer() {
     timerInt.value = 30;
@@ -43,15 +46,16 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
       decoration: BoxDecoration(
           border: Border(
               bottom: BorderSide(
-                color: Colors.grey.shade300,
-                width: 4.0,
-              ))));
+        color: Colors.grey.shade300,
+        width: 4.0,
+      ))));
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     setTimer();
   }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -59,7 +63,7 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
       appBar: AppBar(
         backgroundColor: Color(0xffFF730A),
         leading: GestureDetector(
-          onTap: (){
+          onTap: () {
             Get.back();
           },
           child: const Icon(
@@ -114,7 +118,7 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
                       child: Column(
                         children: [
                           Pinput(
-                            controller: _otpController,
+                            controller: otpController,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             keyboardType: TextInputType.number,
                             length: 4,
@@ -131,12 +135,11 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
                             height: size.height * .03,
                           ),
                           GestureDetector(
-                            onTap: () async {
-                            },
+                            onTap: () async {},
                             child: Obx(() {
                               return Text(
                                 ' Resend OTP\n'
-                                    '${timerInt.value > 0 ? "In ${timerInt.value > 9 ? timerInt.value : "0${timerInt.value}"}" : ""}',
+                                '${timerInt.value > 0 ? "In ${timerInt.value > 9 ? timerInt.value : "0${timerInt.value}"}" : ""}',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w600, color: const Color(0xff578AE8), fontSize: 16),
@@ -163,8 +166,35 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
                 textStyle: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
                 )),
-            onPressed: () {
-            },
+            onPressed: () async {
+              OverlayEntry loader = NewHelper.overlayLoader(context);
+              Overlay.of(context).insert(loader);
+              myauth.verifyOTP(otp: otpController.text);
+                log('message');
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text("OTP is verified"),
+                ));
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                  const HomePageScreen(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    const begin = Offset(1.0, 0.0);
+                    const end = Offset.zero;
+                    const curve = Curves.ease;
+                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                    var offsetAnimation = animation.drive(tween);
+                    return SlideTransition(
+                      position: offsetAnimation,
+                      child: child,
+                    );
+                  },
+                  transitionDuration: Duration(seconds: 1),
+                ),
+              );
+              NewHelper.hideLoader(loader);
+              },
+
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(

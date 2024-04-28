@@ -1,10 +1,30 @@
 import 'dart:collection';
+import 'dart:convert';
+import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:email_otp/email_otp.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:form_field_validator/form_field_validator.dart';
+import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:trunriproject/homepage.dart';
 import 'package:trunriproject/signUpScreen.dart';
+import 'package:trunriproject/widgets/customTextFormField.dart';
+import 'package:trunriproject/widgets/helper.dart';
+
+import 'facebook/firebaseservices.dart';
+import 'otpScreen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -14,9 +34,120 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  RxBool hide = true.obs;
+  RxBool hide1 = true.obs;
+  EmailOTP myauth = EmailOTP();
+  bool showOtpField = false;
+  void SignIn(){
+
+    FirebaseAuth.instance.signInWithEmailAndPassword(email: emailController.text.trim(),
+        password: passwordController.text.trim()).then((value) {
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+          const NewOtpScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.ease;
+            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(
+              position: offsetAnimation,
+              child: child,
+            );
+          },
+          transitionDuration: Duration(seconds: 1),
+        ),
+      );
+
+
+
+    });
+  }
+
+  Future<dynamic> signInWithGoogle(BuildContext context) async {
+    OverlayEntry loader = NewHelper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      final GoogleSignInAuthentication? googleAuth =
+      await googleUser?.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      UserCredential userCredential =
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+          const HomePageScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.ease;
+            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+            return SlideTransition(
+              position: offsetAnimation,
+              child: child,
+            );
+          },
+          transitionDuration: Duration(seconds: 1),
+        ),
+      );
+     NewHelper.hideLoader(loader);
+
+      return userCredential;
+    } on Exception catch (e) {
+      // Handle the exception
+      print('exception->$e');
+    }
+  }
+
+
+
+  void checkEmailInFirestore() async {
+    OverlayEntry loader = NewHelper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
+    final QuerySnapshot result =
+    await FirebaseFirestore.instance.collection('User').where('email', isEqualTo: emailController.text).get();
+    if (result.docs.isNotEmpty) {
+      myauth.setConfig(
+          appEmail: "contact@hdevcoder.com",
+          appName: "TRUNRI",
+          userEmail: emailController.text,
+          otpLength: 4,
+          otpType: OTPType.digitsOnly);
+      if (await myauth.sendOTP() == true) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("OTP has been sent"),
+        ));
+        SignIn();
+        NewHelper.hideLoader(loader);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Oops, OTP send failed"),
+        ));
+      }
+      setState(() {
+        showOtpField = true;
+      });
+      return;
+    } else {
+      Fluttertoast.showToast(msg: 'Email not register yet Please Signup');
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery
+        .of(context)
+        .size;
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -35,22 +166,19 @@ class _SignInScreenState extends State<SignInScreen> {
               children: [
                 SizedBox(height: size.height * 0.05),
                 const Text(
-                  "Hello",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25,
-                    color: Color(0xff353047),
-                  ),
-                ),
-                const Text(
-                  "Indian!",
+                  "Hello Indian!",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 37,
                     color: Color(0xff353047),
                   ),
+                ),
+                const SizedBox(height: 15),
+                Image.asset(
+                  "assets/images/namste.gif",
+                  height: 100.0,
+                  width: 100.0,
                 ),
                 const SizedBox(height: 15),
                 const Text(
@@ -60,8 +188,31 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
                 SizedBox(height: size.height * 0.04),
                 // for username and password
-                myTextField("Enter username", Colors.white),
-                myTextField("Password", Colors.black26),
+                CommonTextField(
+                    hintText: 'Email',
+                    controller: emailController,
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: 'email is required'),
+                      EmailValidator(errorText: 'Please enter valid email'.tr),
+                    ]).call
+                ),
+                Obx(() {
+                  return CommonTextField(
+                    hintText: 'Password',
+                    controller: passwordController,
+                    keyboardType: TextInputType.text,
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: 'Password is required'),
+                    ]).call,
+                    obSecure: hide.value,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        hide.value = !hide.value;
+                      },
+                      icon: hide.value ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
+                    ),
+                  );
+                }),
                 const SizedBox(height: 10),
                 const Align(
                   alignment: Alignment.centerRight,
@@ -81,20 +232,25 @@ class _SignInScreenState extends State<SignInScreen> {
                   child: Column(
                     children: [
                       // for sign in button
-                      Container(
-                        width: size.width,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xffFF730A),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Sign In",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: 22,
+                      GestureDetector(
+                        onTap: (){
+                          checkEmailInFirestore();
+                        },
+                        child: Container(
+                          width: size.width,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xffFF730A),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "Sign In",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 22,
+                              ),
                             ),
                           ),
                         ),
@@ -125,17 +281,56 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       SizedBox(height: size.height * 0.02),
                       Row(
-mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          socialIcon("assets/images/google.png",),
-                          const SizedBox(width: 10,),
-                          socialIcon("assets/images/apple.png"),
-                          const SizedBox(width: 10,),
-                          socialIcon("assets/images/facebook.png"),
+                          GestureDetector(
+                            onTap: (){
+                              signInWithGoogle(context);
+                            },
+                            child: socialIcon(
+                              "assets/images/google.png",
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              try {
+                                final credential = await SignInWithApple.getAppleIDCredential(
+                                  scopes: [
+                                    AppleIDAuthorizationScopes.email,
+                                    AppleIDAuthorizationScopes.fullName,
+                                  ],
+                                );
+                                final OAuthProvider oAuthProvider = OAuthProvider('apple.com');
+                                final OAuthCredential oAuthCredential = oAuthProvider.credential(
+                                  idToken: credential.identityToken,
+                                  accessToken: credential.authorizationCode,
+                                );
+                                await FirebaseAuth.instance.signInWithCredential(oAuthCredential);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => HomePageScreen()),
+                                );
+                              } catch (error) {
+                                print('Error signing in with Apple: $error');
+                              }
+                            },
+                            child: socialIcon("assets/images/apple.png"),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              signInWithFacebook();
+                            },
+                              child: socialIcon("assets/images/facebook.png")),
                         ],
                       ),
                       SizedBox(height: size.height * 0.03),
-                       Text.rich(
+                      Text.rich(
                         TextSpan(
                             text: "Not a member? ",
                             style: const TextStyle(
@@ -145,19 +340,37 @@ mainAxisAlignment: MainAxisAlignment.center,
                             ),
                             children: [
                               TextSpan(
-                                text: "Register now",
-                                style: const TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                           recognizer: TapGestureRecognizer()
-                                  ..onTap = (){
-                               Get.to(const SignUpScreen());
-                                  }
-                              )]
-                        ),
+                                  text: "Register now",
+                                  style: const TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.of(context).push(
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation, secondaryAnimation) =>
+                                          const SignUpScreen(),
+                                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                            const begin = Offset(1.0, 0.0);
+                                            const end = Offset.zero;
+                                            const curve = Curves.ease;
+                                            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                            var offsetAnimation = animation.drive(tween);
+                                            return SlideTransition(
+                                              position: offsetAnimation,
+                                              child: child,
+                                            );
+                                          },
+                                          transitionDuration: Duration(seconds: 1),
+                                        ),
+                                      );
+                                    })
+                            ]),
                       ),
-                      const SizedBox(height: 20,)
+                      const SizedBox(
+                        height: 20,
+                      )
                     ],
                   ),
                 ),

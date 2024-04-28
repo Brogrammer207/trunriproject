@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+import 'package:trunriproject/signUpScreen.dart';
 import 'package:trunriproject/signinscreen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -92,20 +95,42 @@ class _SplashScreenState extends State<SplashScreen> {
                           padding: const EdgeInsets.only(right: 5),
                           child: Row(
                             children: [
-                              Container(
-                                height: size.height * 0.08,
-                                width: size.width / 2.2,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xff253242),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    "Register",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: Color(0xffFFFAFA),
+                              GestureDetector(
+                                onTap:(){
+                                  Navigator.of(context).push(
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation, secondaryAnimation) =>
+                                          const SignUpScreen(),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        const begin = Offset(1.0, 0.0);
+                                        const end = Offset.zero;
+                                        const curve = Curves.ease;
+                                        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                        var offsetAnimation = animation.drive(tween);
+                                        return SlideTransition(
+                                          position: offsetAnimation,
+                                          child: child,
+                                        );
+                                      },
+                                      transitionDuration: Duration(seconds: 1),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  height: size.height * 0.08,
+                                  width: size.width / 2.2,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xff253242),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      "Register",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        color: Color(0xffFFFAFA),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -113,10 +138,22 @@ class _SplashScreenState extends State<SplashScreen> {
                               const Spacer(),
                               GestureDetector(
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const SignInScreen(),
+                                  Navigator.of(context).push(
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation, secondaryAnimation) =>
+                                      const SignInScreen(),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        const begin = Offset(1.0, 0.0);
+                                        const end = Offset.zero;
+                                        const curve = Curves.ease;
+                                        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                        var offsetAnimation = animation.drive(tween);
+                                        return SlideTransition(
+                                          position: offsetAnimation,
+                                          child: child,
+                                        );
+                                      },
+                                      transitionDuration: Duration(seconds: 1),
                                     ),
                                   );
                                 },
