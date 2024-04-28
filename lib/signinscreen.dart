@@ -175,12 +175,12 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                 ),
                 const SizedBox(height: 15),
-                Image.asset(
-                  "assets/images/namste.gif",
-                  height: 100.0,
-                  width: 100.0,
-                ),
-                const SizedBox(height: 15),
+                // Image.asset(
+                //   "assets/images/namste.gif",
+                //   height: 100.0,
+                //   width: 100.0,
+                // ),
+                // const SizedBox(height: 15),
                 const Text(
                   "Wellcome back you've\nbeen missed!",
                   textAlign: TextAlign.center,
