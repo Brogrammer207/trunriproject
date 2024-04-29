@@ -112,7 +112,6 @@ class _SplashScreenState extends State<SplashScreen> {
                                           child: child,
                                         );
                                       },
-                                      transitionDuration: Duration(seconds: 1),
                                     ),
                                   );
                                 },
@@ -153,7 +152,6 @@ class _SplashScreenState extends State<SplashScreen> {
                                           child: child,
                                         );
                                       },
-                                      transitionDuration: Duration(seconds: 1),
                                     ),
                                   );
                                 },

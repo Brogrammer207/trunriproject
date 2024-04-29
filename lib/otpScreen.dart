@@ -189,7 +189,6 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
                       child: child,
                     );
                   },
-                  transitionDuration: Duration(seconds: 1),
                 ),
               );
               NewHelper.hideLoader(loader);

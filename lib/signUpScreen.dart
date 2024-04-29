@@ -33,6 +33,26 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
   RxBool hide = true.obs;
   RxBool hide1 = true.obs;
 
+  void checkEmailInFirestore() async {
+    OverlayEntry loader = NewHelper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
+
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('User')
+        .where('email', isEqualTo: emailController.text)
+        .get();
+
+    if (result.docs.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Email already in use"),
+      ));
+    } else {
+     register();
+    }
+
+    NewHelper.hideLoader(loader);
+  }
+
   void register() {
     OverlayEntry loader = NewHelper.overlayLoader(context);
     Overlay.of(context).insert(loader);
@@ -61,7 +81,6 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                     child: child,
                   );
                 },
-                transitionDuration: Duration(seconds: 1),
               ),
             );
             NewHelper.hideLoader(loader);
@@ -100,7 +119,6 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
               child: child,
             );
           },
-          transitionDuration: Duration(seconds: 1),
         ),
       );
       NewHelper.hideLoader(loader);
@@ -237,7 +255,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                         GestureDetector(
                           onTap: () {
                             if (formKey1.currentState!.validate()) {
-                              register();
+                              checkEmailInFirestore();
                             }
                             },
                           child: Container(
@@ -362,7 +380,6 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                                                 child: child,
                                               );
                                             },
-                                            transitionDuration: Duration(seconds: 1),
                                           ),
                                         );
                                       })

@@ -59,7 +59,6 @@ class _SignInScreenState extends State<SignInScreen> {
               child: child,
             );
           },
-          transitionDuration: Duration(seconds: 1),
         ),
       );
 
@@ -98,7 +97,6 @@ class _SignInScreenState extends State<SignInScreen> {
               child: child,
             );
           },
-          transitionDuration: Duration(seconds: 1),
         ),
       );
      NewHelper.hideLoader(loader);
@@ -362,7 +360,6 @@ class _SignInScreenState extends State<SignInScreen> {
                                               child: child,
                                             );
                                           },
-                                          transitionDuration: Duration(seconds: 1),
                                         ),
                                       );
                                     })
