@@ -19,6 +19,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:trunriproject/homepage.dart';
+import 'package:trunriproject/recoveryPasswordScreen.dart';
 import 'package:trunriproject/signUpScreen.dart';
 import 'package:trunriproject/widgets/customTextFormField.dart';
 import 'package:trunriproject/widgets/helper.dart';
@@ -210,15 +211,23 @@ class _SignInScreenState extends State<SignInScreen> {
                   );
                 }),
                 const SizedBox(height: 10),
-                const Align(
+                Align(
                   alignment: Alignment.centerRight,
-                  child: Text(
-                    "Recovery Password               ",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Color(0xff6F6B7A),
+                  child: GestureDetector(
+                    onTap: (){
+                      Get.to(const RecoveryPasswordScreen());
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child: Text(
+                        "Recovery Password",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Color(0xff6F6B7A),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -318,7 +327,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           const SizedBox(
                             width: 10,
                           ),
-                          InkWell(
+                          GestureDetector(
                             onTap: () async {
                               signInWithFacebook();
                             },
