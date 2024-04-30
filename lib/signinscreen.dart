@@ -162,23 +162,21 @@ class _SignInScreenState extends State<SignInScreen> {
         child: SafeArea(
             child: ListView(
               children: [
-                SizedBox(height: size.height * 0.05),
-                const Text(
-                  "Hello Indian!",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 37,
-                    color: Color(0xff353047),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                // Image.asset(
-                //   "assets/images/namste.gif",
-                //   height: 100.0,
-                //   width: 100.0,
+                // const Text(
+                //   "Hello Indian!",
+                //   textAlign: TextAlign.center,
+                //   style: TextStyle(
+                //     fontWeight: FontWeight.bold,
+                //     fontSize: 37,
+                //     color: Color(0xff353047),
+                //   ),
                 // ),
                 // const SizedBox(height: 15),
+                Image.asset(
+                  "assets/images/hand.gif",
+                  height: 200.0,
+                  width: 100.0,
+                ),
                 const Text(
                   "Wellcome back you've\nbeen missed!",
                   textAlign: TextAlign.center,
