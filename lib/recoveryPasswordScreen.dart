@@ -44,76 +44,85 @@ class _RecoveryPasswordScreenState extends State<RecoveryPasswordScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        body: Container(
-      padding: const EdgeInsets.only(left: 15, right: 15),
-      decoration: const BoxDecoration(
-        // color: Color(0xFFF2EDE2)
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          colors: [
-            Color(0xffF4EEF2),
-            Color(0xffF4EEF2),
-            Color(0xffE3EDF5),
-          ],
+        body: GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Container(
+        padding: const EdgeInsets.only(left: 15, right: 15),
+        decoration: const BoxDecoration(
+          // color: Color(0xFFF2EDE2)
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            colors: [
+              Color(0xffF4EEF2),
+              Color(0xffF4EEF2),
+              Color(0xffE3EDF5),
+            ],
+          ),
         ),
-      ),
-      child: SafeArea(
-          child: ListView(
-        children: [
-          Lottie.asset("assets/loti/lock.json", height: 300),
-          const Text(
-            "Forget Your Password ?",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 35, color: Colors.black, height: 1.2),
-          ),
-          SizedBox(height: size.height * 0.04),
-          const Text(
-            "Enter Your Email and Reset password instruction is send to your email",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: Colors.grey, height: 1.2),
-          ),
-          SizedBox(height: size.height * 0.04),
-          CommonTextField(
-              hintText: 'Email',
+        child: SafeArea(
+            child: ListView(
+          children: [
+            Lottie.asset("assets/loti/lock.json", height: 300),
+            const Text(
+              "Forget Your Password ?",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 35, color: Colors.black, height: 1.2),
+            ),
+            SizedBox(height: size.height * 0.04),
+            const Text(
+              "Enter your email address and we'll send you instructions on how to reset your password.",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: Colors.grey, height: 1.2),
+            ),
+            SizedBox(height: size.height * 0.04),
+            CommonTextField(
+              hintText: 'Email your Email',
               controller: emailController,
               validator: MultiValidator([
                 RequiredValidator(errorText: 'email is required'),
                 EmailValidator(errorText: 'Please enter valid email'.tr),
-              ]).call),
-          SizedBox(height: size.height * 0.1),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: Column(
-              children: [
-                // for sign in button
-                GestureDetector(
-                  onTap: () {
-                    checkEmailInFirestore(context);
-                  },
-                  child: Container(
-                    width: size.width,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xffFF730A),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        "Send",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 22,
+              ]).call,
+              onEditingCompleted: () {
+                FocusScope.of(context).unfocus();
+              },
+            ),
+            SizedBox(height: size.height * 0.07),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Column(
+                children: [
+                  // for sign in button
+                  GestureDetector(
+                    onTap: () {
+                      checkEmailInFirestore(context);
+                    },
+                    child: Container(
+                      width: size.width,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffFF730A),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Send",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 22,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      )),
+          ],
+        )),
+      ),
     ));
   }
 }

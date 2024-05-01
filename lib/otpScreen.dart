@@ -10,6 +10,8 @@ import 'package:pinput/pinput.dart';
 import 'package:trunriproject/homepage.dart';
 import 'package:trunriproject/widgets/helper.dart';
 
+import 'nativAddressScreen.dart';
+
 class NewOtpScreen extends StatefulWidget {
   static String route = "/OtpScreen";
 
@@ -177,7 +179,7 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
               Navigator.of(context).push(
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
-                  const HomePageScreen(),
+                   PickUpAddressScreen(),
                   transitionsBuilder: (context, animation, secondaryAnimation, child) {
                     const begin = Offset(1.0, 0.0);
                     const end = Offset.zero;

@@ -82,6 +82,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
           readOnly: widget.readOnly,
           keyboardType: widget.keyboardType,
           controller: widget.controller,
+
           decoration: InputDecoration(
             counterStyle: GoogleFonts.poppins(
               color: AppTheme.primaryColor,
