@@ -61,6 +61,10 @@
 	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Allow this to access your current location of User for showing nearby Store</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Allow this to access your current location of User for showing nearby Store</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
