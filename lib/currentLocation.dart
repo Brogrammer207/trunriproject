@@ -16,6 +16,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trunriproject/homepage.dart';
+import 'package:trunriproject/visaTypeScreen.dart';
 import 'package:trunriproject/widgets/addSize.dart';
 import 'package:trunriproject/widgets/appTheme.dart';
 import 'package:trunriproject/widgets/helper.dart';
@@ -132,7 +133,7 @@ class _CurrentAddressState extends State<CurrentAddress> {
       'zipcode':zipcode,
       'town':town,
     }).then((value) {
-        Get.to(const HomePageScreen());
+        Get.to(const VisaTypeScreen());
         showToast('Current Location Save Successfully');
         NewHelper.hideLoader(loader);
 
@@ -151,7 +152,7 @@ class _CurrentAddressState extends State<CurrentAddress> {
   String googleApikey = "AIzaSyAP9njE_z7lH2tii68WLoQGju0DF8KryXA";
   GoogleMapController? mapController1;
   CameraPosition? cameraPosition;
-  String location = "Search Location";
+  String location = "Enter Your Address Here";
   final Set<Marker> markers = {};
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);

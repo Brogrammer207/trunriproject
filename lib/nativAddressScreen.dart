@@ -107,7 +107,7 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
                 Padding(
                   padding: const EdgeInsets.only(left: 25),
                   child: Text(
-                    "Where are your hometown".tr,
+                    "Can you tell us where you're from?".tr,
                     style: GoogleFonts.poppins(color: Color(0xff292F45), fontWeight: FontWeight.w600, fontSize: 16),
                   ),
                 ),
