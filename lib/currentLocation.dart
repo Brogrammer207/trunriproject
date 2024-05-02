@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:ui' as ui;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/animation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
@@ -12,8 +15,10 @@ import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trunriproject/homepage.dart';
 import 'package:trunriproject/widgets/addSize.dart';
 import 'package:trunriproject/widgets/appTheme.dart';
+import 'package:trunriproject/widgets/helper.dart';
 
 class CurrentAddress extends StatefulWidget {
   CurrentAddress({
@@ -114,6 +119,24 @@ class _CurrentAddressState extends State<CurrentAddress> {
     appLanguage = sharedPreferences.getString("app_language");
     print("hfgdhfgh$appLanguage");
     setState(() {});
+  }
+
+  void addCurrentLocation(){
+    OverlayEntry loader = NewHelper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
+    FirebaseFirestore.instance.collection('currentLocation').doc(FirebaseAuth.instance.currentUser!.uid).set({
+      'Street' : street,
+      'city': city,
+      'state' : state,
+      'country':country,
+      'zipcode':zipcode,
+      'town':town,
+    }).then((value) {
+        Get.to(const HomePageScreen());
+        showToast('Current Location Save Successfully');
+        NewHelper.hideLoader(loader);
+
+    });
   }
 
   @override
@@ -293,12 +316,17 @@ class _CurrentAddressState extends State<CurrentAddress> {
                                 width: 10,
                               ),
                               Expanded(
-                                child: Text(
-                                  'Save Location',
-                                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: AddSize.font16,
-                                      color: const Color(0xff014E70)),
+                                child: GestureDetector(
+                                  onTap: (){
+                                    showToast('Your Location save Successfully');
+                                  },
+                                  child: Text(
+                                    'Save Location',
+                                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: AddSize.font16,
+                                        color: const Color(0xff014E70)),
+                                  ),
                                 ),
                               )
                             ],
@@ -306,21 +334,26 @@ class _CurrentAddressState extends State<CurrentAddress> {
                           const SizedBox(
                             height: 20,
                           ),
-                          Container(
-                            margin: const EdgeInsets.only(left: 25, right: 25),
-                            width: size.width,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: const Color(0xffFF730A),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                "Confirm Your Address",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white,
-                                  fontSize: 20,
+                          GestureDetector(
+                            onTap: (){
+                              addCurrentLocation();
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(left: 25, right: 25),
+                              width: size.width,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xffFF730A),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "Confirm Your Address",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                  ),
                                 ),
                               ),
                             ),
