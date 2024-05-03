@@ -44,17 +44,10 @@ class _VisaTypeScreenState extends State<VisaTypeScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 25),
-              child: Text(
-                'Visa Type'.tr,
-                style: GoogleFonts.poppins(color: const Color(0xff292F45), fontWeight: FontWeight.w600, fontSize: 20),
-              ),
-            ),
-          ],
+        leading: Icon(Icons.keyboard_arrow_left_outlined),
+        title: Text(
+          'Visa Type'.tr,
+          style: GoogleFonts.poppins(color: const Color(0xff292F45), fontWeight: FontWeight.w600, fontSize: 20),
         ),
       ),
       body: Container(
@@ -110,22 +103,30 @@ class _VisaTypeScreenState extends State<VisaTypeScreen> {
   }
 
   Widget buildRadioButton(int value, String label) {
-    return Row(
-      children: [
-        Radio(
-          value: value,
-          groupValue: selectedVisaType,
-          onChanged: (newValue) {
-            setState(() {
-              selectedVisaType = newValue as int?;
-            });
-          },
-        ),
-        Text(
-          label,
-          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20, color: Colors.black),
-        )
-      ],
+    return Container(
+      padding: EdgeInsets.all(10),
+      margin: EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(11),
+       color: Colors.grey.shade300
+      ),
+      child: Row(
+        children: [
+          Radio(
+            value: value,
+            groupValue: selectedVisaType,
+            onChanged: (newValue) {
+              setState(() {
+                selectedVisaType = newValue as int?;
+              });
+            },
+          ),
+          Text(
+            label,
+            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20, color: Colors.black),
+          )
+        ],
+      ),
     );
   }
 }

@@ -172,7 +172,6 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
               OverlayEntry loader = NewHelper.overlayLoader(context);
               Overlay.of(context).insert(loader);
               myauth.verifyOTP(otp: otpController.text);
-                log('message');
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text("OTP is verified"),
                 ));

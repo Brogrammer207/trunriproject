@@ -59,6 +59,7 @@ dependencies:
   google_api_headers:
   google_maps_flutter: ^2.6.1
   geolocator:
+  email_auth: ^2.0.0
 
 dev_dependencies:
   flutter_test:

@@ -101,12 +101,24 @@ class _SignInScreenState extends State<SignInScreen> {
   void checkEmailInFirestore() async {
     OverlayEntry loader = NewHelper.overlayLoader(context);
     Overlay.of(context).insert(loader);
-    final QuerySnapshot result = await FirebaseFirestore.instance
-        .collection('User')
-        .where('email', isEqualTo: emailController.text)
-        .get();
+    final QuerySnapshot result =
+        await FirebaseFirestore.instance.collection('User').where('email', isEqualTo: emailController.text).get();
+
     if (result.docs.isNotEmpty) {
       checkPasswordInFirestore();
+      NewHelper.hideLoader(loader);
+    } else {
+      Fluttertoast.showToast(msg: 'Password is incorrect');
+      NewHelper.hideLoader(loader);
+    }
+  }
+
+  void checkPasswordInFirestore() async {
+    OverlayEntry loader = NewHelper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
+    final QuerySnapshot result =
+        await FirebaseFirestore.instance.collection('User').where('password', isEqualTo: passwordController.text).get();
+    if (result.docs.isNotEmpty) {
       myauth.setConfig(
           appEmail: "contact@hdevcoder.com",
           appName: "TRUNRI",
@@ -118,6 +130,7 @@ class _SignInScreenState extends State<SignInScreen> {
           content: Text("OTP has been sent"),
         ));
 
+        SignIn();
 
         NewHelper.hideLoader(loader);
       } else {
@@ -128,24 +141,6 @@ class _SignInScreenState extends State<SignInScreen> {
       setState(() {
         showOtpField = true;
       });
-      return;
-    } else {
-      Fluttertoast.showToast(msg: 'Email not register yet Please Signup');
-      NewHelper.hideLoader(loader);
-    }
-  }
-
-
-  void checkPasswordInFirestore() async {
-    OverlayEntry loader = NewHelper.overlayLoader(context);
-    Overlay.of(context).insert(loader);
-    final QuerySnapshot result = await FirebaseFirestore.instance
-        .collection('User')
-        .where('password', isEqualTo: passwordController.text)
-        .get();
-    if (result.docs.isNotEmpty) {
-      SignIn();
-      NewHelper.hideLoader(loader);
       return;
     } else {
       Fluttertoast.showToast(msg: 'Password is incorrect');
