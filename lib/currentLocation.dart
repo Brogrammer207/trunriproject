@@ -7,6 +7,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
 import 'package:flutter_google_places_hoc081098/google_maps_webservice_places.dart';
 import 'package:geocoding/geocoding.dart';
@@ -254,21 +255,33 @@ class _CurrentAddressState extends State<CurrentAddress> {
                       }
                     },
                     child: Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Card(
-                        child: Container(
-                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-                            padding: const EdgeInsets.all(0),
-                            width: MediaQuery.of(context).size.width - 40,
-                            child: ListTile(
-                              leading: const Icon(Icons.location_on_outlined, color: AppTheme.primaryColor),
-                              title: Text(
-                                _address.toString(),
-                                style: TextStyle(fontSize: AddSize.font14),
-                              ),
-                              trailing: const Icon(Icons.search),
-                              dense: true,
-                            )),
+                      padding: const EdgeInsets.only(right: 15,top: 30),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: (){
+                              Get.back();
+                            },
+                              child: const Icon(Icons.arrow_back_ios_new_outlined)),
+                          const SizedBox(width: 10,),
+                          Card(
+                            child: Container(
+                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                                padding: const EdgeInsets.all(0),
+                                width: MediaQuery.of(context).size.width - 40,
+                                child: ListTile(
+                                  leading: const Icon(Icons.location_on_outlined, color: AppTheme.primaryColor),
+                                  title: Text(
+                                    'Type your current address here',
+                                    // _address.toString(),
+                                    style: TextStyle(fontSize: AddSize.font14),
+                                  ),
+                                  trailing: const Icon(Icons.search),
+                                  dense: true,
+                                )),
+                          ),
+                          const SizedBox(width: 10,),
+                        ],
                       ),
                     ))),
             Positioned(

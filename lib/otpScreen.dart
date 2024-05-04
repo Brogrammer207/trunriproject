@@ -130,7 +130,7 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
                             height: size.height * .05,
                           ),
                           Text(
-                            'Didnt you receive the OTP?',
+                            'Did not receive the OTP ?',
                             style: GoogleFonts.poppins(color: const Color(0xff3D4260), fontSize: 17),
                           ),
                           SizedBox(

@@ -138,7 +138,7 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
                   ),
                 ),
                 CommonTextField(
-                  hintText: 'City',
+                  hintText: 'Mumbai',
                   controller: cityController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'City is required'),
@@ -168,7 +168,7 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
                   ),
                 ),
                 CommonTextField(
-                  hintText: 'State',
+                  hintText: 'Maharashtra',
                   controller: stateController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'State is required'),
@@ -186,6 +186,10 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
                   hintText: 'India',
                   controller: countryController,
                   readOnly: true,
+                  prefix: Padding(
+                    padding: const EdgeInsets.only(left: 5,right: 5),
+                    child: Image.asset('assets/images/flag.png',height: 10,),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 25),

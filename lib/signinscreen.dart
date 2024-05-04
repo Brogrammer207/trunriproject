@@ -275,7 +275,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     },
                     child: Row(
                       children: [
-                        const Text('Are You Agree',
+                        const Text('I Accept',
                             style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.black)),
                         Text(
                           ' Terms And Conditions?',
