@@ -134,7 +134,7 @@ showToast(message, {ToastGravity? gravity, bool? center}) {
   Fluttertoast.showToast(
       msg: message.toString().capitalize!,
       toastLength: Toast.LENGTH_LONG,
-      gravity: center == true ? ToastGravity.CENTER :  gravity ?? ToastGravity.BOTTOM,
+      gravity: center == true ? ToastGravity.CENTER :  gravity ?? ToastGravity.CENTER,
       timeInSecForIosWeb: 4,
       backgroundColor: Color(0xff0FF730A),
       textColor: const Color(0xffffffff),

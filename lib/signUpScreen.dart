@@ -164,6 +164,12 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                       color: Color(0xff353047),
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  Image.asset(
+                    "assets/images/person.gif",
+                    height: 200.0,
+                    width: 100.0,
+                  ),
                   const SizedBox(height: 15),
                   const Padding(
                     padding: EdgeInsets.only(left: 5,right: 5),

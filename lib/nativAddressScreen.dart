@@ -69,8 +69,9 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         titleSpacing: 0,
+        backgroundColor: Colors.white,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 25),
@@ -78,6 +79,11 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
                 'Native Address'.tr,
                 style: GoogleFonts.poppins(color: Color(0xff292F45), fontWeight: FontWeight.w600, fontSize: 20),
               ),
+            ),
+            Image.asset(
+              "assets/images/location.gif",
+              height: 200.0,
+              width: 50.0,
             ),
           ],
         ),
