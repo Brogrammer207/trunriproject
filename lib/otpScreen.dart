@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
-import 'package:trunriproject/homepage.dart';
 import 'package:trunriproject/widgets/helper.dart';
 
 import 'nativAddressScreen.dart';

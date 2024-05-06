@@ -12,7 +12,7 @@ import 'package:get/route_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:trunriproject/homepage.dart';
+import 'package:trunriproject/homePageScreen.dart';
 import 'package:trunriproject/recoveryPasswordScreen.dart';
 import 'package:trunriproject/signUpScreen.dart';
 import 'package:trunriproject/widgets/customTextFormField.dart';

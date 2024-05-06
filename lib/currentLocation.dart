@@ -16,7 +16,6 @@ import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trunriproject/homepage.dart';
 import 'package:trunriproject/visaTypeScreen.dart';
 import 'package:trunriproject/widgets/addSize.dart';
 import 'package:trunriproject/widgets/appTheme.dart';
