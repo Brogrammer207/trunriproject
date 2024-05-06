@@ -5,13 +5,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:trunriproject/otpScreen.dart';
 import 'package:trunriproject/signinscreen.dart';
+import 'package:trunriproject/widgets/appTheme.dart';
 import 'package:trunriproject/widgets/customTextFormField.dart';
 import 'package:trunriproject/widgets/helper.dart';
 
@@ -32,6 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
   TextEditingController phoneController = TextEditingController();
   RxBool hide = true.obs;
   RxBool hide1 = true.obs;
+  String code = "+91";
 
   void checkEmailInFirestore() async {
     OverlayEntry loader = NewHelper.overlayLoader(context);
@@ -196,14 +200,69 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                         EmailValidator(errorText: 'Please enter valid Referral email'.tr),
                       ]).call
                   ),
-                  CommonTextField(
-                      hintText: 'Phone Number',
+                  Padding(
+                    padding: EdgeInsets.only(left: 25,right: 25),
+                    child: IntlPhoneField(
+                      key: ValueKey(code),
+                      flagsButtonPadding: const EdgeInsets.all(8),
+                      dropdownIconPosition: IconPosition.trailing,
+                      showDropdownIcon: true,
+                      cursorColor: Colors.black,
+                      textInputAction: TextInputAction.next,
+                      dropdownTextStyle: const TextStyle(color: Colors.black),
+                      style: const TextStyle(
+                          color: AppTheme.textColor
+                      ),
                       controller: phoneController,
-                      keyboardType: TextInputType.number,
-                      validator: MultiValidator([
-                        RequiredValidator(errorText: 'Phone Number is required'),
-                      ]).call
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                          filled: true,
+                          contentPadding: EdgeInsets.symmetric(vertical: 15),
+                          hintStyle: const TextStyle(
+                            color: Colors.black45,
+                            fontSize: 19,
+                            fontWeight: FontWeight.w400
+                          ),
+                          hintText: 'Phone Number',
+                          labelStyle: TextStyle(color: AppTheme.textColor),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(11),
+                            borderSide: BorderSide(),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(11),
+                          ),
+                          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(11),)),
+                      initialCountryCode: code.toString(),
+                      languageCode: '+91',
+                      onCountryChanged: (phone) {
+                        code = phone.code;
+                        print(phone.code);
+                        print(code.toString());
+                      },
+                      validator: (value) {
+                        if (value == null || code.isEmpty) {
+                          return 'Please Enter Phone Number'.tr;
+                        }
+                        return null;
+                      },
+                      onChanged: (phone) {
+                        code = phone.countryISOCode.toString();
+                        print(phone.countryCode);
+                        print(code.toString());
+                      },
+                    ),
                   ),
+                  // CommonTextField(
+                  //     hintText: 'Phone Number',
+                  //     controller: phoneController,
+                  //     keyboardType: TextInputType.number,
+                  //     validator: MultiValidator([
+                  //       RequiredValidator(errorText: 'Phone Number is required'),
+                  //     ]).call
+                  // ),
                   Obx(() {
                     return CommonTextField(
                       hintText: 'Password',
@@ -282,7 +341,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                             ),
                           ),
                         ),
-                        SizedBox(height: size.height * 0.06),
+                        SizedBox(height: size.height * 0.02),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -306,7 +365,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                             ),
                           ],
                         ),
-                        SizedBox(height: size.height * 0.06),
+                        SizedBox(height: size.height * 0.02),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
