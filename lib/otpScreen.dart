@@ -172,13 +172,12 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
               OverlayEntry loader = NewHelper.overlayLoader(context);
               Overlay.of(context).insert(loader);
               myauth.verifyOTP(otp: otpController.text);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text("OTP is verified"),
-                ));
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("OTP is verified"),
+              ));
               Navigator.of(context).push(
                 PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) =>
-                   PickUpAddressScreen(),
+                  pageBuilder: (context, animation, secondaryAnimation) => PickUpAddressScreen(),
                   transitionsBuilder: (context, animation, secondaryAnimation, child) {
                     const begin = Offset(1.0, 0.0);
                     const end = Offset.zero;
@@ -193,8 +192,7 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
                 ),
               );
               NewHelper.hideLoader(loader);
-              },
-
+            },
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(

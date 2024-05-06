@@ -48,7 +48,7 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
     }).then((value) {
        if(formKey1.currentState!.validate()){
          Get.to(CurrentAddress());
-         showToast('Native Address Save Successfully');
+         showToast('Native Address saved Successfully');
          NewHelper.hideLoader(loader);
        }else{
          NewHelper.hideLoader(loader);
@@ -129,7 +129,7 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
                   ),
                 ),
                 CommonTextField(
-                  hintText: 'Street',
+                  hintText: 'Ex: shivaji road',
                   controller: streetController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'Street is required'),
@@ -144,7 +144,7 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
                   ),
                 ),
                 CommonTextField(
-                  hintText: 'Mumbai',
+                  hintText: 'Ex: Mubai,Delhi, Chennai',
                   controller: cityController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'City is required'),
@@ -174,7 +174,7 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
                   ),
                 ),
                 CommonTextField(
-                  hintText: 'Maharashtra',
+                  hintText: 'Ex: Bihar, Rajasthan, Karnataka',
                   controller: stateController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'State is required'),
@@ -194,7 +194,7 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
                   readOnly: true,
                   prefix: Padding(
                     padding: const EdgeInsets.only(left: 5,right: 5),
-                    child: Image.asset('assets/images/flag.png',height: 10,),
+                    child: Image.asset('assets/images/flag.gif',height: 10,),
                   ),
                 ),
                 Padding(

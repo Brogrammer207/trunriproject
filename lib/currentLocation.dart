@@ -123,21 +123,20 @@ class _CurrentAddressState extends State<CurrentAddress> {
     setState(() {});
   }
 
-  void addCurrentLocation(){
+  void addCurrentLocation() {
     OverlayEntry loader = NewHelper.overlayLoader(context);
     Overlay.of(context).insert(loader);
     FirebaseFirestore.instance.collection('currentLocation').doc(FirebaseAuth.instance.currentUser!.uid).set({
-      'Street' : street,
+      'Street': street,
       'city': city,
-      'state' : state,
-      'country':country,
-      'zipcode':zipcode,
-      'town':town,
+      'state': state,
+      'country': country,
+      'zipcode': zipcode,
+      'town': town,
     }).then((value) {
-        Get.to(const VisaTypeScreen());
-        showToast('Current Location Save Successfully');
-        NewHelper.hideLoader(loader);
-
+      Get.to(const VisaTypeScreen());
+      showToast('Current Location Save Successfully');
+      NewHelper.hideLoader(loader);
     });
   }
 
@@ -255,32 +254,39 @@ class _CurrentAddressState extends State<CurrentAddress> {
                       }
                     },
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 15,top: 30),
+                      padding: const EdgeInsets.only(right: 15, top: 35),
                       child: Row(
                         children: [
                           GestureDetector(
-                            onTap: (){
-                              Get.back();
-                            },
+                              onTap: () {
+                                Get.back();
+                              },
                               child: const Icon(Icons.arrow_back_ios_new_outlined)),
-                          const SizedBox(width: 10,),
-                          Card(
-                            child: Container(
-                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-                                padding: const EdgeInsets.all(0),
-                                width: MediaQuery.of(context).size.width - 40,
-                                child: ListTile(
-                                  leading: const Icon(Icons.location_on_outlined, color: AppTheme.primaryColor),
-                                  title: Text(
-                                    'Type your current address here',
-                                    // _address.toString(),
-                                    style: TextStyle(fontSize: AddSize.font14),
-                                  ),
-                                  trailing: const Icon(Icons.search),
-                                  dense: true,
-                                )),
+                          const SizedBox(
+                            width: 10,
                           ),
-                          const SizedBox(width: 10,),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Card(
+                              child: Container(
+                                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                                  padding: const EdgeInsets.all(0),
+                                  width: MediaQuery.of(context).size.width - 50,
+                                  child: ListTile(
+                                    leading: const Icon(Icons.location_on_outlined, color: AppTheme.primaryColor),
+                                    title: Text(
+                                      'Type your current address here',
+                                      // _address.toString(),
+                                      style: TextStyle(fontSize: AddSize.font14),
+                                    ),
+                                    trailing: const Icon(Icons.search),
+                                    dense: true,
+                                  )),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
                         ],
                       ),
                     ))),
@@ -331,7 +337,7 @@ class _CurrentAddressState extends State<CurrentAddress> {
                               ),
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: (){
+                                  onTap: () {
                                     showToast('Your Location save Successfully');
                                   },
                                   child: Text(
@@ -349,7 +355,7 @@ class _CurrentAddressState extends State<CurrentAddress> {
                             height: 20,
                           ),
                           GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               addCurrentLocation();
                             },
                             child: Container(
