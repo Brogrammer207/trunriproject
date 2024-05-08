@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:trunriproject/home/home_screen.dart';
 import 'package:trunriproject/homePageScreen.dart';
 import 'package:trunriproject/widgets/helper.dart';
 
@@ -26,7 +27,7 @@ class _VisaTypeScreenState extends State<VisaTypeScreen> {
       'visaType': selectedVisaType
     }).then((value) {
       if(selectedVisaType != null){
-        Get.to(const HomePageScreen());
+        Get.to(const HomeScreen());
         showToast('Visa Type Added Successfully');
         NewHelper.hideLoader(loader);
       }else{

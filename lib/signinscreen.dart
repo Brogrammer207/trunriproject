@@ -19,6 +19,7 @@ import 'package:trunriproject/widgets/customTextFormField.dart';
 import 'package:trunriproject/widgets/helper.dart';
 
 import 'facebook/firebaseservices.dart';
+import 'nativAddressScreen.dart';
 import 'otpScreen.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -75,7 +76,7 @@ class _SignInScreenState extends State<SignInScreen> {
       UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
       Navigator.of(context).push(
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const HomePageScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) => PickUpAddressScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             const begin = Offset(1.0, 0.0);
             const end = Offset.zero;
@@ -377,7 +378,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             await FirebaseAuth.instance.signInWithCredential(oAuthCredential);
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => HomePageScreen()),
+                              MaterialPageRoute(builder: (context) => PickUpAddressScreen()),
                             );
                           } catch (error) {
                             print('Error signing in with Apple: $error');
