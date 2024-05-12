@@ -6,7 +6,6 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trunriproject/home/home_screen.dart';
-import 'package:trunriproject/homePageScreen.dart';
 import 'package:trunriproject/widgets/helper.dart';
 
 class VisaTypeScreen extends StatefulWidget {

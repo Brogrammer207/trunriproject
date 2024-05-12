@@ -5,13 +5,13 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/home/product.dart';
 import 'package:trunriproject/home/product_cart.dart';
 import 'package:trunriproject/widgets/helper.dart';
 import '../model/bannerModel.dart';
 import '../model/categoryModel.dart';
+import 'bottom_bar.dart';
 import 'icon_btn_with_counter.dart';
 import 'search_field.dart';
 import 'section_title.dart';
@@ -178,33 +178,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                               child:
                                   CategoryCard(icon: category[index].imageUrl, text: category[index].name, press: () {})
-                              // Container(
-                              //   decoration: BoxDecoration(
-                              //       borderRadius: BorderRadius.circular(12),
-                              //       border: Border.all(color: Colors.transparent, width: 2)),
-                              //   margin: const EdgeInsets.symmetric(horizontal: 10),
-                              //   padding: const EdgeInsets.symmetric(horizontal: 6),
-                              //   constraints: BoxConstraints(maxWidth: context.getSize.width * .16),
-                              //   child: Column(
-                              //     mainAxisAlignment: MainAxisAlignment.center,
-                              //     children: [
-                              //       CircleAvatar(
-                              //         radius: 30, // Image radius
-                              //         backgroundImage: NetworkImage(category[index].imageUrl),
-                              //       ),
-                              //       const SizedBox(
-                              //         height: 7,
-                              //       ),
-                              //       Center(
-                              //         child: Text(
-                              //           category[index].name.capitalize!,
-                              //           overflow: TextOverflow.ellipsis,
-                              //           maxLines: 1,
-                              //         ),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // ),
                               );
                         });
                   },
@@ -279,6 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+
     );
   }
 }
@@ -298,43 +272,43 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: press,
-      child: Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(right: 10),
-              height: 56,
-              width: 56,
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFECDF),
-                borderRadius: BorderRadius.circular(10),
-                image: DecorationImage(
-                  image: NetworkImage(icon),
-                  fit: BoxFit.fill,
-                ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            height: 56,
+            width: 56,
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFECDF),
+              borderRadius: BorderRadius.circular(10),
+              image: DecorationImage(
+                image: NetworkImage(icon),
+                fit: BoxFit.fill,
               ),
             ),
-            const SizedBox(height: 4), // Add space between the image and the text
-            Container(
-              width: 56, // Adjust width if needed
-              child: Text(
-                text.capitalize!,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 12, // Adjust the font size as needed
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2, // Allow text to wrap to 2 lines if needed
+          ),
+          const SizedBox(height: 4), // Add space between the image and the text
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            width: 56, // Adjust width if needed
+            child: Text(
+              text.capitalize!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 12, // Adjust the font size as needed
               ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2, // Allow text to wrap to 2 lines if needed
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+
 
 
 class SpecialOfferCard extends StatelessWidget {

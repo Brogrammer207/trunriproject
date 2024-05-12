@@ -12,7 +12,6 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:trunriproject/homePageScreen.dart';
 import 'package:trunriproject/otpScreen.dart';
 import 'package:trunriproject/signinscreen.dart';
 import 'package:trunriproject/widgets/appTheme.dart';
