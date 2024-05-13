@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/home/product.dart';
 import 'package:trunriproject/home/product_cart.dart';
+import 'package:trunriproject/home/resturentDetailsScreen.dart';
 import 'package:trunriproject/widgets/helper.dart';
 import '../model/bannerModel.dart';
 import '../model/categoryModel.dart';
@@ -18,9 +21,6 @@ import 'search_field.dart';
 import 'section_title.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-
-
 
 class HomeScreen extends StatefulWidget {
   static String routeName = "/home";
@@ -39,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+    fetchImageData();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -47,12 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse &&
-          permission != LocationPermission.always) {
+      if (permission != LocationPermission.whileInUse && permission != LocationPermission.always) {
         return;
       }
     }
@@ -80,34 +79,29 @@ class _HomeScreenState extends State<HomeScreen> {
       throw Exception('Failed to fetch data');
     }
   }
+
+  List<String> imageUrls = [];
+  Future<List<String>> fetchImageData() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('banners').get();
+
+      querySnapshot.docs.forEach((DocumentSnapshot document) {
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+        String imageUrl = data['imageUrl'];
+        imageUrls.add(imageUrl);
+      });
+    } catch (e) {
+      print("Error fetching image data: $e");
+    }
+
+    return imageUrls;
+  }
+
+  RxDouble sliderIndex = (0.0).obs;
+
+  int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
-    List<String> imageUrls = [];
-    Future<List<String>> fetchImageData() async {
-      try {
-        QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('banners').get();
-
-        querySnapshot.docs.forEach((DocumentSnapshot document) {
-          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-          String imageUrl = data['imageUrl'];
-          imageUrls.add(imageUrl);
-        });
-      } catch (e) {
-        print("Error fetching image data: $e");
-      }
-
-      return imageUrls;
-    }
-
-    RxDouble sliderIndex = (0.0).obs;
-    @override
-    void initState() {
-      super.initState();
-      fetchImageData();
-    }
-
-    int currentIndex = 0;
-
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
@@ -230,9 +224,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //       keyId: category[index].name,
                                 //     ));
                               },
-                              child:
-                                  CategoryCard(icon: category[index].imageUrl, text: category[index].name, press: () {})
-                              );
+                              child: CategoryCard(
+                                  icon: category[index].imageUrl, text: category[index].name, press: () {}));
                         });
                   },
                 ),
@@ -321,15 +314,31 @@ class _HomeScreenState extends State<HomeScreen> {
                         final restaurant = _restaurants[index];
                         final name = restaurant['name'];
                         final address = restaurant['vicinity'];
-                        final photoReference = restaurant['photos'] != null
-                            ? restaurant['photos'][0]['photo_reference']
-                            : null;
+                        final rating = restaurant['rating'];
+                        final reviews = restaurant['reviews'];
+                        final description = restaurant['description'] ?? 'No Description Available';
+                        final openingHours = restaurant['opening_hours'] != null ? restaurant['opening_hours']['weekday_text'] : 'Not Available';
+                        final closingTime = restaurant['closing_time'] ?? 'Not Available';
+                        final photoReference =
+                            restaurant['photos'] != null ? restaurant['photos'][0]['photo_reference'] : null;
                         final photoUrl = photoReference != null
                             ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
                             : null;
 
-                        return
-                          Column(
+                        return GestureDetector(
+                          onTap: () {
+                            log('message');
+                            Get.to(ResturentDetailsScreen(
+                                name: name.toString(),
+                                rating: rating.toString(),
+                                desc: description.toString(),
+                                openingTime: openingHours.toString(),
+                                closingTime: closingTime.toString(),
+                                address: address.toString(),
+                                image: photoUrl.toString())
+                            );
+                          },
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Container(
@@ -345,7 +354,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                   //   fit: BoxFit.fill,
                                   // ),
                                 ),
-                                child: photoUrl != null ? Image.network(photoUrl,height: 100,width: 100,fit: BoxFit.fill,) : SizedBox(),
+                                child: photoUrl != null
+                                    ? Image.network(
+                                        photoUrl,
+                                        height: 100,
+                                        width: 100,
+                                        fit: BoxFit.fill,
+                                      )
+                                    : SizedBox(),
                               ),
                               const SizedBox(height: 4), // Add space between the image and the text
                               Container(
@@ -363,9 +379,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ],
-                          );
-
-
+                          ),
+                        );
                       },
                     ),
                   )
@@ -375,7 +390,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-
     );
   }
 }
@@ -431,8 +445,6 @@ class CategoryCard extends StatelessWidget {
     );
   }
 }
-
-
 
 class SpecialOfferCard extends StatelessWidget {
   const SpecialOfferCard({

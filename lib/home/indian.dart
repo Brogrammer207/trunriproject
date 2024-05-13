@@ -74,6 +74,7 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
           final restaurant = _restaurants[index];
           final name = restaurant['name'];
           final address = restaurant['vicinity'];
+          final rating = restaurant['rating'];
           final photoReference = restaurant['photos'] != null
               ? restaurant['photos'][0]['photo_reference']
               : null;
@@ -81,11 +82,17 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
               ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
               : null;
 
-          return ListTile(
-            title: Text(name),
-            subtitle: Text(address),
-            leading: photoUrl != null ? Image.network(photoUrl,height: 100,width: 100,fit: BoxFit.fill,) : null,
+          return Column(
+            children: [
+              if (rating != null) Text('Rating: $rating'),
+            ],
           );
+
+          //   ListTile(
+          //   title: Text(name),
+          //   subtitle: Text(address),
+          //   leading: photoUrl != null ? Image.network(photoUrl,height: 100,width: 100,fit: BoxFit.fill,) : null,
+          // );
         },
       ),
     );
