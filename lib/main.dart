@@ -5,6 +5,7 @@ import 'package:trunriproject/SplashScreen.dart';
 
 import 'home/bottom_bar.dart';
 import 'home/home_screen.dart';
+import 'home/indian.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

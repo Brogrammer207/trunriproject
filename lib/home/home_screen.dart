@@ -5,6 +5,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/home/product.dart';
 import 'package:trunriproject/home/product_cart.dart';
@@ -15,6 +16,11 @@ import 'bottom_bar.dart';
 import 'icon_btn_with_counter.dart';
 import 'search_field.dart';
 import 'section_title.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+
+
 
 class HomeScreen extends StatefulWidget {
   static String routeName = "/home";
@@ -26,6 +32,54 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Position? _currentPosition;
+  List<dynamic> _restaurants = [];
+  final apiKey = 'AIzaSyAP9njE_z7lH2tii68WLoQGju0DF8KryXA';
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return;
+    }
+
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        return;
+      }
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    setState(() {
+      _currentPosition = position;
+      _fetchIndianRestaurants(position.latitude, position.longitude);
+    });
+  }
+
+  Future<void> _fetchIndianRestaurants(double latitude, double longitude) async {
+    final australiaLatitude = -33.8688;
+    final australiaLongitude = 151.2093;
+    final url =
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$australiaLatitude,$australiaLongitude&radius=1500&type=restaurant&keyword=indian&key=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        _restaurants = data['results'];
+      });
+    } else {
+      throw Exception('Failed to fetch data');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     List<String> imageUrls = [];
@@ -248,6 +302,75 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               const SizedBox(height: 20),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: SectionTitle(
+                      title: "Near By Restaurant",
+                      press: () {},
+                    ),
+                  ),
+                  SizedBox(
+                    height: 200,
+                    width: Get.width,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _restaurants.length,
+                      itemBuilder: (context, index) {
+                        final restaurant = _restaurants[index];
+                        final name = restaurant['name'];
+                        final address = restaurant['vicinity'];
+                        final photoReference = restaurant['photos'] != null
+                            ? restaurant['photos'][0]['photo_reference']
+                            : null;
+                        final photoUrl = photoReference != null
+                            ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
+                            : null;
+
+                        return
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(left: 15),
+                                padding: EdgeInsets.all(10),
+                                height: 120,
+                                width: 120,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFECDF),
+                                  borderRadius: BorderRadius.circular(10),
+                                  // image: DecorationImage(
+                                  //   image: NetworkImage(icon),
+                                  //   fit: BoxFit.fill,
+                                  // ),
+                                ),
+                                child: photoUrl != null ? Image.network(photoUrl,height: 100,width: 100,fit: BoxFit.fill,) : SizedBox(),
+                              ),
+                              const SizedBox(height: 4), // Add space between the image and the text
+                              Container(
+                                margin: const EdgeInsets.only(right: 10),
+                                width: 56, // Adjust width if needed
+                                child: Text(
+                                  name,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 12, // Adjust the font size as needed
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                ),
+                              ),
+                            ],
+                          );
+
+
+                      },
+                    ),
+                  )
+                ],
+              ),
             ],
           ),
         ),
@@ -297,7 +420,7 @@ class CategoryCard extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.black,
-                fontSize: 12, // Adjust the font size as needed
+                fontSize: 10, // Adjust the font size as needed
               ),
               overflow: TextOverflow.ellipsis,
               maxLines: 2, // Allow text to wrap to 2 lines if needed
