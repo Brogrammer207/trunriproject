@@ -25,7 +25,7 @@ class _MyButtomNavBarState extends State<MyBottomNavBar> {
       backgroundColor: Colors.transparent,
       extendBody: true,
       bottomNavigationBar: Container(
-        margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10),
+        margin: const EdgeInsets.only(left: 20,right: 20,bottom: 0),
         decoration: BoxDecoration(
             boxShadow: [
           BoxShadow(

@@ -12,7 +12,10 @@ import 'package:get/get.dart';
 import 'package:trunriproject/home/product.dart';
 import 'package:trunriproject/home/product_cart.dart';
 import 'package:trunriproject/home/resturentDetailsScreen.dart';
+import 'package:trunriproject/widgets/appTheme.dart';
 import 'package:trunriproject/widgets/helper.dart';
+import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
+
 import '../model/bannerModel.dart';
 import '../model/categoryModel.dart';
 import 'bottom_bar.dart';
@@ -34,7 +37,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
   List<dynamic> _restaurants = [];
-  final apiKey = 'AIzaSyAP9njE_z7lH2tii68WLoQGju0DF8KryXA';
+  final apiKey = 'AIzaSyAP9njE_z7lH2tii68WLoQGju0DF8KryXA'; // Replace with your API key
+
   @override
   void initState() {
     super.initState();
@@ -64,8 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchIndianRestaurants(double latitude, double longitude) async {
-    final australiaLatitude = -33.8688;
-    final australiaLongitude = 151.2093;
+
     final url =
         'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=restaurant&keyword=indian&key=$apiKey';
 
@@ -77,6 +80,15 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     } else {
       throw Exception('Failed to fetch data');
+    }
+  }
+
+  Future<void> _launchMap(double lat, double lng) async {
+    final url = 'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
@@ -166,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: height * .20),
                         items: List.generate(
                             banner.length,
-                            (index) => Container(
+                                (index) => Container(
                                 width: width,
                                 margin: EdgeInsets.symmetric(horizontal: width * .01),
                                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey),
@@ -277,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         ...List.generate(
                           demoProducts.length,
-                          (index) {
+                              (index) {
                             if (demoProducts[index].isPopular) {
                               return Padding(
                                 padding: const EdgeInsets.only(left: 20),
@@ -305,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: 200,
+                    height: 220,
                     width: Get.width,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
@@ -320,10 +332,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         final openingHours = restaurant['opening_hours'] != null ? restaurant['opening_hours']['weekday_text'] : 'Not Available';
                         final closingTime = restaurant['closing_time'] ?? 'Not Available';
                         final photoReference =
-                            restaurant['photos'] != null ? restaurant['photos'][0]['photo_reference'] : null;
+                        restaurant['photos'] != null ? restaurant['photos'][0]['photo_reference'] : null;
                         final photoUrl = photoReference != null
                             ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
                             : null;
+                        final lat = restaurant['geometry']['location']['lat'];
+                        final lng = restaurant['geometry']['location']['lng'];
 
                         return GestureDetector(
                           onTap: () {
@@ -338,47 +352,64 @@ class _HomeScreenState extends State<HomeScreen> {
                                 image: photoUrl.toString())
                             );
                           },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(left: 15),
-                                padding: EdgeInsets.all(10),
-                                height: 120,
-                                width: 120,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFFECDF),
-                                  borderRadius: BorderRadius.circular(10),
-                                  // image: DecorationImage(
-                                  //   image: NetworkImage(icon),
-                                  //   fit: BoxFit.fill,
-                                  // ),
-                                ),
-                                child: photoUrl != null
-                                    ? Image.network(
-                                        photoUrl,
-                                        height: 100,
-                                        width: 100,
-                                        fit: BoxFit.fill,
-                                      )
-                                    : SizedBox(),
-                              ),
-                              const SizedBox(height: 4), // Add space between the image and the text
-                              Container(
-                                margin: const EdgeInsets.only(right: 10),
-                                width: 56, // Adjust width if needed
-                                child: Text(
-                                  name,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 12, // Adjust the font size as needed
+                          child: Container(
+                            margin: EdgeInsets.only(left: 5),
+                            decoration: BoxDecoration(
+                              color: Color(0xFFFFECDF),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  height: 120,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFFECDF),
+                                    borderRadius: BorderRadius.circular(10),
+                                    // image: DecorationImage(
+                                    //   image: NetworkImage(icon),
+                                    //   fit: BoxFit.fill,
+                                    // ),
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                  child: photoUrl != null
+                                      ? Image.network(
+                                    photoUrl,
+                                    height: 100,
+                                    width: 100,
+                                    fit: BoxFit.fill,
+                                  )
+                                      : SizedBox(),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 4), // Add space between the image and the text
+                                Container(
+                                  margin: const EdgeInsets.only(right: 10),
+                                  width: 56, // Adjust width if needed
+                                  child: Text(
+                                    name,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 12, // Adjust the font size as needed
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+
+                                InkWell(
+                                  onTap:(){
+                                    _launchMap(lat, lng);
+                                  },
+                                    child: Container(
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.mainColor,
+                                      ),
+                                        child: Text('Get Directions',style: TextStyle(color: Colors.white),)))
+                              ],
+                            ),
                           ),
                         );
                       },
