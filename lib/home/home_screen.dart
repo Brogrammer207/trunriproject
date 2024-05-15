@@ -18,6 +18,7 @@ import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
 
 import '../model/bannerModel.dart';
 import '../model/categoryModel.dart';
+import 'Controller.dart';
 import 'bottom_bar.dart';
 import 'icon_btn_with_counter.dart';
 import 'search_field.dart';
@@ -38,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
   List<dynamic> _restaurants = [];
   final apiKey = 'AIzaSyAP9njE_z7lH2tii68WLoQGju0DF8KryXA'; // Replace with your API key
-
+  final serviceController = Get.put(ServiceController());
   @override
   void initState() {
     super.initState();
@@ -63,6 +64,11 @@ class _HomeScreenState extends State<HomeScreen> {
     Position position = await Geolocator.getCurrentPosition();
     setState(() {
       _currentPosition = position;
+      double currentLatitude = position.latitude;
+      double currentLongitude = position.longitude;
+      serviceController.currentlat = currentLatitude;
+      serviceController.currentlong = currentLongitude;
+
       _fetchIndianRestaurants(position.latitude, position.longitude);
     });
   }
@@ -178,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: height * .20),
                         items: List.generate(
                             banner.length,
-                                (index) => Container(
+                            (index) => Container(
                                 width: width,
                                 margin: EdgeInsets.symmetric(horizontal: width * .01),
                                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey),
@@ -289,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         ...List.generate(
                           demoProducts.length,
-                              (index) {
+                          (index) {
                             if (demoProducts[index].isPopular) {
                               return Padding(
                                 padding: const EdgeInsets.only(left: 20),
@@ -316,9 +322,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       press: () {},
                     ),
                   ),
-                  SizedBox(
-                    height: 220,
+                  Container(
+                    height: 180,
                     width: Get.width,
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(11)),
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: _restaurants.length,
@@ -329,15 +336,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         final rating = restaurant['rating'];
                         final reviews = restaurant['reviews'];
                         final description = restaurant['description'] ?? 'No Description Available';
-                        final openingHours = restaurant['opening_hours'] != null ? restaurant['opening_hours']['weekday_text'] : 'Not Available';
+                        final openingHours = restaurant['opening_hours'] != null
+                            ? restaurant['opening_hours']['weekday_text']
+                            : 'Not Available';
                         final closingTime = restaurant['closing_time'] ?? 'Not Available';
                         final photoReference =
-                        restaurant['photos'] != null ? restaurant['photos'][0]['photo_reference'] : null;
+                            restaurant['photos'] != null ? restaurant['photos'][0]['photo_reference'] : null;
                         final photoUrl = photoReference != null
                             ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
                             : null;
                         final lat = restaurant['geometry']['location']['lat'];
                         final lng = restaurant['geometry']['location']['lng'];
+
+
+                          serviceController.resturentLat = lat;
+                          serviceController.resturentlong =lng;
+
+
+
 
                         return GestureDetector(
                           onTap: () {
@@ -349,13 +365,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 openingTime: openingHours.toString(),
                                 closingTime: closingTime.toString(),
                                 address: address.toString(),
-                                image: photoUrl.toString())
-                            );
+                                image: photoUrl.toString()));
                           },
                           child: Container(
                             margin: EdgeInsets.only(left: 5),
                             decoration: BoxDecoration(
                               color: Color(0xFFFFECDF),
+                              borderRadius: BorderRadius.circular(11)
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -374,11 +390,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   child: photoUrl != null
                                       ? Image.network(
-                                    photoUrl,
-                                    height: 100,
-                                    width: 100,
-                                    fit: BoxFit.fill,
-                                  )
+                                          photoUrl,
+                                          height: 100,
+                                          width: 100,
+                                          fit: BoxFit.fill,
+                                        )
                                       : SizedBox(),
                                 ),
                                 const SizedBox(height: 4), // Add space between the image and the text
@@ -398,16 +414,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 const SizedBox(height: 15),
 
-                                InkWell(
-                                  onTap:(){
-                                    _launchMap(lat, lng);
-                                  },
-                                    child: Container(
-                                      padding: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.mainColor,
-                                      ),
-                                        child: Text('Get Directions',style: TextStyle(color: Colors.white),)))
+                                // InkWell(
+                                //     onTap: () {
+                                //       _launchMap(lat, lng);
+                                //     },
+                                //     child: Container(
+                                //         padding: EdgeInsets.all(10),
+                                //         decoration: BoxDecoration(
+                                //           color: AppTheme.mainColor,
+                                //         ),
+                                //         child: Text(
+                                //           'Get Directions',
+                                //           style: TextStyle(color: Colors.white),
+                                //         )))
                               ],
                             ),
                           ),
