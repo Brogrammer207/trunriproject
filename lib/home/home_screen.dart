@@ -37,6 +37,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
+  String resturentLat = '';
+  String resturentlong = '';
   List<dynamic> _restaurants = [];
   final apiKey = 'AIzaSyAP9njE_z7lH2tii68WLoQGju0DF8KryXA'; // Replace with your API key
   final serviceController = Get.put(ServiceController());
@@ -73,6 +75,14 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> _launchMap(double lat, double lng) async {
+    final url = 'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
   Future<void> _fetchIndianRestaurants(double latitude, double longitude) async {
 
     final url =
@@ -88,15 +98,15 @@ class _HomeScreenState extends State<HomeScreen> {
       throw Exception('Failed to fetch data');
     }
   }
-
-  Future<void> _launchMap(double lat, double lng) async {
-    final url = 'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+  //
+  // Future<void> _launchMap(double lat, double lng) async {
+  //   final url = 'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving';
+  //   if (await canLaunch(url)) {
+  //     await launch(url);
+  //   } else {
+  //     throw 'Could not launch $url';
+  //   }
+  // }
 
   List<String> imageUrls = [];
   Future<List<String>> fetchImageData() async {
@@ -323,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Container(
-                    height: 180,
+                    height: 250,
                     width: Get.width,
                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(11)),
                     child: ListView.builder(
@@ -349,8 +359,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         final lng = restaurant['geometry']['location']['lng'];
 
 
-                          serviceController.resturentLat = lat;
-                          serviceController.resturentlong =lng;
+                          resturentLat = lat.toString();
+                          resturentlong =lng.toString();
+
 
 
 
@@ -365,7 +376,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 openingTime: openingHours.toString(),
                                 closingTime: closingTime.toString(),
                                 address: address.toString(),
-                                image: photoUrl.toString()));
+                                image: photoUrl.toString()),arguments: [lat,lng]);
                           },
                           child: Container(
                             margin: EdgeInsets.only(left: 5),
@@ -414,19 +425,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 const SizedBox(height: 15),
 
-                                // InkWell(
-                                //     onTap: () {
-                                //       _launchMap(lat, lng);
-                                //     },
-                                //     child: Container(
-                                //         padding: EdgeInsets.all(10),
-                                //         decoration: BoxDecoration(
-                                //           color: AppTheme.mainColor,
-                                //         ),
-                                //         child: Text(
-                                //           'Get Directions',
-                                //           style: TextStyle(color: Colors.white),
-                                //         )))
+                                InkWell(
+                                    onTap: () {
+                                      _launchMap(lat, lng);
+                                    },
+                                    child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.mainColor,
+                                        ),
+                                        child: Text(
+                                          'Get Directions',
+                                          style: TextStyle(color: Colors.white),
+                                        )))
                               ],
                             ),
                           ),
