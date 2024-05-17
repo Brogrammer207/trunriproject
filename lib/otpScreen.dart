@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
+import 'package:trunriproject/home/bottom_bar.dart';
 import 'package:trunriproject/widgets/helper.dart';
 
 import 'nativAddressScreen.dart';
@@ -176,7 +177,7 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
               ));
               Navigator.of(context).push(
                 PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => PickUpAddressScreen(),
+                  pageBuilder: (context, animation, secondaryAnimation) => const  MyBottomNavBar(),
                   transitionsBuilder: (context, animation, secondaryAnimation, child) {
                     const begin = Offset(1.0, 0.0);
                     const end = Offset.zero;

@@ -2,13 +2,11 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/route_manager.dart';
 import 'package:trunriproject/home/bottom_bar.dart';
 import 'package:trunriproject/signUpScreen.dart';
-import 'package:trunriproject/widgets/appTheme.dart';
-
-import '../widgets/customTextFormField.dart';
 import '../widgets/helper.dart';
 import 'firestore_service.dart';
 
@@ -29,7 +27,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   updateProfile() async {
     if (!formKey.currentState!.validate()) return;
     try {
-
       await fireStoreService.updateProfile(
         address: address.text.trim(),
         allowChange: image.path.isEmpty ? false : imagePicked,
@@ -86,186 +83,228 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.home == null
-          ? AppBar(
+      appBar: AppBar(
         title: const Text('Profile'),
         leading: GestureDetector(
-          onTap: (){
-            Get.back();
-          },
+            onTap: () {
+              Get.back();
+            },
             child: const Icon(Icons.arrow_back_ios)),
-      )
-          : null,
+        actions: const [
+          Icon(Icons.edit),
+          SizedBox(
+            width: 15,
+          )
+        ],
+      ),
       body: dataLoaded
           ? Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            colors: [
-              Color(0xffF4EEF2),
-              Color(0xffF4EEF2),
-              Color(0xffE3EDF5),
-            ],
-          ),
-        ),
-        padding: const EdgeInsets.only(left: 15, top: 20, right: 15),
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: Form(
-            key: formKey,
-            child: ListView(
-              children: [
-                Center(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () {
-                      NewHelper.showImagePickerSheet(
-                          gotImage: (File gg) {
-                            image = gg;
-                            imagePicked = true;
-                            setState(() {});
-                          },
-                          context: context);
-                    },
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: 130,
-                          height: 130,
-                          decoration: BoxDecoration(
-                            border: Border.all(width: 4, color: Colors.white),
-                            boxShadow: [
-                              BoxShadow(
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(0.1),
-                              )
-                            ],
-                            shape: BoxShape.circle,
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10000),
-                            child: Image.file(
-                              image,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Image.network(
-                                image.path,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Icon(
-                                  CupertinoIcons.person_alt_circle,
-                                  size: 45,
-                                  color: Colors.grey.shade700,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  width: 4,
-                                  color: Colors.white,
-                                ),
-                                color: Colors.blue),
-                            child: const Icon(
-                              Icons.edit,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                CommonTextField(
-                    hintText: 'Full Name',
-                    controller: nameController,
-                    validator: MultiValidator([
-                      RequiredValidator(errorText: 'email is required'),
-                    ]).call),
-                CommonTextField(
-                    hintText: 'Email',
-                    controller: email,
-                    validator: MultiValidator([
-                      RequiredValidator(errorText: 'email is required'),
-                      EmailValidator(errorText: 'Please enter valid email'),
-                    ]).call),
-                CommonTextField(
-                    hintText: 'Address',
-                    controller: address,
-                    validator: MultiValidator([
-                      RequiredValidator(errorText: 'Address is required'),
-                    ]).call),
-
-                const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    OutlinedButton(
-                      onPressed: () {
-                        FirebaseAuth.instance.signOut().then((value) {
-                          Get.offAll(const SignUpScreen());
-                          showToast("Logged Out Successfully");
-                        });
-                      },
-                      style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 50),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
-                      child: const Text(
-                        'Logout',
-                        style: TextStyle(fontSize: 15, letterSpacing: 2, color: Colors.black),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        updateProfile();
-                      },
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.mainColor,
-                          padding: const EdgeInsets.symmetric(horizontal: 50),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
-                      child: const Text(
-                        'Update',
-                        style: TextStyle(fontSize: 15, letterSpacing: 2, color: Colors.white),
-                      ),
-                    ),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  colors: [
+                    Color(0xffF4EEF2),
+                    Color(0xffF4EEF2),
+                    Color(0xffE3EDF5),
                   ],
                 ),
-                const SizedBox(height: 15),
-                if (FirebaseAuth.instance.currentUser != null)
-                  ElevatedButton(
-                    onPressed: () async {
-                      User? user = FirebaseAuth.instance.currentUser;
-                      await user!.delete();
-                      showToast("Your account has been deleted");
-                      Get.to(const SignUpScreen());
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        padding: const EdgeInsets.symmetric(horizontal: 50),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
-                    child: const Text(
-                      'Delete Account',
-                      style: TextStyle(fontSize: 15, letterSpacing: 2, color: Colors.white),
-                    ),
+              ),
+              padding: const EdgeInsets.only(left: 15, top: 20, right: 15),
+              child: GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                },
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () {
+                              NewHelper.showImagePickerSheet(
+                                  gotImage: (File gg) {
+                                    image = gg;
+                                    imagePicked = true;
+                                    setState(() {});
+                                  },
+                                  context: context);
+                            },
+                            child: Stack(
+                              children: [
+                                Container(
+                                  width: 130,
+                                  height: 130,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(width: 4, color: Colors.white),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        spreadRadius: 2,
+                                        blurRadius: 10,
+                                        color: Colors.black.withOpacity(0.1),
+                                      )
+                                    ],
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10000),
+                                    child: Image.file(
+                                      image,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) => Image.network(
+                                        image.path,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) => Icon(
+                                          CupertinoIcons.person_alt_circle,
+                                          size: 45,
+                                          color: Colors.grey.shade700,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  right: 0,
+                                  child: Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          width: 4,
+                                          color: Colors.white,
+                                        ),
+                                        color: Colors.blue),
+                                    child: const Icon(
+                                      Icons.edit,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                TextFormField(
+                                    decoration: const InputDecoration(
+                                      // border: InputBorder.none,
+                                      hintText: 'Full Name',
+                                    ),
+                                    readOnly: true,
+                                    controller: nameController,
+                                    style:
+                                        const TextStyle(fontWeight: FontWeight.w600, fontSize: 20, color: Colors.black),
+                                ),
+                                TextFormField(
+                                    decoration: const InputDecoration(
+                                      // border: InputBorder.none,
+                                      hintText: 'Email',
+                                    ),
+                                  readOnly: true,
+                                    controller: email,
+                                    style:
+                                        const TextStyle(fontWeight: FontWeight.w400, fontSize: 14, color: Colors.black),
+
+                                ),
+                                TextFormField(
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'Address',
+                                    ),
+                                  readOnly: true,
+                                    controller: address,
+                                    maxLines: 3,
+                                    style:
+                                        const TextStyle(fontWeight: FontWeight.w400, fontSize: 14, color: Colors.black),
+
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const ListTile(
+                        leading: Icon(Icons.home),
+                        title: Text('Address'),
+                        trailing: Icon(
+                          Icons.arrow_forward_ios_outlined,
+                          size: 15,
+                        ),
+                      ),
+                      const Divider(
+                        height: 10,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          FirebaseAuth.instance.signOut().then((value) {
+                            Get.offAll(const SignUpScreen());
+                            showToast("Logged Out Successfully");
+                          });
+                        },
+                        child: const ListTile(
+                          leading: Icon(Icons.logout),
+                          title: Text('LogOut'),
+                          trailing: Icon(
+                            Icons.arrow_forward_ios_outlined,
+                            size: 15,
+                          ),
+                        ),
+                      ),
+                      const Divider(
+                        height: 10,
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          User? user = FirebaseAuth.instance.currentUser;
+                          await user!.delete();
+                          showToast("Your account has been deleted");
+                          Get.to(const SignUpScreen());
+                        },
+                        child: const ListTile(
+                          leading: Icon(Icons.delete),
+                          title: Text('Delete Account'),
+                          trailing: Icon(
+                            Icons.arrow_forward_ios_outlined,
+                            size: 15,
+                          ),
+                        ),
+                      ),
+                      const Divider(
+                        height: 10,
+                      ),
+                      const ListTile(
+                        leading: Icon(Icons.share),
+                        title: Text('Share App'),
+                        trailing: Icon(
+                          Icons.arrow_forward_ios_outlined,
+                          size: 15,
+                        ),
+                      ),
+                      const Divider(
+                        height: 10,
+                      ),
+                      const ListTile(
+                        leading: Icon(Icons.call),
+                        title: Text('Contact Us'),
+                        trailing: Icon(
+                          Icons.arrow_forward_ios_outlined,
+                          size: 15,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                    ],
                   ),
-              ],
-            ),
-          ),
-        ),
-      )
+                ),
+              ),
+            )
           : const Center(child: CircularProgressIndicator()),
     );
   }
-
-
 }
