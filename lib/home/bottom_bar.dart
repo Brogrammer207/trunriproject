@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/home/profileScreen.dart';
 
+import 'explorScreen.dart';
+import 'favoriteRestaurantsScreen.dart';
 import 'home_screen.dart';
 
 
@@ -14,10 +16,10 @@ class MyBottomNavBar extends StatefulWidget {
 
 class _MyButtomNavBarState extends State<MyBottomNavBar> {
   int myCurrentIndex = 0;
-  List pages = const [
+  List pages = [
     HomeScreen(),
-    HomeScreen(),
-    HomeScreen(),
+    FavoriteRestaurantsScreen(),
+    ExplorScreen(),
     ProfileScreen(),
   ];
   @override
@@ -51,7 +53,7 @@ class _MyButtomNavBarState extends State<MyBottomNavBar> {
                 BottomNavigationBarItem(
                     icon: Icon(Icons.favorite), label: "Favorite"),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.settings), label: "Setting"),
+                    icon: Icon(Icons.explore), label: "Discover"),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.person_outline), label: "Profile"),
               ]),
