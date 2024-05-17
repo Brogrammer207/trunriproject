@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:trunriproject/home/profileScreen.dart';
 
 import 'home_screen.dart';
 
@@ -17,7 +18,7 @@ class _MyButtomNavBarState extends State<MyBottomNavBar> {
     HomeScreen(),
     HomeScreen(),
     HomeScreen(),
-    HomeScreen(),
+    ProfileScreen(),
   ];
   @override
   Widget build(BuildContext context) {

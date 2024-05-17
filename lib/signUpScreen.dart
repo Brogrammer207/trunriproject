@@ -69,7 +69,9 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
             'email' : emailController.text.trim(),
             'phoneNumber' : phoneController.text.trim(),
             'password' : passwordController.text.trim(),
-            'confirmPassword' : confirmPasswordController.text.trim()
+            'confirmPassword' : confirmPasswordController.text.trim(),
+            'address' : "",
+            'profile' : ""
           }).then((value) {
             Navigator.of(context).push(
               PageRouteBuilder(

@@ -333,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Container(
-                    height: 250,
+                    height: 180,
                     width: Get.width,
                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(11)),
                     child: ListView.builder(
@@ -424,20 +424,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 15),
-
-                                InkWell(
-                                    onTap: () {
-                                      _launchMap(lat, lng);
-                                    },
-                                    child: Container(
-                                        padding: EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          color: AppTheme.mainColor,
-                                        ),
-                                        child: Text(
-                                          'Get Directions',
-                                          style: TextStyle(color: Colors.white),
-                                        )))
+                                //
+                                // InkWell(
+                                //     onTap: () {
+                                //       _launchMap(lat, lng);
+                                //     },
+                                //     child: Container(
+                                //         padding: EdgeInsets.all(10),
+                                //         decoration: BoxDecoration(
+                                //           color: AppTheme.mainColor,
+                                //         ),
+                                //         child: Text(
+                                //           'Get Directions',
+                                //           style: TextStyle(color: Colors.white),
+                                //         )))
                               ],
                             ),
                           ),
