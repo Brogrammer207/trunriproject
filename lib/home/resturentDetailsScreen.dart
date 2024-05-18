@@ -17,7 +17,7 @@ import 'Controller.dart';
 
 class ResturentDetailsScreen extends StatefulWidget {
   final String name;
-  final String rating;
+  final double rating;
   final String desc;
   final String openingTime;
   final String closingTime;
@@ -254,7 +254,7 @@ class _ResturentDetailsScreenState extends State<ResturentDetailsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             RatingBarIndicator(
-                              rating: double.parse(widget.rating),
+                              rating: widget.rating,
                               itemBuilder: (context, index) => const Icon(
                                 Icons.star,
                                 color: Colors.amber,

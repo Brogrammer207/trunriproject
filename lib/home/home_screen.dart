@@ -371,7 +371,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             log('message');
                             Get.to(ResturentDetailsScreen(
                                 name: name.toString(),
-                                rating: rating.toString(),
+                                rating: rating,
                                 desc: description.toString(),
                                 openingTime: openingHours.toString(),
                                 closingTime: closingTime.toString(),

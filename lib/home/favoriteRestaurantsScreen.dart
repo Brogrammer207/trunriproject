@@ -117,7 +117,7 @@ class FavoriteRestaurant {
   final String address;
   final String image;
   final String desc;
-  final String rating;
+  final double rating;
   final String opentime;
   final String closetime;
 

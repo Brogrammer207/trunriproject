@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/route_manager.dart';
 import 'package:trunriproject/home/bottom_bar.dart';
 import 'package:trunriproject/signUpScreen.dart';
@@ -23,6 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseFireStoreService fireStoreService = FirebaseFireStoreService();
   bool isobscurepassword = true;
   File image = File("");
+  bool isEditing = false;
 
   updateProfile() async {
     if (!formKey.currentState!.validate()) return;
@@ -90,15 +90,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Get.back();
             },
             child: const Icon(Icons.arrow_back_ios)),
-        actions: const [
-          Icon(Icons.edit),
-          SizedBox(
+        actions: [
+          GestureDetector(
+            onTap: () {
+              if (isEditing) {
+                updateProfile();
+              }
+              setState(() {
+                isEditing = !isEditing;
+              });
+            },
+            child: isEditing
+                ? Image.asset(
+                    'assets/images/check.png',
+                    height: 30,
+                  )
+                : Image.asset(
+                    'assets/images/edit.png',
+                    height: 30,
+                  ),
+          ),
+          const SizedBox(
             width: 15,
           )
         ],
       ),
       body: dataLoaded
           ? Container(
+              height: Get.height,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -116,190 +135,261 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 child: Form(
                   key: formKey,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onTap: () {
-                              NewHelper.showImagePickerSheet(
-                                  gotImage: (File gg) {
-                                    image = gg;
-                                    imagePicked = true;
-                                    setState(() {});
-                                  },
-                                  context: context);
-                            },
-                            child: Stack(
-                              children: [
-                                Container(
-                                  width: 130,
-                                  height: 130,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(width: 4, color: Colors.white),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        spreadRadius: 2,
-                                        blurRadius: 10,
-                                        color: Colors.black.withOpacity(0.1),
-                                      )
-                                    ],
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10000),
-                                    child: Image.file(
-                                      image,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) => Image.network(
-                                        image.path,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: () {
+                                NewHelper.showImagePickerSheet(
+                                    gotImage: (File gg) {
+                                      image = gg;
+                                      imagePicked = true;
+                                      setState(() {});
+                                    },
+                                    context: context);
+                              },
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    width: 130,
+                                    height: 130,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(width: 4, color: Colors.white),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          spreadRadius: 2,
+                                          blurRadius: 10,
+                                          color: Colors.black.withOpacity(0.1),
+                                        )
+                                      ],
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10000),
+                                      child: Image.file(
+                                        image,
                                         fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) => Icon(
-                                          CupertinoIcons.person_alt_circle,
-                                          size: 45,
-                                          color: Colors.grey.shade700,
+                                        errorBuilder: (_, __, ___) => Image.network(
+                                          image.path,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) => Icon(
+                                            CupertinoIcons.person_alt_circle,
+                                            size: 45,
+                                            color: Colors.grey.shade700,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  right: 0,
-                                  child: Container(
-                                    height: 40,
-                                    width: 40,
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          width: 4,
-                                          color: Colors.white,
-                                        ),
-                                        color: Colors.blue),
-                                    child: const Icon(
-                                      Icons.edit,
-                                      color: Colors.white,
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      height: 40,
+                                      width: 40,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            width: 4,
+                                            color: Colors.white,
+                                          ),
+                                          color: Colors.blue),
+                                      child: const Icon(
+                                        Icons.edit,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              ],
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                TextFormField(
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  TextFormField(
                                     decoration: const InputDecoration(
                                       // border: InputBorder.none,
                                       hintText: 'Full Name',
                                     ),
-                                    readOnly: true,
+                                    readOnly: !isEditing,
                                     controller: nameController,
                                     style:
                                         const TextStyle(fontWeight: FontWeight.w600, fontSize: 20, color: Colors.black),
-                                ),
-                                TextFormField(
+                                  ),
+                                  TextFormField(
                                     decoration: const InputDecoration(
                                       // border: InputBorder.none,
                                       hintText: 'Email',
                                     ),
-                                  readOnly: true,
+                                    readOnly: !isEditing,
                                     controller: email,
                                     style:
                                         const TextStyle(fontWeight: FontWeight.w400, fontSize: 14, color: Colors.black),
-
-                                ),
-                                TextFormField(
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: 'Address',
-                                    ),
-                                  readOnly: true,
-                                    controller: address,
-                                    maxLines: 3,
-                                    style:
-                                        const TextStyle(fontWeight: FontWeight.w400, fontSize: 14, color: Colors.black),
-
-                                ),
-                              ],
+                                  ),
+                                  // TextFormField(
+                                  //   decoration: const InputDecoration(
+                                  //     border: InputBorder.none,
+                                  //     hintText: 'Address',
+                                  //   ),
+                                  //   readOnly: !isEditing,
+                                  //   controller: address,
+                                  //   maxLines: 3,
+                                  //   style:
+                                  //       const TextStyle(fontWeight: FontWeight.w400, fontSize: 14, color: Colors.black),
+                                  // ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        ListTile(
+                          leading: Image.asset(
+                            'assets/images/address.png',
+                            height: 30,
+                          ),
+                          title: const Text('Address'),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios_outlined,
+                            size: 15,
+                          ),
+                        ),
+                        const Divider(
+                          height: 10,
+                        ),
+                        ListTile(
+                          leading: Image.asset(
+                            'assets/images/password.png',
+                            height: 30,
+                          ),
+                          title: const Text('Change Password'),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios_outlined,
+                            size: 15,
+                          ),
+                        ),
+                        const Divider(
+                          height: 10,
+                        ),
+                        ListTile(
+                          leading: Image.asset(
+                            'assets/images/language.png',
+                            height: 30,
+                          ),
+                          title: const Text('Change Language'),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios_outlined,
+                            size: 15,
+                          ),
+                        ),
+                        const Divider(
+                          height: 10,
+                        ),
+                        ListTile(
+                          leading: Image.asset(
+                            'assets/images/notification.png',
+                            height: 30,
+                          ),
+                          title: const Text('Notification preferences'),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios_outlined,
+                            size: 15,
+                          ),
+                        ),
+                        const Divider(
+                          height: 10,
+                        ),
+                        ListTile(
+                          leading: Image.asset(
+                            'assets/images/feedback.png',
+                            height: 30,
+                          ),
+                          title: const Text('Feedback'),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios_outlined,
+                            size: 15,
+                          ),
+                        ),
+                        const Divider(
+                          height: 10,
+                        ),
+                        ListTile(
+                          leading: Image.asset(
+                            'assets/images/share.png',
+                            height: 30,
+                          ),
+                          title: const Text('Share App'),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios_outlined,
+                            size: 15,
+                          ),
+                        ),
+                        const Divider(
+                          height: 10,
+                        ),
+                        ListTile(
+                          leading: Image.asset(
+                            'assets/images/contact.png',
+                            height: 30,
+                          ),
+                          title: const Text('Contact Us'),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios_outlined,
+                            size: 15,
+                          ),
+                        ),
+                        const Divider(
+                          height: 10,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            FirebaseAuth.instance.signOut().then((value) {
+                              Get.offAll(const SignUpScreen());
+                              showToast("Logged Out Successfully");
+                            });
+                          },
+                          child: ListTile(
+                            leading: Image.asset(
+                              'assets/images/logout.png',
+                              height: 30,
+                            ),
+                            title: const Text('LogOut'),
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              size: 15,
                             ),
                           ),
-                        ],
-                      ),
-                      const ListTile(
-                        leading: Icon(Icons.home),
-                        title: Text('Address'),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          size: 15,
                         ),
-                      ),
-                      const Divider(
-                        height: 10,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          FirebaseAuth.instance.signOut().then((value) {
-                            Get.offAll(const SignUpScreen());
-                            showToast("Logged Out Successfully");
-                          });
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.logout),
-                          title: Text('LogOut'),
-                          trailing: Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            size: 15,
+                        const Divider(
+                          height: 10,
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            User? user = FirebaseAuth.instance.currentUser;
+                            await user!.delete();
+                            showToast("Your account has been deleted");
+                            Get.to(const SignUpScreen());
+                          },
+                          child: ListTile(
+                            leading: Image.asset(
+                              'assets/images/delete.png',
+                              height: 30,
+                            ),
+                            title: const Text('Delete Account'),
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              size: 15,
+                            ),
                           ),
                         ),
-                      ),
-                      const Divider(
-                        height: 10,
-                      ),
-                      GestureDetector(
-                        onTap: () async {
-                          User? user = FirebaseAuth.instance.currentUser;
-                          await user!.delete();
-                          showToast("Your account has been deleted");
-                          Get.to(const SignUpScreen());
-                        },
-                        child: const ListTile(
-                          leading: Icon(Icons.delete),
-                          title: Text('Delete Account'),
-                          trailing: Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            size: 15,
-                          ),
-                        ),
-                      ),
-                      const Divider(
-                        height: 10,
-                      ),
-                      const ListTile(
-                        leading: Icon(Icons.share),
-                        title: Text('Share App'),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          size: 15,
-                        ),
-                      ),
-                      const Divider(
-                        height: 10,
-                      ),
-                      const ListTile(
-                        leading: Icon(Icons.call),
-                        title: Text('Contact Us'),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          size: 15,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                    ],
+                        const SizedBox(height: 60),
+                      ],
+                    ),
                   ),
                 ),
               ),
