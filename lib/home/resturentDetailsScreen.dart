@@ -212,7 +212,10 @@ class _ResturentDetailsScreenState extends State<ResturentDetailsScreen> {
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      const Icon(Icons.home),
+                      Image.asset(
+                        'assets/images/address.png',
+                        height: 30,
+                      ),
                       const SizedBox(width: 20),
                       Expanded(
                         child: Column(
@@ -246,7 +249,10 @@ class _ResturentDetailsScreenState extends State<ResturentDetailsScreen> {
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      const Icon(Icons.star),
+                      Image.asset(
+                        'assets/images/rating.png',
+                        height: 30,
+                      ),
                       const SizedBox(width: 20),
                       Expanded(
                         child: Column(
@@ -282,7 +288,10 @@ class _ResturentDetailsScreenState extends State<ResturentDetailsScreen> {
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      const Icon(Icons.access_time_filled),
+                      Image.asset(
+                        'assets/images/time.png',
+                        height: 30,
+                      ),
                       const SizedBox(width: 20),
                       Expanded(
                         child: Column(
@@ -316,7 +325,10 @@ class _ResturentDetailsScreenState extends State<ResturentDetailsScreen> {
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      const Icon(Icons.access_time_filled),
+                      Image.asset(
+                        'assets/images/time.png',
+                        height: 30,
+                      ),
                       const SizedBox(width: 20),
                       Expanded(
                         child: Column(
@@ -349,7 +361,10 @@ class _ResturentDetailsScreenState extends State<ResturentDetailsScreen> {
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      const Icon(Icons.description),
+                      Image.asset(
+                        'assets/images/description.png',
+                        height: 30,
+                      ),
                       const SizedBox(width: 20),
                       Expanded(
                         child: Column(
@@ -393,7 +408,22 @@ class _ResturentDetailsScreenState extends State<ResturentDetailsScreen> {
                   //     ),
                   //   ],
                   // ),
-                  const SizedBox(height: 10),
+                  Container(
+                    height: 200,
+                    child: GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(resturentLat, resturentlong),
+                        zoom: 15,
+                      ),
+                      markers: {
+                        Marker(
+                          markerId: const MarkerId('resturentLocation'),
+                          position: LatLng(resturentLat, resturentlong),
+                        ),
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -407,6 +437,7 @@ class _ResturentDetailsScreenState extends State<ResturentDetailsScreen> {
         backgroundColor: AppTheme.mainColor,
         child:const  Icon(
           Icons.directions,
+          size: 40,
         ),
       ),
     );

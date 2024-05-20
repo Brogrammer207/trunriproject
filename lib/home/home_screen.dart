@@ -343,7 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         final restaurant = _restaurants[index];
                         final name = restaurant['name'];
                         final address = restaurant['vicinity'];
-                        final rating = restaurant['rating'];
+                        final rating = (restaurant['rating'] as num?)?.toDouble() ?? 0.0;
                         final reviews = restaurant['reviews'];
                         final description = restaurant['description'] ?? 'No Description Available';
                         final openingHours = restaurant['opening_hours'] != null

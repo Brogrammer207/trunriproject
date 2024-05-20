@@ -193,7 +193,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 hintText: 'Email',
                 controller: emailController,
                 validator: MultiValidator([
-                  RequiredValidator(errorText: 'email is required'),
+                  RequiredValidator(errorText: 'Email is required'),
                   EmailValidator(errorText: 'Please enter valid email'.tr),
                 ]).call),
             Obx(() {

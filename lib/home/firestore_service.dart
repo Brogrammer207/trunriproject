@@ -8,7 +8,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../widgets/helper.dart';
-import 'modelProfileData.dart';
+import '../profile/modelProfileData.dart';
 
 enum UpdateType { set, update }
 

@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/SplashScreen.dart';
-import 'package:trunriproject/home/profileScreen.dart';
+import 'package:trunriproject/profile/profileScreen.dart';
 
 import 'home/bottom_bar.dart';
 import 'home/home_screen.dart';

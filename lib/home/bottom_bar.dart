@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:trunriproject/home/profileScreen.dart';
+import 'package:trunriproject/profile/profileScreen.dart';
 
 import 'explorScreen.dart';
 import 'favoriteRestaurantsScreen.dart';

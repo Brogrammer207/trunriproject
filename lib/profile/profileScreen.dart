@@ -4,10 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/route_manager.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:trunriproject/home/bottom_bar.dart';
 import 'package:trunriproject/signUpScreen.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import '../recoveryPasswordScreen.dart';
 import '../widgets/helper.dart';
-import 'firestore_service.dart';
+import '../home/firestore_service.dart';
+import 'addressListScreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, this.fromLogin, this.home});
@@ -85,11 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
-        leading: GestureDetector(
-            onTap: () {
-              Get.back();
-            },
-            child: const Icon(Icons.arrow_back_ios)),
+
         actions: [
           GestureDetector(
             onTap: () {
@@ -101,9 +101,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               });
             },
             child: isEditing
-                ? Image.asset(
-                    'assets/images/check.png',
-                    height: 30,
+                ? const Text(
+                    'save',
+                    style: TextStyle(color: Colors.green, fontSize: 17),
                   )
                 : Image.asset(
                     'assets/images/edit.png',
@@ -248,6 +248,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ],
                         ),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         ListTile(
                           leading: Image.asset(
                             'assets/images/address.png',
@@ -258,11 +261,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Icons.arrow_forward_ios_outlined,
                             size: 15,
                           ),
+                          onTap: () {
+                            Get.to(const AddressListScreen());
+                          },
                         ),
                         const Divider(
                           height: 10,
                         ),
                         ListTile(
+                          onTap: () {
+                            Get.to(const RecoveryPasswordScreen());
+                          },
                           leading: Image.asset(
                             'assets/images/password.png',
                             height: 30,
@@ -319,6 +328,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: 10,
                         ),
                         ListTile(
+                          onTap: () {
+                            Share.share('https://www.google.co.in/');
+                          },
                           leading: Image.asset(
                             'assets/images/share.png',
                             height: 30,
@@ -333,6 +345,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: 10,
                         ),
                         ListTile(
+                          onTap: () {
+                            launchUrlString("tel://+917665096245");
+                          },
                           leading: Image.asset(
                             'assets/images/contact.png',
                             height: 30,
