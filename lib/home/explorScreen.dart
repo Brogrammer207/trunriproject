@@ -19,66 +19,53 @@ class _ExplorScreenState extends State<ExplorScreen> {
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
-        child: Container(
-          height: Get.height,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              colors: [
-                Color(0xffF4EEF2),
-                Color(0xffF4EEF2),
-                Color(0xffE3EDF5),
-              ],
+        child: Column(
+          children: [
+            ListTile(
+              onTap: () {
+                Get.to(const ResturentItemListScreen());
+              },
+              leading: Image.asset('assets/images/restaurent.png'),
+              title: const Text('Restaurant'),
+              trailing: const Icon(
+                Icons.arrow_forward_ios_outlined,
+                size: 15,
+              ),
             ),
-          ),
-          child: Column(
-            children: [
-              ListTile(
-                onTap: () {
-                  Get.to(const ResturentItemListScreen());
-                },
-                leading: Image.asset('assets/images/restaurent.png'),
-                title: const Text('Restaurant'),
-                trailing: const Icon(
-                  Icons.arrow_forward_ios_outlined,
-                  size: 15,
-                ),
+            const Divider(
+              height: 10,
+            ),
+            ListTile(
+              leading: Image.asset('assets/images/store.png'),
+              title: const Text('Grocery Stores'),
+              trailing: const Icon(
+                Icons.arrow_forward_ios_outlined,
+                size: 15,
               ),
-              const Divider(
-                height: 10,
+            ),
+            const Divider(
+              height: 10,
+            ),
+            ListTile(
+              leading: Image.asset('assets/images/accommodation.png'),
+              title: const Text('Accommodation'),
+              trailing: const Icon(
+                Icons.arrow_forward_ios_outlined,
+                size: 15,
               ),
-              ListTile(
-                leading: Image.asset('assets/images/store.png'),
-                title: const Text('Grocery Stores'),
-                trailing: const Icon(
-                  Icons.arrow_forward_ios_outlined,
-                  size: 15,
-                ),
+            ),
+            const Divider(
+              height: 10,
+            ),
+            ListTile(
+              leading: Image.asset('assets/images/events.png'),
+              title: const Text('Events'),
+              trailing: const Icon(
+                Icons.arrow_forward_ios_outlined,
+                size: 15,
               ),
-              const Divider(
-                height: 10,
-              ),
-              ListTile(
-                leading: Image.asset('assets/images/accommodation.png'),
-                title: const Text('Accommodation'),
-                trailing: const Icon(
-                  Icons.arrow_forward_ios_outlined,
-                  size: 15,
-                ),
-              ),
-              const Divider(
-                height: 10,
-              ),
-              ListTile(
-                leading: Image.asset('assets/images/events.png'),
-                title: const Text('Events'),
-                trailing: const Icon(
-                  Icons.arrow_forward_ios_outlined,
-                  size: 15,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -55,62 +55,48 @@ class _VisaTypeScreenState extends State<VisaTypeScreen> {
           style: GoogleFonts.poppins(color: const Color(0xff292F45), fontWeight: FontWeight.w600, fontSize: 20),
         ),
       ),
-      body: Container(
-        padding: EdgeInsets.all(20),
-        height: Get.height,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            colors: [
-              Color(0xffF4EEF2),
-              Color(0xffF4EEF2),
-              Color(0xffE3EDF5),
-            ],
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'We collect visa status to personalize community updates, news, and services according to your residency.'.tr,
-                style: GoogleFonts.poppins(color: const Color(0xff292F45), fontWeight: FontWeight.w400, fontSize: 16),
-              ),
-              const SizedBox(height: 10,),
-              buildRadioButton(1, 'Student visa'),
-              buildRadioButton(2, 'Temporary resident'),
-              buildRadioButton(3, 'Permanent resident'),
-              buildRadioButton(4, 'Tourist visa'),
-              buildRadioButton(5, 'Work visa'),
-              buildRadioButton(6, 'Others'),
-              const SizedBox(height: 20,),
-              GestureDetector(
-                onTap: (){
-                  visaType();
-                },
-                child: Container(
-                  width: size.width,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xffFF730A),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Next",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 22,
-                      ),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'We collect visa status to personalize community updates, news, and services according to your residency.'.tr,
+              style: GoogleFonts.poppins(color: const Color(0xff292F45), fontWeight: FontWeight.w400, fontSize: 16),
+            ),
+            const SizedBox(height: 10,),
+            buildRadioButton(1, 'Student visa'),
+            buildRadioButton(2, 'Temporary resident'),
+            buildRadioButton(3, 'Permanent resident'),
+            buildRadioButton(4, 'Tourist visa'),
+            buildRadioButton(5, 'Work visa'),
+            buildRadioButton(6, 'Others'),
+            const SizedBox(height: 20,),
+            GestureDetector(
+              onTap: (){
+                visaType();
+              },
+              child: Container(
+                width: size.width,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xffFF730A),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: const Center(
+                  child: Text(
+                    "Next",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 22,
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 40,)
-            ],
-          ),
+            ),
+            SizedBox(height: 40,)
+          ],
         ),
       ),
     );

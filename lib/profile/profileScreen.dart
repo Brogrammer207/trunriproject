@@ -89,7 +89,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
-
         actions: [
           GestureDetector(
             onTap: () {
@@ -118,16 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: dataLoaded
           ? Container(
               height: Get.height,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  colors: [
-                    Color(0xffF4EEF2),
-                    Color(0xffF4EEF2),
-                    Color(0xffE3EDF5),
-                  ],
-                ),
-              ),
+              color: Colors.white,
               padding: const EdgeInsets.only(left: 15, top: 20, right: 15),
               child: GestureDetector(
                 onTap: () {

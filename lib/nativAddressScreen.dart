@@ -91,156 +91,143 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
       body: Form(
         key: formKey1,
         child: SingleChildScrollView(
-          child: Container(
-            decoration: const BoxDecoration(
-              // color: Color(0xFFF2EDE2)
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                colors: [
-                  Color(0xffF4EEF2),
-                  Color(0xffF4EEF2),
-                  Color(0xffE3EDF5),
-                ],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: size.height * .02,
               ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: size.height * .02,
+              Padding(
+                padding: const EdgeInsets.only(left: 25),
+                child: Text(
+                  "Can you tell us where you're from?".tr,
+                  style: GoogleFonts.poppins(color: Color(0xff292F45), fontWeight: FontWeight.w600, fontSize: 16),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25),
-                  child: Text(
-                    "Can you tell us where you're from?".tr,
-                    style: GoogleFonts.poppins(color: Color(0xff292F45), fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+              SizedBox(
+                height: size.height * .02,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 25),
+                child: Text(
+                  'Street'.tr,
+                  style:
+                      GoogleFonts.poppins(color: const Color(0xff1F1F1F), fontWeight: FontWeight.w400, fontSize: 14),
+                ),
+              ),
+              CommonTextField(
+                hintText: 'Ex: shivaji road',
+                controller: streetController,
+                validator: MultiValidator([
+                  RequiredValidator(errorText: 'Street is required'),
+                ]).call,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 25),
+                child: Text(
+                  'City'.tr,
+                  style:
+                      GoogleFonts.poppins(color: const Color(0xff1F1F1F), fontWeight: FontWeight.w400, fontSize: 14),
+                ),
+              ),
+              CommonTextField(
+                hintText: 'Ex: Mubai,Delhi, Chennai',
+                controller: cityController,
+                validator: MultiValidator([
+                  RequiredValidator(errorText: 'City is required'),
+                ]).call,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 25),
+                child: Text(
+                  'Town'.tr,
+                  style:
+                      GoogleFonts.poppins(color: const Color(0xff1F1F1F), fontWeight: FontWeight.w400, fontSize: 14),
+                ),
+              ),
+              CommonTextField(
+                hintText: 'Town',
+                controller: townController,
+                validator: MultiValidator([
+                  RequiredValidator(errorText: 'Town is required'),
+                ]).call,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 25),
+                child: Text(
+                  'State'.tr,
+                  style:
+                      GoogleFonts.poppins(color: const Color(0xff1F1F1F), fontWeight: FontWeight.w400, fontSize: 14),
+                ),
+              ),
+              CommonTextField(
+                hintText: 'Ex: Bihar, Rajasthan, Karnataka',
+                controller: stateController,
+                validator: MultiValidator([
+                  RequiredValidator(errorText: 'State is required'),
+                ]).call,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 25),
+                child: Text(
+                  'Country'.tr,
+                  style:
+                      GoogleFonts.poppins(color: const Color(0xff1F1F1F), fontWeight: FontWeight.w400, fontSize: 14),
+                ),
+              ),
+              CommonTextField(
+                hintText: 'India',
+                controller: countryController,
+                readOnly: true,
+                prefix: Padding(
+                  padding: const EdgeInsets.only(left: 5,right: 5),
+                  child: Image.asset('assets/images/flag.gif',height: 10,),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 25),
+                child: Text(
+                  'Special Instruction'.tr,
+                  style:
+                      GoogleFonts.poppins(color: const Color(0xff1F1F1F), fontWeight: FontWeight.w400, fontSize: 14),
+                ),
+              ),
+              CommonTextField(
+                hintText: 'Special Instruction (Optional)',
+                controller: specialInstructionController,
+              ),
+              SizedBox(
+                height: size.height * .02,
+              ),
+              GestureDetector(
+                onTap: () {
+                  addNativeAddress();
+                },
+                child: Container(
+                  margin: EdgeInsets.only(left: 25, right: 25),
+                  width: size.width,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xffFF730A),
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                ),
-                SizedBox(
-                  height: size.height * .02,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25),
-                  child: Text(
-                    'Street'.tr,
-                    style:
-                        GoogleFonts.poppins(color: const Color(0xff1F1F1F), fontWeight: FontWeight.w400, fontSize: 14),
-                  ),
-                ),
-                CommonTextField(
-                  hintText: 'Ex: shivaji road',
-                  controller: streetController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'Street is required'),
-                  ]).call,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25),
-                  child: Text(
-                    'City'.tr,
-                    style:
-                        GoogleFonts.poppins(color: const Color(0xff1F1F1F), fontWeight: FontWeight.w400, fontSize: 14),
-                  ),
-                ),
-                CommonTextField(
-                  hintText: 'Ex: Mubai,Delhi, Chennai',
-                  controller: cityController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'City is required'),
-                  ]).call,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25),
-                  child: Text(
-                    'Town'.tr,
-                    style:
-                        GoogleFonts.poppins(color: const Color(0xff1F1F1F), fontWeight: FontWeight.w400, fontSize: 14),
-                  ),
-                ),
-                CommonTextField(
-                  hintText: 'Town',
-                  controller: townController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'Town is required'),
-                  ]).call,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25),
-                  child: Text(
-                    'State'.tr,
-                    style:
-                        GoogleFonts.poppins(color: const Color(0xff1F1F1F), fontWeight: FontWeight.w400, fontSize: 14),
-                  ),
-                ),
-                CommonTextField(
-                  hintText: 'Ex: Bihar, Rajasthan, Karnataka',
-                  controller: stateController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'State is required'),
-                  ]).call,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25),
-                  child: Text(
-                    'Country'.tr,
-                    style:
-                        GoogleFonts.poppins(color: const Color(0xff1F1F1F), fontWeight: FontWeight.w400, fontSize: 14),
-                  ),
-                ),
-                CommonTextField(
-                  hintText: 'India',
-                  controller: countryController,
-                  readOnly: true,
-                  prefix: Padding(
-                    padding: const EdgeInsets.only(left: 5,right: 5),
-                    child: Image.asset('assets/images/flag.gif',height: 10,),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25),
-                  child: Text(
-                    'Special Instruction'.tr,
-                    style:
-                        GoogleFonts.poppins(color: const Color(0xff1F1F1F), fontWeight: FontWeight.w400, fontSize: 14),
-                  ),
-                ),
-                CommonTextField(
-                  hintText: 'Special Instruction (Optional)',
-                  controller: specialInstructionController,
-                ),
-                SizedBox(
-                  height: size.height * .02,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    addNativeAddress();
-                  },
-                  child: Container(
-                    margin: EdgeInsets.only(left: 25, right: 25),
-                    width: size.width,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xffFF730A),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        "Confirm Your Address",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
+                  child: const Center(
+                    child: Text(
+                      "Confirm Your Address",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                        fontSize: 20,
                       ),
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: size.height * .02,
-                ),
-              ],
-            ),
+              ),
+              SizedBox(
+                height: size.height * .02,
+              ),
+            ],
           ),
         ),
       ),

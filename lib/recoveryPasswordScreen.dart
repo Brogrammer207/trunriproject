@@ -50,17 +50,7 @@ class _RecoveryPasswordScreenState extends State<RecoveryPasswordScreen> {
       },
       child: Container(
         padding: const EdgeInsets.only(left: 15, right: 15),
-        decoration: const BoxDecoration(
-          // color: Color(0xFFF2EDE2)
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            colors: [
-              Color(0xffF4EEF2),
-              Color(0xffF4EEF2),
-              Color(0xffE3EDF5),
-            ],
-          ),
-        ),
+
         child: SafeArea(
             child: ListView(
           children: [

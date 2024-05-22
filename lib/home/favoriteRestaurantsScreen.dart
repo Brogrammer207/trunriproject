@@ -43,68 +43,55 @@ class _FavoriteRestaurantsScreenState extends State<FavoriteRestaurantsScreen> {
 
           final favoriteRestaurants = snapshot.data!;
 
-          return Container(
-            decoration: const BoxDecoration(
-              // color: Color(0xFFF2EDE2)
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                colors: [
-                  Color(0xffF4EEF2),
-                  Color(0xffF4EEF2),
-                  Color(0xffE3EDF5),
+          return ListView.builder(
+            itemCount: favoriteRestaurants.length,
+            itemBuilder: (context, index) {
+              final restaurant = favoriteRestaurants[index];
+              return Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    margin: const EdgeInsets.only(bottom: 8, left: 10, top: 2),
+                    decoration: BoxDecoration(color: const Color(0xfff1cbe2), borderRadius: BorderRadius.circular(5)),
+                    child: Image.network(
+                      restaurant.image,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: (){
+                        Get.to(
+                            ResturentDetailsScreen(
+                                name: restaurant.name,
+                                desc: restaurant.desc,
+                                rating: restaurant.rating,
+                                openingTime: restaurant.opentime,
+                                closingTime: restaurant.closetime,
+                                address: restaurant.address,
+                                image: restaurant.image));
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            restaurant.name,
+                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                          ),
+                          Text(restaurant.address)
+                        ],
+                      ),
+                    ),
+                  )
                 ],
-              ),
-            ),
-            child: ListView.builder(
-              itemCount: favoriteRestaurants.length,
-              itemBuilder: (context, index) {
-                final restaurant = favoriteRestaurants[index];
-                return Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      margin: const EdgeInsets.only(bottom: 8, left: 10, top: 2),
-                      decoration: BoxDecoration(color: const Color(0xfff1cbe2), borderRadius: BorderRadius.circular(5)),
-                      child: Image.network(
-                        restaurant.image,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: (){
-                          Get.to(
-                              ResturentDetailsScreen(
-                                  name: restaurant.name,
-                                  desc: restaurant.desc,
-                                  rating: restaurant.rating,
-                                  openingTime: restaurant.opentime,
-                                  closingTime: restaurant.closetime,
-                                  address: restaurant.address,
-                                  image: restaurant.image));
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              restaurant.name,
-                              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-                            ),
-                            Text(restaurant.address)
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              },
-            ),
+              );
+            },
           );
         },
       ),

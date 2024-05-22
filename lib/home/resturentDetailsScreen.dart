@@ -440,6 +440,8 @@ class _ResturentDetailsScreenState extends State<ResturentDetailsScreen> {
           size: 40,
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+
     );
   }
 }
