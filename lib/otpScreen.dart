@@ -62,6 +62,7 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Color(0xffFF730A),
         leading: GestureDetector(

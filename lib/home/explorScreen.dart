@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/home/resturentItemListScreen.dart';
 
+import 'groceryStoreListScreen.dart';
+
 class ExplorScreen extends StatefulWidget {
   const ExplorScreen({super.key});
 
@@ -14,6 +16,7 @@ class _ExplorScreenState extends State<ExplorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Discover Items'),
         automaticallyImplyLeading: false,
@@ -36,6 +39,9 @@ class _ExplorScreenState extends State<ExplorScreen> {
               height: 10,
             ),
             ListTile(
+              onTap: (){
+                Get.to(GroceryStoreListScreen());
+              },
               leading: Image.asset('assets/images/store.png'),
               title: const Text('Grocery Stores'),
               trailing: const Icon(

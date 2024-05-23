@@ -144,6 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
         .of(context)
         .size;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
           child: Form(
             key: formKey1,
@@ -206,7 +207,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                     ),
                     controller: phoneController,
                     decoration: InputDecoration(
-                      fillColor: Colors.white,
+                      fillColor: Colors.grey.shade100,
                         filled: true,
                         contentPadding: EdgeInsets.symmetric(vertical: 15),
                         hintStyle: const TextStyle(

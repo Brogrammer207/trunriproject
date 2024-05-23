@@ -152,6 +152,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
           child: ListView(
         children: [

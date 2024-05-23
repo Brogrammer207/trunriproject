@@ -93,7 +93,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
               vertical: 15,
             ),
             counter: const Offstage(),
-            fillColor: Colors.white,
+            fillColor: Colors.grey.shade100,
             filled: true,
             errorMaxLines: 2,
             enabled: widget.enabled,

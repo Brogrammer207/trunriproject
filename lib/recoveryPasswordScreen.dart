@@ -44,6 +44,7 @@ class _RecoveryPasswordScreenState extends State<RecoveryPasswordScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.white,
         body: GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();

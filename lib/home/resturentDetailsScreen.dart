@@ -430,17 +430,19 @@ class _ResturentDetailsScreenState extends State<ResturentDetailsScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          _launchMap(resturentLat, resturentlong);
-        },
-        backgroundColor: AppTheme.mainColor,
-        child:const  Icon(
-          Icons.directions,
-          size: 40,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 20.0),
+        child: FloatingActionButton(
+          onPressed: (){
+            _launchMap(resturentLat, resturentlong);
+          },
+          backgroundColor: AppTheme.mainColor,
+          child:const  Icon(
+            Icons.directions,
+            size: 40,
+          ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
 
     );
   }

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,7 +19,7 @@ class _FavoriteRestaurantsScreenState extends State<FavoriteRestaurantsScreen> {
     }
 
     final snapshot =
-        await FirebaseFirestore.instance.collection('favorite').doc(userId).collection('restaurants').get();
+    await FirebaseFirestore.instance.collection('favorite').doc(userId).collection('restaurants').get();
 
     return snapshot.docs.map((doc) => FavoriteRestaurant.fromFirestore(doc)).toList();
   }
@@ -47,17 +48,28 @@ class _FavoriteRestaurantsScreenState extends State<FavoriteRestaurantsScreen> {
             itemCount: favoriteRestaurants.length,
             itemBuilder: (context, index) {
               final restaurant = favoriteRestaurants[index];
+              final photoUrl = restaurant.image.isNotEmpty
+                  ? restaurant.image
+                  : 'https://via.placeholder.com/400'; // Path to your default image
+
               return Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    margin: const EdgeInsets.only(bottom: 8, left: 10, top: 2),
-                    decoration: BoxDecoration(color: const Color(0xfff1cbe2), borderRadius: BorderRadius.circular(5)),
-                    child: Image.network(
-                      restaurant.image,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      margin: const EdgeInsets.only(bottom: 8, left: 10, top: 2),
+                      decoration: BoxDecoration(
+                          color: const Color(0xfff1cbe2), borderRadius: BorderRadius.circular(5)),
+                      child: CachedNetworkImage(
+                        imageUrl: photoUrl,
+                        height: 100,
+                        width: Get.width,
+                        fit: BoxFit.fill,
+                        placeholder: (context, url) =>const Center(child:  CircularProgressIndicator()),
+                        errorWidget: (context, url, error) {
+                          return Image.network('https://via.placeholder.com/400'); // Path to your default image
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -65,16 +77,18 @@ class _FavoriteRestaurantsScreenState extends State<FavoriteRestaurantsScreen> {
                   ),
                   Expanded(
                     child: GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         Get.to(
-                            ResturentDetailsScreen(
-                                name: restaurant.name,
-                                desc: restaurant.desc,
-                                rating: restaurant.rating,
-                                openingTime: restaurant.opentime,
-                                closingTime: restaurant.closetime,
-                                address: restaurant.address,
-                                image: restaurant.image));
+                          ResturentDetailsScreen(
+                            name: restaurant.name,
+                            desc: restaurant.desc,
+                            rating: restaurant.rating,
+                            openingTime: restaurant.opentime,
+                            closingTime: restaurant.closetime,
+                            address: restaurant.address,
+                            image: restaurant.image,
+                          ),
+                        );
                       },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,7 +122,15 @@ class FavoriteRestaurant {
   final String opentime;
   final String closetime;
 
-  FavoriteRestaurant({required this.name, required this.address, required this.image,required this.rating, required this.opentime, required this.closetime,required this.desc,});
+  FavoriteRestaurant({
+    required this.name,
+    required this.address,
+    required this.image,
+    required this.desc,
+    required this.rating,
+    required this.opentime,
+    required this.closetime,
+  });
 
   factory FavoriteRestaurant.fromFirestore(DocumentSnapshot doc) {
     Map data = doc.data() as Map;
@@ -117,7 +139,7 @@ class FavoriteRestaurant {
       address: data['address'] ?? '',
       image: data['image'] ?? '',
       desc: data['desc'] ?? '',
-      rating: data['rating'] ?? '',
+      rating: (data['rating'] ?? 0.0).toDouble(),
       opentime: data['opentime'] ?? '',
       closetime: data['closetime'] ?? '',
     );

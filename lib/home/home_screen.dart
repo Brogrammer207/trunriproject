@@ -40,7 +40,10 @@ class _HomeScreenState extends State<HomeScreen> {
   String resturentLat = '';
   String resturentlong = '';
   List<dynamic> _restaurants = [];
-  final apiKey = 'AIzaSyAP9njE_z7lH2tii68WLoQGju0DF8KryXA'; // Replace with your API key
+  String groceryStoreLat = '';
+  String groceryStoreLong = '';
+  List<dynamic> _groceryStores = [];
+  final apiKey = 'AIzaSyDDl-_JOy_bj4MyQhYbKbGkZ0sfpbTZDNU';
   final serviceController = Get.put(ServiceController());
   @override
   void initState() {
@@ -72,9 +75,10 @@ class _HomeScreenState extends State<HomeScreen> {
       serviceController.currentlong = currentLongitude;
 
       _fetchIndianRestaurants(position.latitude, position.longitude);
+      _fetchGroceryStores(position.latitude, position.longitude);
     });
   }
-
+  String defaultImageUrl = 'https://via.placeholder.com/400';
   Future<void> _launchMap(double lat, double lng) async {
     final url = 'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving';
     if (await canLaunch(url)) {
@@ -94,6 +98,24 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _restaurants = data['results'];
       });
+    } else {
+      throw Exception('Failed to fetch data');
+    }
+  }
+
+
+  Future<void> _fetchGroceryStores(double latitude, double longitude) async {
+    final url =
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=grocery_or_supermarket&key=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (mounted) {
+        setState(() {
+          _groceryStores = data['results'];
+        });
+      }
     } else {
       throw Exception('Failed to fetch data');
     }
@@ -134,6 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
     var width = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -406,6 +429,126 @@ class _HomeScreenState extends State<HomeScreen> {
                                           width: 100,
                                           fit: BoxFit.fill,
                                         )
+                                      : SizedBox(),
+                                ),
+                                const SizedBox(height: 4), // Add space between the image and the text
+                                Container(
+                                  margin: const EdgeInsets.only(right: 10),
+                                  width: 56, // Adjust width if needed
+                                  child: Text(
+                                    name,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 12, // Adjust the font size as needed
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+                                //
+                                // InkWell(
+                                //     onTap: () {
+                                //       _launchMap(lat, lng);
+                                //     },
+                                //     child: Container(
+                                //         padding: EdgeInsets.all(10),
+                                //         decoration: BoxDecoration(
+                                //           color: AppTheme.mainColor,
+                                //         ),
+                                //         child: Text(
+                                //           'Get Directions',
+                                //           style: TextStyle(color: Colors.white),
+                                //         )))
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(height: 20),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: SectionTitle(
+                      title: "Near By Grocery Store",
+                      press: () {},
+                    ),
+                  ),
+                  Container(
+                    height: 180,
+                    width: Get.width,
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(11)),
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _groceryStores.length,
+                      itemBuilder: (context, index) {
+                        final groceryStore = _groceryStores[index];
+                        final name = groceryStore['name'];
+                        final address = groceryStore['vicinity'];
+                        final rating = (groceryStore['rating'] as num?)?.toDouble() ?? 0.0;
+                        final description = groceryStore['description'] ?? 'No Description Available';
+                        final openingHours =
+                        groceryStore['opening_hours'] != null ? groceryStore['opening_hours']['weekday_text'] : 'Not Available';
+                        final closingTime = groceryStore['closing_time'] ?? 'Not Available';
+                        final photoReference = groceryStore['photos'] != null ? groceryStore['photos'][0]['photo_reference'] : null;
+                        final photoUrl = photoReference != null
+                            ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
+                            : defaultImageUrl;
+                        final lat = groceryStore['geometry']['location']['lat'];
+                        final lng = groceryStore['geometry']['location']['lng'];
+
+                        groceryStoreLat = lat.toString();
+                        groceryStoreLong = lng.toString();
+
+
+
+
+                        return GestureDetector(
+                          onTap: () {
+                            log('message');
+                            Get.to(ResturentDetailsScreen(
+                                name: name.toString(),
+                                rating: rating,
+                                desc: description.toString(),
+                                openingTime: openingHours.toString(),
+                                closingTime: closingTime.toString(),
+                                address: address.toString(),
+                                image: photoUrl.toString()),arguments: [lat,lng]);
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(left: 5),
+                            decoration: BoxDecoration(
+                                color: Color(0xFFFFECDF),
+                                borderRadius: BorderRadius.circular(11)
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  height: 120,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFFECDF),
+                                    borderRadius: BorderRadius.circular(10),
+                                    // image: DecorationImage(
+                                    //   image: NetworkImage(icon),
+                                    //   fit: BoxFit.fill,
+                                    // ),
+                                  ),
+                                  child: photoUrl != null
+                                      ? Image.network(
+                                    photoUrl,
+                                    height: 100,
+                                    width: 100,
+                                    fit: BoxFit.fill,
+                                  )
                                       : SizedBox(),
                                 ),
                                 const SizedBox(height: 4), // Add space between the image and the text
