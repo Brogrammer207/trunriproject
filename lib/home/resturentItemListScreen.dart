@@ -26,6 +26,9 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
   final apiKey = 'AIzaSyDDl-_JOy_bj4MyQhYbKbGkZ0sfpbTZDNU';
   final serviceController = Get.put(ServiceController());
 
+  String defaultImageUrl = 'https://via.placeholder.com/400';
+
+
   @override
   void initState() {
     super.initState();
@@ -46,7 +49,7 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
       throw Exception('Failed to fetch data');
     }
   }
-  String defaultImageUrl = 'https://via.placeholder.com/400';
+
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -77,11 +80,16 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
+        title:  Row(
           children: [
-            Icon(
-              Icons.arrow_back_ios,
-              size: 18,
+            GestureDetector(
+              onTap: (){
+                Get.back();
+              },
+              child: Icon(
+                Icons.arrow_back_ios,
+                size: 18,
+              ),
             ),
             SizedBox(
               width: 10,
@@ -149,7 +157,7 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
                     );
                   },
                   child: Container(
-                    margin: const EdgeInsets.only(left: 15, right: 15),
+                    margin: const EdgeInsets.only(left: 10, right: 10),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,20 +167,17 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
                             borderRadius: BorderRadius.circular(10),
                             child: Image.network(
                               photoUrl,
-                              height: 130,
+                              height: 125,
                               width: double.infinity,
                               fit: BoxFit.cover,
                             ),
                           ),
-                        const SizedBox(
-                          height: 5,
-                        ),
                         Padding(
-                          padding: const EdgeInsets.all(2.0),
+                          padding: const EdgeInsets.all(1.0),
                           child: Text(
                             name,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w600),
+                            style: const TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                           ),

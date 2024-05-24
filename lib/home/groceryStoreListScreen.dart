@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/home/resturentDetailsScreen.dart';
@@ -35,7 +36,7 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
 
   Future<void> _fetchGroceryStores(double latitude, double longitude) async {
     final url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=grocery_or_supermarket&key=$apiKey';
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=grocery_or_supermarket&keyword=Indian&key=$apiKey';
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -84,11 +85,16 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(
-              Icons.arrow_back_ios,
-              size: 18,
+            GestureDetector(
+              onTap: (){
+                Get.back();
+              },
+              child: Icon(
+                Icons.arrow_back_ios,
+                size: 18,
+              ),
             ),
             SizedBox(
               width: 10,

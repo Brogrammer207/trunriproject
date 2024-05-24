@@ -27,36 +27,43 @@ class _MyButtomNavBarState extends State<MyBottomNavBar> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBody: true,
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.only(left: 20,right: 20,bottom: 0),
-        decoration: BoxDecoration(
-            boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.5),
-              blurRadius: 25,
-              offset: const Offset(8, 20))
-        ]),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(30),
-          child: BottomNavigationBar(
-             backgroundColor: Colors.transparent,
-              selectedItemColor: Colors.redAccent,
-              unselectedItemColor: Colors.black,
-              currentIndex: myCurrentIndex,
-              onTap: (index) {
-                setState(() {
-                  myCurrentIndex = index;
-                });
-              },
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.favorite), label: "Favorite"),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.explore), label: "Discover"),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person_outline), label: "Profile"),
-              ]),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Container(
+          margin: const EdgeInsets.only(left: 20,right: 20,bottom: 0),
+          decoration: BoxDecoration(
+              boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.5),
+                blurRadius: 25,
+                offset: const Offset(8, 20))
+          ]),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: SizedBox(
+              height: 60,
+              child: BottomNavigationBar(
+
+                 backgroundColor: Colors.transparent,
+                  selectedItemColor: Colors.redAccent,
+                  unselectedItemColor: Colors.black,
+                  currentIndex: myCurrentIndex,
+                  onTap: (index) {
+                    setState(() {
+                      myCurrentIndex = index;
+                    });
+                  },
+                  items: const [
+                    BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.favorite), label: "Favorite"),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.explore), label: "Discover"),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.person_outline), label: "Profile"),
+                  ]),
+            ),
+          ),
         ),
       ),
       body: pages[myCurrentIndex],

@@ -71,6 +71,17 @@ class _ExplorScreenState extends State<ExplorScreen> {
                 size: 15,
               ),
             ),
+            const Divider(
+              height: 10,
+            ),
+            ListTile(
+              leading: Image.asset('assets/images/job.png'),
+              title: const Text('Jobs'),
+              trailing: const Icon(
+                Icons.arrow_forward_ios_outlined,
+                size: 15,
+              ),
+            ),
           ],
         ),
       ),
