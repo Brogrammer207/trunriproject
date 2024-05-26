@@ -66,17 +66,15 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
     }
 
     Position position = await Geolocator.getCurrentPosition();
-    if (mounted) {
-      setState(() {
-        _currentPosition = position;
-        double currentLatitude = position.latitude;
-        double currentLongitude = position.longitude;
-        serviceController.currentlat = currentLatitude;
-        serviceController.currentlong = currentLongitude;
+    setState(() {
+      _currentPosition = position;
+      double currentLatitude = position.latitude;
+      double currentLongitude = position.longitude;
+      serviceController.currentlat = currentLatitude;
+      serviceController.currentlong = currentLongitude;
 
-        _fetchGroceryStores(position.latitude, position.longitude);
-      });
-    }
+      _fetchGroceryStores(position.latitude, position.longitude);
+    });
   }
   String defaultImageUrl = 'https://via.placeholder.com/400';
 

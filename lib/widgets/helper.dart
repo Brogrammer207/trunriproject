@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:file_picker/file_picker.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -47,6 +48,22 @@ class NewHelper {
   }
 
 
+  Future<File?> addFilePicker({List<String>? allowedExtensions}) async {
+
+    try {
+      final item = await FilePicker.platform.pickFiles(
+        type: allowedExtensions != null ? FileType.custom : FileType.any,
+        allowedExtensions: allowedExtensions,
+      );
+      if (item == null) {
+        return null;
+      } else {
+        return File(item.files.first.path!);
+      }
+    } on PlatformException catch (e) {
+      throw Exception(e);
+    }
+  }
 
   Future<File?> addImagePicker({ImageSource imageSource = ImageSource.gallery, int imageQuality = 80}) async {
     try {
