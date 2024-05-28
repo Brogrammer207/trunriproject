@@ -78,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _fetchGroceryStores(position.latitude, position.longitude);
     });
   }
+
   String defaultImageUrl = 'https://via.placeholder.com/400';
   Future<void> _launchMap(double lat, double lng) async {
     final url = 'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving';
@@ -87,8 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
       throw 'Could not launch $url';
     }
   }
-  Future<void> _fetchIndianRestaurants(double latitude, double longitude) async {
 
+  Future<void> _fetchIndianRestaurants(double latitude, double longitude) async {
     final url =
         'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=restaurant&keyword=indian&key=$apiKey';
 
@@ -102,7 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
       throw Exception('Failed to fetch data');
     }
   }
-
 
   Future<void> _fetchGroceryStores(double latitude, double longitude) async {
     final url =
@@ -120,15 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
       throw Exception('Failed to fetch data');
     }
   }
-  //
-  // Future<void> _launchMap(double lat, double lng) async {
-  //   final url = 'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving';
-  //   if (await canLaunch(url)) {
-  //     await launch(url);
-  //   } else {
-  //     throw 'Could not launch $url';
-  //   }
-  // }
+
 
   List<String> imageUrls = [];
   Future<List<String>> fetchImageData() async {
@@ -381,32 +373,27 @@ class _HomeScreenState extends State<HomeScreen> {
                         final lat = restaurant['geometry']['location']['lat'];
                         final lng = restaurant['geometry']['location']['lng'];
 
-
-                          resturentLat = lat.toString();
-                          resturentlong =lng.toString();
-
-
-
-
+                        resturentLat = lat.toString();
+                        resturentlong = lng.toString();
 
                         return GestureDetector(
                           onTap: () {
                             log('message');
-                            Get.to(ResturentDetailsScreen(
-                                name: name.toString(),
-                                rating: rating,
-                                desc: description.toString(),
-                                openingTime: openingHours.toString(),
-                                closingTime: closingTime.toString(),
-                                address: address.toString(),
-                                image: photoUrl.toString()),arguments: [lat,lng]);
+                            Get.to(
+                                ResturentDetailsScreen(
+                                    name: name.toString(),
+                                    rating: rating,
+                                    desc: description.toString(),
+                                    openingTime: openingHours.toString(),
+                                    closingTime: closingTime.toString(),
+                                    address: address.toString(),
+                                    image: photoUrl.toString()),
+                                arguments: [lat, lng]);
                           },
                           child: Container(
                             margin: EdgeInsets.only(left: 5),
-                            decoration: BoxDecoration(
-                              color: Color(0xFFFFECDF),
-                              borderRadius: BorderRadius.circular(11)
-                            ),
+                            decoration:
+                                BoxDecoration(color: Color(0xFFFFECDF), borderRadius: BorderRadius.circular(11)),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -493,10 +480,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         final address = groceryStore['vicinity'];
                         final rating = (groceryStore['rating'] as num?)?.toDouble() ?? 0.0;
                         final description = groceryStore['description'] ?? 'No Description Available';
-                        final openingHours =
-                        groceryStore['opening_hours'] != null ? groceryStore['opening_hours']['weekday_text'] : 'Not Available';
+                        final openingHours = groceryStore['opening_hours'] != null
+                            ? groceryStore['opening_hours']['weekday_text']
+                            : 'Not Available';
                         final closingTime = groceryStore['closing_time'] ?? 'Not Available';
-                        final photoReference = groceryStore['photos'] != null ? groceryStore['photos'][0]['photo_reference'] : null;
+                        final photoReference =
+                            groceryStore['photos'] != null ? groceryStore['photos'][0]['photo_reference'] : null;
                         final photoUrl = photoReference != null
                             ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
                             : defaultImageUrl;
@@ -506,27 +495,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         groceryStoreLat = lat.toString();
                         groceryStoreLong = lng.toString();
 
-
-
-
                         return GestureDetector(
                           onTap: () {
                             log('message');
-                            Get.to(ResturentDetailsScreen(
-                                name: name.toString(),
-                                rating: rating,
-                                desc: description.toString(),
-                                openingTime: openingHours.toString(),
-                                closingTime: closingTime.toString(),
-                                address: address.toString(),
-                                image: photoUrl.toString()),arguments: [lat,lng]);
+                            Get.to(
+                                ResturentDetailsScreen(
+                                    name: name.toString(),
+                                    rating: rating,
+                                    desc: description.toString(),
+                                    openingTime: openingHours.toString(),
+                                    closingTime: closingTime.toString(),
+                                    address: address.toString(),
+                                    image: photoUrl.toString()),
+                                arguments: [lat, lng]);
                           },
                           child: Container(
                             margin: EdgeInsets.only(left: 5),
-                            decoration: BoxDecoration(
-                                color: Color(0xFFFFECDF),
-                                borderRadius: BorderRadius.circular(11)
-                            ),
+                            decoration:
+                                BoxDecoration(color: Color(0xFFFFECDF), borderRadius: BorderRadius.circular(11)),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -544,11 +530,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   child: photoUrl != null
                                       ? Image.network(
-                                    photoUrl,
-                                    height: 100,
-                                    width: 100,
-                                    fit: BoxFit.fill,
-                                  )
+                                          photoUrl,
+                                          height: 100,
+                                          width: 100,
+                                          fit: BoxFit.fill,
+                                        )
                                       : SizedBox(),
                                 ),
                                 const SizedBox(height: 4), // Add space between the image and the text
@@ -590,6 +576,97 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 ],
               ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SectionTitle(
+                  title: "Near By Accommodations",
+                  press: () {},
+                ),
+              ),
+              Container(
+                height: 180,
+                width: double.infinity,
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(11)),
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance.collection('accommodations').snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(child: Text('No accommodations found'));
+                    }
+                    return ListView(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      children: snapshot.data!.docs.map((DocumentSnapshot doc) {
+                        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+                        List<dynamic> images = data['images'] ?? [];
+
+                        return Container(
+                          margin: EdgeInsets.only(left: 5),
+                          decoration: BoxDecoration(color: Color(0xFFFFECDF), borderRadius: BorderRadius.circular(11)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+                                height: 140,
+                                width: 120,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFECDF),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: images.isNotEmpty
+                                    ? CarouselSlider(
+                                  options: CarouselOptions(
+                                    height: 200.0,
+                                    enlargeCenterPage: true,
+                                    autoPlay: true,
+                                    aspectRatio: 16 / 9,
+                                    autoPlayCurve: Curves.fastOutSlowIn,
+                                    enableInfiniteScroll: true,
+                                    autoPlayAnimationDuration: Duration(milliseconds: 800),
+                                    viewportFraction: 0.8,
+                                  ),
+                                  items: images.map((imageUrl) {
+                                    return Builder(
+                                      builder: (BuildContext context) {
+                                        return Image.network(
+                                          imageUrl,
+                                          fit: BoxFit.cover,
+                                          width: MediaQuery.of(context).size.width,
+                                        );
+                                      },
+                                    );
+                                  }).toList(),
+                                )
+                                    : SizedBox(),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(right: 10),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    data['name'] ?? 'No name',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
+              )
+
+
+
             ],
           ),
         ),
