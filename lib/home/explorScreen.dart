@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/home/resturentItemListScreen.dart';
 
+import '../accommodation/accommodationHomeScreen.dart';
 import 'groceryStoreListScreen.dart';
 
 class ExplorScreen extends StatefulWidget {
@@ -55,6 +56,9 @@ class _ExplorScreenState extends State<ExplorScreen> {
             ListTile(
               leading: Image.asset('assets/images/accommodation.png'),
               title: const Text('Accommodation'),
+              onTap: (){
+                Get.to(const Accommodationhomescreen());
+              },
               trailing: const Icon(
                 Icons.arrow_forward_ios_outlined,
                 size: 15,

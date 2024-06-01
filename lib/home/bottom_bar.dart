@@ -18,65 +18,11 @@ class _MyBottomNavBarState extends State<MyBottomNavBar> {
   List pages = [
     const HomeScreen(),
     FavoriteRestaurantsScreen(),
-    const HomeScreen(), // Dummy screen for the Add button
     const ExplorScreen(),
     const ProfileScreen(),
   ];
 
-  void _showAddOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
-      ),
-      backgroundColor: Colors.white,
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(20.0),
-          height: 200,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  height: 5,
-                  width: 50,
-                  color: Colors.grey[300],
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Choose an option',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildOption(
-                    icon: Icons.home,
-                    label: 'Add Accommodation',
-                    onTap: () {
-                      Get.to(const AddAccommodationScreen());
 
-                    },
-                  ),
-                  _buildOption(
-                    icon: Icons.work,
-                    label: 'Add Job',
-                    onTap: () {
-                      // Handle Add Store
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
   Widget _buildOption({
     required IconData icon,
@@ -127,19 +73,13 @@ class _MyBottomNavBarState extends State<MyBottomNavBar> {
                 unselectedItemColor: Colors.black,
                 currentIndex: myCurrentIndex,
                 onTap: (index) {
-                  if (index == 2) {
-                    _showAddOptions(context);
-                  } else {
-                    setState(() {
-                      myCurrentIndex = index;
-                    });
-                  }
+                  setState(() {
+                    myCurrentIndex = index;
+                  });
                 },
                 items: const [
                   BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
                   BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Favorite"),
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.add_circle_outline_outlined), label: "Create"),
                   BottomNavigationBarItem(icon: Icon(Icons.explore), label: "Discover"),
                   BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: "Profile"),
                 ],
