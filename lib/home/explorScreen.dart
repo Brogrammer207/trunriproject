@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:trunriproject/home/resturentItemListScreen.dart';
 
 import '../accommodation/accommodationHomeScreen.dart';
+import '../accommodation/accommodationOptionScreen.dart';
 import 'groceryStoreListScreen.dart';
 
 class ExplorScreen extends StatefulWidget {
@@ -57,7 +58,7 @@ class _ExplorScreenState extends State<ExplorScreen> {
               leading: Image.asset('assets/images/accommodation.png'),
               title: const Text('Accommodation'),
               onTap: (){
-                Get.to(const Accommodationhomescreen());
+                Get.to(const Accommodationoptionscreen());
               },
               trailing: const Icon(
                 Icons.arrow_forward_ios_outlined,
