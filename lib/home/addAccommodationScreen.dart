@@ -292,7 +292,7 @@ class _AddAccommodationScreenState extends State<AddAccommodationScreen> {
                 padding: const EdgeInsets.only(left: 25, right: 25),
                 child: ImageWidget(
                   files: selectedFiles,
-                  title: 'Select Images',
+        
                   validation: true,
                   imageOnly: true,
                   filesPicked: (List<File> pickedFiles) {

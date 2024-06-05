@@ -12,14 +12,12 @@ class ImageWidget extends StatefulWidget {
   const ImageWidget({
     super.key,
     required this.files,
-    required this.title,
     required this.validation,
     required this.filesPicked,
     this.imageOnly,
   });
 
   final List<File> files;
-  final String title;
   final bool validation;
   final bool? imageOnly;
   final Function(List<File> files) filesPicked;
@@ -63,13 +61,13 @@ class _ImageWidgetState extends State<ImageWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 8),
-        Text(
-          widget.title,
-          style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w500,
-              color: const Color(0xff2F2F2F),
-              fontSize: 16),
-        ),
+        // Text(
+        //   widget.title,
+        //   style: GoogleFonts.poppins(
+        //       fontWeight: FontWeight.w500,
+        //       color: const Color(0xff2F2F2F),
+        //       fontSize: 16),
+        // ),
         const SizedBox(height: 8),
         GestureDetector(
           onTap: pickImages,
@@ -87,13 +85,13 @@ class _ImageWidgetState extends State<ImageWidget> {
                 ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  "Select ${widget.title}",
-                  style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w500,
-                      color: validation ? Theme.of(context).colorScheme.error : const Color(0xff463B57),
-                      fontSize: 15),
-                ),
+                // Text(
+                //   "Select ${widget.title}",
+                //   style: GoogleFonts.poppins(
+                //       fontWeight: FontWeight.w500,
+                //       color: validation ? Theme.of(context).colorScheme.error : const Color(0xff463B57),
+                //       fontSize: 15),
+                // ),
                 SizedBox(
                   height: AddSize.size10,
                 ),
