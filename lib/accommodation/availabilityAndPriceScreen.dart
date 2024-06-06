@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart'; // Add this import for date formatting
 
 import '../widgets/commomButton.dart';
+import '../widgets/helper.dart';
 import 'addMediaScreen.dart';
 
 class AvailabilityAndPriceScreen extends StatefulWidget {
@@ -13,8 +17,94 @@ class AvailabilityAndPriceScreen extends StatefulWidget {
 }
 
 class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen> {
+  DateTime? selectedAvailabilityDate;
+  DateTime? selectedNoDate;
+  String selectedMinStay = '1 Month';
+  String selectedMaxStay = 'No max';
+  bool billsInclude = false;
+  bool noDepositRequired = false;
+  bool rentalContract = false;
+  bool cleaningService = false;
+  bool cityHallRegistrationSupport = false;
+  bool maintenanceService = false;
+
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<void> savePriceData() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('accommodation')
+          .where('uid', isEqualTo: user.uid)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        for (var doc in querySnapshot.docs) {
+          await _firestore
+              .collection('accommodation')
+              .doc(doc.id)
+              .update({
+            'selectedAvailabilityDate': selectedAvailabilityDate,
+            'selectedNoDate': selectedNoDate,
+            'selectedMinStay': selectedMinStay,
+            'selectedMaxStay': selectedMaxStay,
+            'billsInclude': billsInclude,
+            'noDepositRequired': noDepositRequired,
+            'rentalContract': rentalContract,
+            'cleaningService': cleaningService,
+            'cityHallRegistrationSupport': cityHallRegistrationSupport,
+            'maintenanceService': maintenanceService,
+
+          });
+        }
+        Get.to(const AddMediaScreen());
+        showToast('Availability and price saved');
+      } else {
+        print('No matching document found');
+      }
+    } else {
+      print('No user logged in');
+    }
+  }
+
+  // Method to show date picker and update selected date
+  Future<void> _selectDate(BuildContext context, bool isAvailabilityDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        if (isAvailabilityDate) {
+          selectedAvailabilityDate = picked;
+        } else {
+          selectedNoDate = picked;
+        }
+      });
+    }
+  }
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'No Date';
+    return DateFormat('d MMMM yyyy').format(date);
+  }
+
+  List<String> _generateMonths(int count) {
+    return List<String>.generate(count, (int index) => '${index + 1} Month${index + 1 > 1 ? 's' : ''}');
+  }
+  List<String> _generateYears(int count) {
+    return List<String>.generate(count, (int index) => '${index + 1} Year${index + 1 > 1 ? 's' : ''}');
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<String> months = _generateMonths(12);
+    List<String> years = _generateYears(20);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -25,10 +115,11 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
         ),
         centerTitle: true,
         leading: GestureDetector(
-            onTap: () {
-              Get.back();
-            },
-            child: const Icon(Icons.arrow_back_ios)),
+          onTap: () {
+            Get.back();
+          },
+          child: const Icon(Icons.arrow_back_ios),
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -41,33 +132,41 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
                 'Set the availability',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               Row(
                 children: [
-                  Container(
-                    width: 150,
-                    padding: const EdgeInsets.only(top: 10, bottom: 10, left: 25, right: 25),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey, width: 1), borderRadius: BorderRadius.circular(25)),
-                    child: const Center(child: Text('4 june 2024')),
+                  GestureDetector(
+                    onTap: () => _selectDate(context, true),
+                    child: Container(
+                      width: 150,
+                      padding: const EdgeInsets.only(top: 10, bottom: 10, left: 25, right: 25),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey, width: 1),
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: Center(
+                        child: Text(_formatDate(selectedAvailabilityDate)),
+                      ),
+                    ),
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    width: 150,
-                    padding: const EdgeInsets.only(top: 10, bottom: 10, left: 25, right: 25),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey, width: 1), borderRadius: BorderRadius.circular(25)),
-                    child: const Center(child: Text('No Date')),
+                  const SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () => _selectDate(context, false),
+                    child: Container(
+                      width: 150,
+                      padding: const EdgeInsets.only(top: 10, bottom: 10, left: 25, right: 25),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey, width: 1),
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: Center(
+                        child: Text(_formatDate(selectedNoDate)),
+                      ),
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               Row(
                 children: [
                   Column(
@@ -78,21 +177,53 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
                         'Minimum stay',
                         style: TextStyle(fontSize: 12),
                       ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-                        width: 150,
-                        padding: const EdgeInsets.only(top: 10, bottom: 10, left: 25, right: 25),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 1), borderRadius: BorderRadius.circular(25)),
-                        child: const Center(child: Text('1 Month')),
+                      const SizedBox(height: 5),
+                      GestureDetector(
+                        onTap: () async {
+                          String? selectedValue = await showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Select Minimum Stay'),
+                                content: Container(
+                                  width: double.minPositive,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: months.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      return ListTile(
+                                        title: Text(months[index]),
+                                        onTap: () {
+                                          Navigator.pop(context, months[index]);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                          if (selectedValue != null) {
+                            setState(() {
+                              selectedMinStay = selectedValue;
+                            });
+                          }
+                        },
+                        child: Container(
+                          width: 150,
+                          padding: const EdgeInsets.only(top: 10, bottom: 10, left: 25, right: 25),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 1),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          child: Center(
+                            child: Text(selectedMinStay),
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
+                  const SizedBox(width: 10),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,25 +232,57 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
                         'Maximum stay',
                         style: TextStyle(fontSize: 12),
                       ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-                        width: 150,
-                        padding: const EdgeInsets.only(top: 10, bottom: 10, left: 25, right: 25),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 1), borderRadius: BorderRadius.circular(25)),
-                        child: const Center(child: Text('No max')),
+                      const SizedBox(height: 5),
+                      GestureDetector(
+                        onTap: () async {
+                          String? selectedValue = await showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Select Maximum Stay'),
+                                content: Container(
+                                  width: double.minPositive,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: years.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      return ListTile(
+                                        title: Text(years[index]),
+                                        onTap: () {
+                                          Navigator.pop(context, years[index]);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                          if (selectedValue != null) {
+                            setState(() {
+                              selectedMaxStay = selectedValue;
+                            });
+                          }
+                        },
+                        child: Container(
+                          width: 150,
+                          padding: const EdgeInsets.only(top: 10, bottom: 10, left: 25, right: 25),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 1),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          child: Center(
+                            child: Text(selectedMaxStay),
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               const Text(
-                'Whats the monthly rent ?',
+                'Whats the monthly rent?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
               TextFormField(
@@ -129,71 +292,111 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
               ),
               Row(
                 children: [
-                  Checkbox(value: false, onChanged: (value) {}),
+                  Checkbox(
+                    value: billsInclude,
+                    onChanged: (value) {
+                      setState(() {
+                        billsInclude = value ?? false;
+                      });
+                    },
+                  ),
                   const Text(
                     'Bills include',
                     style: TextStyle(fontSize: 12),
-                  )
+                  ),
                 ],
               ),
-              SizedBox(height: 20,),
+              const SizedBox(height: 20),
               const Text(
-                'And the deposit ?',
+                'And the deposit?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
               Row(
                 children: [
-                  Checkbox(value: false, onChanged: (value) {}),
+                  Checkbox(
+                    value: noDepositRequired,
+                    onChanged: (value) {
+                      setState(() {
+                        noDepositRequired = value ?? false;
+                      });
+                    },
+                  ),
                   const Text(
                     'No deposit required',
                     style: TextStyle(fontSize: 12),
-                  )
+                  ),
                 ],
               ),
               TextFormField(
-                decoration: const InputDecoration(
-
-                ),
+                decoration: const InputDecoration(),
               ),
-              SizedBox(height: 20,),
+              const SizedBox(height: 20),
               const Text(
-                'Any services include in the rent ? optional',
+                'Any services include in the rent? (optional)',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
               Row(
                 children: [
-                  Checkbox(value: false, onChanged: (value) {}),
+                  Checkbox(
+                    value: rentalContract,
+                    onChanged: (value) {
+                      setState(() {
+                        rentalContract = value ?? false;
+                      });
+                    },
+                  ),
                   const Text(
                     'Rental contract',
                     style: TextStyle(fontSize: 12),
-                  )
+                  ),
                 ],
               ),
               Row(
                 children: [
-                  Checkbox(value: false, onChanged: (value) {}),
+                  Checkbox(
+                    value: cleaningService,
+                    onChanged: (value) {
+                      setState(() {
+                        cleaningService = value ?? false;
+                      });
+                    },
+                  ),
                   const Text(
                     'Cleaning Service',
                     style: TextStyle(fontSize: 12),
-                  )
+                  ),
                 ],
               ),
               Row(
                 children: [
-                  Checkbox(value: false, onChanged: (value) {}),
+                  Checkbox(
+                    value: cityHallRegistrationSupport,
+                    onChanged: (value) {
+                      setState(() {
+                        cityHallRegistrationSupport = value ?? false;
+                      });
+                    },
+                  ),
                   const Text(
                     'City hall registration support',
                     style: TextStyle(fontSize: 12),
-                  )
+                  ),
                 ],
               ),
               Row(
                 children: [
-                  Checkbox(value: false, onChanged: (value) {}),
+                  Checkbox(
+                    value: maintenanceService,
+                    onChanged: (value) {
+                      setState(() {
+                        maintenanceService = value ?? false;
+                      });
+                    },
+                  ),
                   const Text(
                     'Maintenance service',
                     style: TextStyle(fontSize: 12),
-                  )
+                  ),
                 ],
               ),
             ],
@@ -203,21 +406,23 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
       bottomNavigationBar: SizedBox(
         width: double.infinity,
         child: Padding(
-            padding: const EdgeInsets.all(15.0).copyWith(bottom: 10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: CommonButton(
-                    text: 'Continue',
-                    color: const Color(0xffFF730A),
-                    textColor: Colors.white,
-                    onPressed: () {
-                      Get.to(const AddMediaScreen());
-                    },
-                  ),
+          padding: const EdgeInsets.all(15.0).copyWith(bottom: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: CommonButton(
+                  text: 'Continue',
+                  color: const Color(0xffFF730A),
+                  textColor: Colors.white,
+                  onPressed: () {
+                    savePriceData();
+
+                  },
                 ),
-              ],
-            )),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
