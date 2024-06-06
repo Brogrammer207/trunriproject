@@ -1,10 +1,13 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../widgets/commomButton.dart';
+import '../widgets/helper.dart';
 import 'availabilityAndPriceScreen.dart';
 
 
@@ -23,6 +26,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
   int livingFemale = 0;
   int livingMale = 0;
   int livingNonBinary = 0;
+  List<String> roomAmenities = [];
 
   bool isLiftAvailable = false;
   String bedroomFacing = '';
@@ -82,6 +86,46 @@ class _PropertyScreenState extends State<PropertyScreen> {
         ),
       ],
     );
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<void> savePropertyData() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('accommodation')
+          .where('uid', isEqualTo: user.uid)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        for (var doc in querySnapshot.docs) {
+          await _firestore
+              .collection('accommodation')
+              .doc(doc.id)
+              .update({
+            'singleBadRoom': singleBadRoom,
+            'doubleBadRoom': doubleBadRoom,
+            'bathrooms': bathrooms,
+            'toilets': toilets,
+            'livingFemale': livingFemale,
+            'livingMale': livingMale,
+            'livingNonBinary': livingNonBinary,
+            'isLiftAvailable': isLiftAvailable,
+            'bedroomFacing': bedroomFacing,
+            'isBedInRoom': isBedInRoom,
+            'roomAmenities': roomAmenities,
+          });
+        }
+        Get.to(const AvailabilityAndPriceScreen());
+        showToast('Property saved');
+      } else {
+        print('No matching document found');
+      }
+    } else {
+      print('No user logged in');
+    }
   }
 
   @override
@@ -276,77 +320,117 @@ class _PropertyScreenState extends State<PropertyScreen> {
               ),
               Row(
                 children: [
-                  Container(
-                    width: 40, // Adjust the width and height to match the radius of the CircleAvatar
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Set the color of the border
-                        width: 1.0, // Set the width of the border
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        roomAmenities.add('wifi');
+                      });
+                    },
+                    child: Container(
+                      width: 40, // Adjust the width and height to match the radius of the CircleAvatar
+                      height: 40,
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.grey, // Set the color of the border
+                          width: 1.0, // Set the width of the border
+                        ),
                       ),
+                      child: Image.asset('assets/icons/wifi.png',),
                     ),
-                    child: const Icon(Icons.shopping_bag),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
-                  Container(
-                    width: 40, // Adjust the width and height to match the radius of the CircleAvatar
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Set the color of the border
-                        width: 1.0, // Set the width of the border
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        roomAmenities.add('air conditioner');
+                      });
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.grey, // Set the color of the border
+                          width: 1.0, // Set the width of the border
+                        ),
                       ),
+                      child: Image.asset('assets/icons/air.png',),
                     ),
-                    child: const Icon(Icons.shopping_bag),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
-                  Container(
-                    width: 40, // Adjust the width and height to match the radius of the CircleAvatar
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Set the color of the border
-                        width: 1.0, // Set the width of the border
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        roomAmenities.add('gym');
+                      });
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.grey, // Set the color of the border
+                          width: 1.0, // Set the width of the border
+                        ),
                       ),
+                      child: Image.asset('assets/icons/gym.png',),
                     ),
-                    child: const Icon(Icons.shopping_bag),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
-                  Container(
-                    width: 40, // Adjust the width and height to match the radius of the CircleAvatar
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Set the color of the border
-                        width: 1.0, // Set the width of the border
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        roomAmenities.add('parking');
+                      });
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.grey, // Set the color of the border
+                          width: 1.0, // Set the width of the border
+                        ),
                       ),
+                      child: Image.asset('assets/icons/parking.png',),
                     ),
-                    child: const Icon(Icons.shopping_bag),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
-                  Container(
-                    width: 40, // Adjust the width and height to match the radius of the CircleAvatar
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Set the color of the border
-                        width: 1.0, // Set the width of the border
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        roomAmenities.add('washing machine');
+                      });
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.grey, // Set the color of the border
+                          width: 1.0, // Set the width of the border
+                        ),
                       ),
+                      child: Image.asset('assets/icons/washing.png',),
                     ),
-                    child: const Icon(Icons.shopping_bag),
                   ),
                 ],
               ),
@@ -363,7 +447,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
               Row(
                 children: [
                   Container(
-                    width: 40, // Adjust the width and height to match the radius of the CircleAvatar
+                    width: 40,
                     height: 40,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -511,7 +595,8 @@ class _PropertyScreenState extends State<PropertyScreen> {
                     color: const Color(0xffFF730A),
                     textColor: Colors.white,
                     onPressed: () {
-                      Get.to(const AvailabilityAndPriceScreen());
+                      savePropertyData();
+
                     },
                   ),
                 ),

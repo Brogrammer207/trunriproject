@@ -33,14 +33,16 @@ class _LocationScreenState extends State<LocationScreen> {
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
-        await _firestore
-            .collection('accommodation')
-            .doc(querySnapshot.docs.first.id)
-            .update({
-          'city': cityController.text,
-          'address': addressController.text,
-          'floor': floorController.text,
-        });
+        for (var doc in querySnapshot.docs) {
+          await _firestore
+              .collection('accommodation')
+              .doc(doc.id)
+              .update({
+            'city': cityController.text,
+            'address': addressController.text,
+            'floor': floorController.text,
+          });
+        }
         Get.to(const PropertyScreen());
         showToast('Location saved');
       } else {
