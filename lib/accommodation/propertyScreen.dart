@@ -92,6 +92,8 @@ class _PropertyScreenState extends State<PropertyScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> savePropertyData() async {
+    OverlayEntry loader = NewHelper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
     User? user = _auth.currentUser;
     if (user != null) {
       QuerySnapshot querySnapshot = await _firestore
@@ -119,11 +121,14 @@ class _PropertyScreenState extends State<PropertyScreen> {
           });
         }
         Get.to(const AvailabilityAndPriceScreen());
+        NewHelper.hideLoader(loader);
         showToast('Property saved');
       } else {
+        NewHelper.hideLoader(loader);
         print('No matching document found');
       }
     } else {
+      NewHelper.hideLoader(loader);
       print('No user logged in');
     }
   }

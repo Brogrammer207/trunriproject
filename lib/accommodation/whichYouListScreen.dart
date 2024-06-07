@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../widgets/helper.dart';
 import 'locationScreen.dart';
 
 class WhichYouListScreen extends StatefulWidget {
@@ -18,13 +19,18 @@ class _WhichYouListScreenState extends State<WhichYouListScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> saveData(String text) async {
+    OverlayEntry loader = NewHelper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
     User? user = _auth.currentUser;
     if (user != null) {
       await _firestore.collection('accommodation').add({
         'uid': user.uid,
         'roomType': text,
       });
+      NewHelper.hideLoader(loader);
+      showToast('Selected');
     } else {
+      NewHelper.hideLoader(loader);
       print('No user logged in');
     }
   }

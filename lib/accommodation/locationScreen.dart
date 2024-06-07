@@ -25,6 +25,8 @@ class _LocationScreenState extends State<LocationScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> saveLocationData() async {
+    OverlayEntry loader = NewHelper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
     User? user = _auth.currentUser;
     if (user != null) {
       QuerySnapshot querySnapshot = await _firestore
@@ -44,8 +46,10 @@ class _LocationScreenState extends State<LocationScreen> {
           });
         }
         Get.to(const PropertyScreen());
+        NewHelper.hideLoader(loader);
         showToast('Location saved');
       } else {
+        NewHelper.hideLoader(loader);
         print('No matching document found');
       }
     } else {

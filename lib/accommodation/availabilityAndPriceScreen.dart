@@ -33,6 +33,8 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> savePriceData() async {
+    OverlayEntry loader = NewHelper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
     User? user = _auth.currentUser;
     if (user != null) {
       QuerySnapshot querySnapshot = await _firestore
@@ -60,11 +62,14 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
           });
         }
         Get.to(const AddMediaScreen());
+        NewHelper.hideLoader(loader);
         showToast('Availability and price saved');
       } else {
+        NewHelper.hideLoader(loader);
         print('No matching document found');
       }
     } else {
+      NewHelper.hideLoader(loader);
       print('No user logged in');
     }
   }

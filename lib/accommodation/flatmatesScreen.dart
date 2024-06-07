@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,6 +7,7 @@ import 'package:trunriproject/home/bottom_bar.dart';
 
 import '../widgets/appTheme.dart';
 import '../widgets/commomButton.dart';
+import '../widgets/helper.dart';
 
 class FlatmateScreen extends StatefulWidget {
   const FlatmateScreen({super.key});
@@ -15,6 +18,57 @@ class FlatmateScreen extends StatefulWidget {
 
 class _FlatmateScreenState extends State<FlatmateScreen> {
   RangeValues currentRangeValues = const RangeValues(10, 80);
+  bool male = false;
+  bool female = false;
+  bool nonBinary = false;
+  bool isWorking = false;
+  bool isStudying = false;
+  bool isDontMind = false;
+  RangeValues _currentRangeValues = const RangeValues(0, 100);
+
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<void> saveFlatmatesData() async {
+    OverlayEntry loader = NewHelper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
+    User? user = _auth.currentUser;
+    if (user != null) {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('accommodation')
+          .where('uid', isEqualTo: user.uid)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        for (var doc in querySnapshot.docs) {
+          await _firestore
+              .collection('accommodation')
+              .doc(doc.id)
+              .update({
+            'male': male,
+            'female': female,
+            'nonBinary': nonBinary,
+            'isWorking': isWorking,
+            'isStudying': isStudying,
+            'isDontMind': isDontMind,
+            'currentRangeValues': {
+              'start': _currentRangeValues.start,
+              'end': _currentRangeValues.end,
+            },
+          });
+        }
+        Get.to(const MyBottomNavBar());
+        NewHelper.hideLoader(loader);
+        showToast('Location saved');
+      } else {
+        NewHelper.hideLoader(loader);
+        print('No matching document found');
+      }
+    } else {
+      print('No user logged in');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +88,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.only(left: 15, right: 15),
+          margin: const EdgeInsets.only(left: 15, right: 15),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +97,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 'Who would you prefer to live in the property ?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               const Text(
@@ -52,7 +106,14 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
               ),
               Row(
                 children: [
-                  Checkbox(value: false, onChanged: (value) {}),
+                  Checkbox(
+                    value: male,
+                    onChanged: (value) {
+                      setState(() {
+                        male = value ?? false;
+                      });
+                    },
+                  ),
                   const Text(
                     'Male',
                     style: TextStyle(fontSize: 12),
@@ -61,7 +122,14 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
               ),
               Row(
                 children: [
-                  Checkbox(value: false, onChanged: (value) {}),
+                  Checkbox(
+                    value: female,
+                    onChanged: (value) {
+                      setState(() {
+                        female = value ?? false;
+                      });
+                    },
+                  ),
                   const Text(
                     'Female',
                     style: TextStyle(fontSize: 12),
@@ -70,14 +138,21 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
               ),
               Row(
                 children: [
-                  Checkbox(value: false, onChanged: (value) {}),
+                  Checkbox(
+                    value: nonBinary,
+                    onChanged: (value) {
+                      setState(() {
+                        nonBinary = value ?? false;
+                      });
+                    },
+                  ),
                   const Text(
                     'Non-binary',
                     style: TextStyle(fontSize: 12),
                   )
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               const Text(
@@ -86,22 +161,31 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
               ),
               Align(
                 alignment: Alignment.bottomRight,
-                child: const Text(
-                  '0 to 15 years old',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.black),
+                child: Text(
+                  '${_currentRangeValues.start.round()} to ${_currentRangeValues.end.round()} years old',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black,
+                  ),
                 ),
               ),
               RangeSlider(
-                values: currentRangeValues,
-                max: 99,
-                divisions: 99,
+                values: _currentRangeValues,
+                min: 0,
+                max: 100,
+                divisions: 100,
                 labels: RangeLabels(
-                  currentRangeValues.start.round().toString(),
-                  currentRangeValues.end.round().toString(),
+                  _currentRangeValues.start.round().toString(),
+                  _currentRangeValues.end.round().toString(),
                 ),
-                onChanged: (RangeValues values) {},
+                onChanged: (RangeValues values) {
+                  setState(() {
+                    _currentRangeValues = values;
+                  });
+                },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               const Text(
@@ -110,15 +194,48 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [Radio(value: true, groupValue: 'yes', onChanged: (value) {}), const Text('Working')],
+                children: [
+                  Radio<bool>(
+                    value: true,
+                    groupValue: isWorking,
+                    onChanged: (value) {
+                      setState(() {
+                        isWorking = value!;
+                      });
+                    },
+                  ),
+                  const Text('Working')
+                ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [Radio(value: true, groupValue: 'yes', onChanged: (value) {}), const Text('Studying')],
+                children: [
+                  Radio<bool>(
+                    value: true,
+                    groupValue: isStudying,
+                    onChanged: (value) {
+                      setState(() {
+                        isStudying = value!;
+                      });
+                    },
+                  ),
+                  const Text('Studying')
+                ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [Radio(value: true, groupValue: 'yes', onChanged: (value) {}), const Text('O dont mind')],
+                children: [
+                  Radio<bool>(
+                    value: true,
+                    groupValue: isDontMind,
+                    onChanged: (value) {
+                      setState(() {
+                        isDontMind = value!;
+                      });
+                    },
+                  ),
+                  const Text('O dont mind')
+                ],
               ),
             ],
           ),
@@ -136,7 +253,8 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                     color: const Color(0xffFF730A),
                     textColor: Colors.white,
                     onPressed: () {
-                      Get.to(const MyBottomNavBar());
+                      saveFlatmatesData();
+
                     },
                   ),
                 ),
