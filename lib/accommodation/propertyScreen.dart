@@ -27,6 +27,8 @@ class _PropertyScreenState extends State<PropertyScreen> {
   int livingMale = 0;
   int livingNonBinary = 0;
   List<String> roomAmenities = [];
+  List<String> propertyAmenities = [];
+  List<String> homeRules = [];
 
   bool isLiftAvailable = false;
   String bedroomFacing = '';
@@ -118,6 +120,8 @@ class _PropertyScreenState extends State<PropertyScreen> {
             'bedroomFacing': bedroomFacing,
             'isBedInRoom': isBedInRoom,
             'roomAmenities': roomAmenities,
+            'propertyAmenities': propertyAmenities,
+            'homeRules': homeRules,
           });
         }
         Get.to(const AvailabilityAndPriceScreen());
@@ -323,120 +327,37 @@ class _PropertyScreenState extends State<PropertyScreen> {
               const SizedBox(
                 height: 10,
               ),
-              Row(
+              Wrap(
                 children: [
-                  GestureDetector(
-                    onTap: (){
-                      setState(() {
-                        roomAmenities.add('wifi');
-                      });
-                    },
-                    child: Container(
-                      width: 40, // Adjust the width and height to match the radius of the CircleAvatar
-                      height: 40,
-                      padding: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.grey, // Set the color of the border
-                          width: 1.0, // Set the width of the border
+                  for (String amenity in [
+                    'Balcony',
+                    'Window',
+                    'Central heating',
+                    'Air conditioning',
+                    'Desk',
+                    'TV'
+                  ])
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (roomAmenities.contains(amenity)) {
+                            roomAmenities.remove(amenity);
+                          } else {
+                            roomAmenities.add(amenity);
+                          }
+                        });
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: roomAmenities.contains(amenity) ? Color(0xffFF730A) :
+                          Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(15),
                         ),
+                        child: Text(amenity),
                       ),
-                      child: Image.asset('assets/icons/wifi.png',),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  GestureDetector(
-                    onTap: (){
-                      setState(() {
-                        roomAmenities.add('air conditioner');
-                      });
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      padding: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.grey, // Set the color of the border
-                          width: 1.0, // Set the width of the border
-                        ),
-                      ),
-                      child: Image.asset('assets/icons/air.png',),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  GestureDetector(
-                    onTap: (){
-                      setState(() {
-                        roomAmenities.add('gym');
-                      });
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      padding: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.grey, // Set the color of the border
-                          width: 1.0, // Set the width of the border
-                        ),
-                      ),
-                      child: Image.asset('assets/icons/gym.png',),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  GestureDetector(
-                    onTap: (){
-                      setState(() {
-                        roomAmenities.add('parking');
-                      });
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      padding: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.grey, // Set the color of the border
-                          width: 1.0, // Set the width of the border
-                        ),
-                      ),
-                      child: Image.asset('assets/icons/parking.png',),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  GestureDetector(
-                    onTap: (){
-                      setState(() {
-                        roomAmenities.add('washing machine');
-                      });
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      padding: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.grey, // Set the color of the border
-                          width: 1.0, // Set the width of the border
-                        ),
-                      ),
-                      child: Image.asset('assets/icons/washing.png',),
-                    ),
-                  ),
                 ],
               ),
               const SizedBox(
@@ -449,80 +370,37 @@ class _PropertyScreenState extends State<PropertyScreen> {
               const SizedBox(
                 height: 10,
               ),
-              Row(
+              Wrap(
                 children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Set the color of the border
-                        width: 1.0, // Set the width of the border
+                  for (String amenity in [
+                    'Gym',
+                    'Garden',
+                    'Security',
+                    'Laundry facilities',
+                    'Playground',
+                    'Swimming pool'
+                  ])
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (propertyAmenities.contains(amenity)) {
+                            propertyAmenities.remove(amenity);
+                          } else {
+                            propertyAmenities.add(amenity);
+                          }
+                        });
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: propertyAmenities.contains(amenity) ? Color(0xffFF730A) :
+                          Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Text(amenity),
                       ),
                     ),
-                    child: const Icon(Icons.shopping_bag),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    width: 40, // Adjust the width and height to match the radius of the CircleAvatar
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Set the color of the border
-                        width: 1.0, // Set the width of the border
-                      ),
-                    ),
-                    child: const Icon(Icons.shopping_bag),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    width: 40, // Adjust the width and height to match the radius of the CircleAvatar
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Set the color of the border
-                        width: 1.0, // Set the width of the border
-                      ),
-                    ),
-                    child: const Icon(Icons.shopping_bag),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    width: 40, // Adjust the width and height to match the radius of the CircleAvatar
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Set the color of the border
-                        width: 1.0, // Set the width of the border
-                      ),
-                    ),
-                    child: const Icon(Icons.shopping_bag),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    width: 40, // Adjust the width and height to match the radius of the CircleAvatar
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Set the color of the border
-                        width: 1.0, // Set the width of the border
-                      ),
-                    ),
-                    child: const Icon(Icons.shopping_bag),
-                  ),
                 ],
               ),
               const SizedBox(
@@ -535,50 +413,35 @@ class _PropertyScreenState extends State<PropertyScreen> {
               const SizedBox(
                 height: 10,
               ),
-              Row(
+              Wrap(
                 children: [
-                  Container(
-                    width: 40, // Adjust the width and height to match the radius of the CircleAvatar
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Set the color of the border
-                        width: 1.0, // Set the width of the border
+                  for (String amenity in [
+                    'No smoking',
+                    'Night out',
+                    'no drinking',
+
+                  ])
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (homeRules.contains(amenity)) {
+                            homeRules.remove(amenity);
+                          } else {
+                            homeRules.add(amenity);
+                          }
+                        });
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: homeRules.contains(amenity) ? Color(0xffFF730A) :
+                          Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Text(amenity),
                       ),
                     ),
-                    child: const Icon(Icons.shopping_bag),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    width: 40, // Adjust the width and height to match the radius of the CircleAvatar
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Set the color of the border
-                        width: 1.0, // Set the width of the border
-                      ),
-                    ),
-                    child: const Icon(Icons.shopping_bag),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    width: 40, // Adjust the width and height to match the radius of the CircleAvatar
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey, // Set the color of the border
-                        width: 1.0, // Set the width of the border
-                      ),
-                    ),
-                    child: const Icon(Icons.shopping_bag),
-                  ),
                 ],
               ),
               const SizedBox(
