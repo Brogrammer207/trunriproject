@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
 import '../widgets/helper.dart';
 import 'locationScreen.dart';
 
@@ -17,15 +20,21 @@ class _WhichYouListScreenState extends State<WhichYouListScreen> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
+  final Uuid uuid = Uuid();
+  String formID = '';
   Future<void> saveData(String text) async {
+
     OverlayEntry loader = NewHelper.overlayLoader(context);
     Overlay.of(context).insert(loader);
     User? user = _auth.currentUser;
+
     if (user != null) {
+       formID = uuid.v4();
+       log(formID.toString());
       await _firestore.collection('accommodation').add({
         'uid': user.uid,
         'roomType': text,
+        'formID' : formID
       });
       NewHelper.hideLoader(loader);
       showToast('Selected');
@@ -60,7 +69,7 @@ class _WhichYouListScreenState extends State<WhichYouListScreen> {
               GestureDetector(
                 onTap: () async {
                   await saveData('A room');
-                  Get.to(const LocationScreen());
+                  Get.to(LocationScreen(dateTime: formID,));
                 },
                 child: Container(
                   height: 80,
@@ -96,7 +105,7 @@ class _WhichYouListScreenState extends State<WhichYouListScreen> {
               GestureDetector(
                 onTap: () async {
                   await saveData('An apartment');
-                  Get.to(const LocationScreen());
+                  Get.to(LocationScreen());
                 },
                 child: Container(
                   height: 80,

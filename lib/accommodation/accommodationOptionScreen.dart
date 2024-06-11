@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:trunriproject/accommodation/whichBestDescribeYouScreen.dart';
+import 'package:trunriproject/accommodation/whichYouListScreen.dart';
+
+import 'lookingForAPlaceScreen.dart';
 
 class Accommodationoptionscreen extends StatefulWidget {
   const Accommodationoptionscreen({super.key});
@@ -34,7 +36,7 @@ class _AccommodationoptionscreenState extends State<Accommodationoptionscreen> {
               const Spacer(),
               GestureDetector(
                 onTap: (){
-                  Get.to(const WhichBestDescribeYouScreen());
+                  Get.to(const WhichYouListScreen());
                 },
                 child: Container(
                   padding: const EdgeInsets.all(10),
@@ -61,25 +63,30 @@ class _AccommodationoptionscreenState extends State<Accommodationoptionscreen> {
               const SizedBox(
                 height: 10,
               ),
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey, width: 2), borderRadius: BorderRadius.circular(11)),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      'assets/images/house.png',
-                      height: 70,
-                      width: 70,
-                    ),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    const Text(
-                      'I am looking for a place to live',
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15),
-                    ),
-                  ],
+              GestureDetector(
+                onTap: (){
+                  Get.to(const LookingForAPlaceScreen());
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey, width: 2), borderRadius: BorderRadius.circular(11)),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/images/house.png',
+                        height: 70,
+                        width: 70,
+                      ),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      const Text(
+                        'I am looking for a place to live',
+                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 15),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(

@@ -4,13 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart'; // Add this import for date formatting
+import 'package:uuid/uuid.dart';
 
 import '../widgets/commomButton.dart';
 import '../widgets/helper.dart';
 import 'addMediaScreen.dart';
 
 class AvailabilityAndPriceScreen extends StatefulWidget {
-  const AvailabilityAndPriceScreen({super.key});
+  String ? dateTime;
+  AvailabilityAndPriceScreen({super.key,this.dateTime});
+
 
   @override
   State<AvailabilityAndPriceScreen> createState() => _AvailabilityAndPriceScreenState();
@@ -39,7 +42,7 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
     if (user != null) {
       QuerySnapshot querySnapshot = await _firestore
           .collection('accommodation')
-          .where('uid', isEqualTo: user.uid)
+          .where('formID', isEqualTo: widget.dateTime)
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
@@ -61,7 +64,7 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
 
           });
         }
-        Get.to(const AddMediaScreen());
+        Get.to(AddMediaScreen(dateTime: widget.dateTime,));
         NewHelper.hideLoader(loader);
         showToast('Availability and price saved');
       } else {
@@ -293,6 +296,7 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
               TextFormField(
                 decoration: const InputDecoration(
                   suffix: Text('GBP/month'),
+                  prefix: Text(r'$')
                 ),
               ),
               Row(

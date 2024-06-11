@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
 
 import '../widgets/commomButton.dart';
 import '../widgets/helper.dart';
@@ -12,7 +13,9 @@ import 'availabilityAndPriceScreen.dart';
 
 
 class PropertyScreen extends StatefulWidget {
-  const PropertyScreen({super.key});
+  String ? dateTime;
+  PropertyScreen({super.key,this.dateTime});
+
 
   @override
   State<PropertyScreen> createState() => _PropertyScreenState();
@@ -100,7 +103,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
     if (user != null) {
       QuerySnapshot querySnapshot = await _firestore
           .collection('accommodation')
-          .where('uid', isEqualTo: user.uid)
+          .where('formID', isEqualTo: widget.dateTime)
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
@@ -124,7 +127,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
             'homeRules': homeRules,
           });
         }
-        Get.to(const AvailabilityAndPriceScreen());
+        Get.to(AvailabilityAndPriceScreen(dateTime: widget.dateTime,));
         NewHelper.hideLoader(loader);
         showToast('Property saved');
       } else {
@@ -330,12 +333,11 @@ class _PropertyScreenState extends State<PropertyScreen> {
               Wrap(
                 children: [
                   for (String amenity in [
-                    'Balcony',
-                    'Window',
-                    'Central heating',
+                    'Wardrobe',
                     'Air conditioning',
-                    'Desk',
-                    'TV'
+                    'heating controls',
+                    'WI-FI',
+
                   ])
                     GestureDetector(
                       onTap: () {

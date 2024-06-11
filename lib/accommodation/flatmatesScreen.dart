@@ -4,13 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/home/bottom_bar.dart';
+import 'package:uuid/uuid.dart';
 
 import '../widgets/appTheme.dart';
 import '../widgets/commomButton.dart';
 import '../widgets/helper.dart';
 
 class FlatmateScreen extends StatefulWidget {
-  const FlatmateScreen({super.key});
+  String ? dateTime;
+  FlatmateScreen({super.key,this.dateTime});
+
 
   @override
   State<FlatmateScreen> createState() => _FlatmateScreenState();
@@ -37,7 +40,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
     if (user != null) {
       QuerySnapshot querySnapshot = await _firestore
           .collection('accommodation')
-          .where('uid', isEqualTo: user.uid)
+          .where('formID', isEqualTo: widget.dateTime)
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
@@ -234,7 +237,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                       });
                     },
                   ),
-                  const Text('O dont mind')
+                  const Text('I dont mind')
                 ],
               ),
             ],

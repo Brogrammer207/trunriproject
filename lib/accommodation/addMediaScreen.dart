@@ -7,13 +7,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as path;
+import 'package:uuid/uuid.dart';
 import '../widgets/commomButton.dart';
 import '../widgets/helper.dart';
 import '../widgets/imageWidget.dart';
 import 'flatmatesScreen.dart';
 
 class AddMediaScreen extends StatefulWidget {
-  const AddMediaScreen({super.key});
+  String ? dateTime;
+  AddMediaScreen({super.key,this.dateTime});
+
 
   @override
   State<AddMediaScreen> createState() => _AddMediaScreenState();
@@ -43,7 +46,7 @@ class _AddMediaScreenState extends State<AddMediaScreen> {
       }
 
       QuerySnapshot querySnapshot =
-          await _firestore.collection('accommodation').where('uid', isEqualTo: user.uid).get();
+          await _firestore.collection('accommodation').where('formID', isEqualTo: widget.dateTime).get();
 
       if (querySnapshot.docs.isNotEmpty) {
         for (var doc in querySnapshot.docs) {
@@ -53,7 +56,7 @@ class _AddMediaScreenState extends State<AddMediaScreen> {
             'Add a description': descriptionController.text.trim(),
           });
         }
-        Get.to(const FlatmateScreen());
+        Get.to(FlatmateScreen(dateTime: widget.dateTime,));
         NewHelper.hideLoader(loader);
         showToast('Media saved');
       } else {

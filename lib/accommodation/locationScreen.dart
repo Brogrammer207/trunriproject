@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,12 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/accommodation/propertyScreen.dart';
 import 'package:trunriproject/widgets/helper.dart';
+import 'package:uuid/uuid.dart';
 
 import '../widgets/appTheme.dart';
 import '../widgets/commomButton.dart';
 
 class LocationScreen extends StatefulWidget {
-  const LocationScreen({super.key});
+  String ? dateTime;
+  LocationScreen({super.key,this.dateTime});
 
   @override
   State<LocationScreen> createState() => _LocationScreenState();
@@ -24,14 +28,18 @@ class _LocationScreenState extends State<LocationScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  final List<String> cityList = ['Sydney','Albury','Armidale','Bathurst','Blue Mountains','Broken Hill'];
+  String? selectedCity;
+
   Future<void> saveLocationData() async {
     OverlayEntry loader = NewHelper.overlayLoader(context);
     Overlay.of(context).insert(loader);
     User? user = _auth.currentUser;
+    log(widget.dateTime.toString());
     if (user != null) {
       QuerySnapshot querySnapshot = await _firestore
           .collection('accommodation')
-          .where('uid', isEqualTo: user.uid)
+          .where('formID', isEqualTo: widget.dateTime)
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
@@ -40,12 +48,12 @@ class _LocationScreenState extends State<LocationScreen> {
               .collection('accommodation')
               .doc(doc.id)
               .update({
-            'city': cityController.text,
+            'city': selectedCity,
             'address': addressController.text,
             'floor': floorController.text,
           });
         }
-        Get.to(const PropertyScreen());
+        Get.to(PropertyScreen(dateTime: widget.dateTime,));
         NewHelper.hideLoader(loader);
         showToast('Location saved');
       } else {
@@ -88,16 +96,30 @@ class _LocationScreenState extends State<LocationScreen> {
               const SizedBox(
                 height: 10,
               ),
-              TextFormField(
-                controller: cityController,
+              DropdownButtonFormField<String>(
+                value: selectedCity,
+                items: cityList.map((String city) {
+                  return DropdownMenuItem<String>(
+                    value: city,
+                    child: Text(city),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    selectedCity = newValue;
+                  });
+                },
                 decoration: const InputDecoration(
-                    hintText: 'Eg. : Delhi,jaipur', hintStyle: TextStyle(color: Colors.grey, fontSize: 14)),
+                  hintText: 'Select City',
+                  hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+
+                ),
               ),
               const SizedBox(
                 height: 30,
               ),
               const Text(
-                'Address',
+                'Full Address',
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
               ),
               const SizedBox(
