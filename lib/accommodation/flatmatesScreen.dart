@@ -4,16 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/home/bottom_bar.dart';
-import 'package:uuid/uuid.dart';
 
-import '../widgets/appTheme.dart';
 import '../widgets/commomButton.dart';
 import '../widgets/helper.dart';
 
 class FlatmateScreen extends StatefulWidget {
-  String ? dateTime;
-  FlatmateScreen({super.key,this.dateTime});
-
+  String? dateTime;
+  FlatmateScreen({super.key, this.dateTime});
 
   @override
   State<FlatmateScreen> createState() => _FlatmateScreenState();
@@ -29,11 +26,28 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
   bool isDontMind = false;
   RangeValues _currentRangeValues = const RangeValues(0, 100);
 
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  bool showGenderError = false;
+  bool showSituationError = false;
+
+  bool isFormValid() {
+    bool genderSelected = male || female || nonBinary;
+    bool situationSelected = isWorking || isStudying || isDontMind;
+    return genderSelected && situationSelected;
+  }
+
   Future<void> saveFlatmatesData() async {
+    if (!isFormValid()) {
+      setState(() {
+        showGenderError = !(male || female || nonBinary);
+        showSituationError = !(isWorking || isStudying || isDontMind);
+      });
+      showToast('Please fill in all required fields');
+      return;
+    }
+
     OverlayEntry loader = NewHelper.overlayLoader(context);
     Overlay.of(context).insert(loader);
     User? user = _auth.currentUser;
@@ -45,10 +59,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
 
       if (querySnapshot.docs.isNotEmpty) {
         for (var doc in querySnapshot.docs) {
-          await _firestore
-              .collection('accommodation')
-              .doc(doc.id)
-              .update({
+          await _firestore.collection('accommodation').doc(doc.id).update({
             'male': male,
             'female': female,
             'nonBinary': nonBinary,
@@ -63,7 +74,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
         }
         Get.to(const MyBottomNavBar());
         NewHelper.hideLoader(loader);
-        showToast('Location saved');
+        showToast('Flatmate preferences saved');
       } else {
         NewHelper.hideLoader(loader);
         print('No matching document found');
@@ -72,6 +83,17 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
       print('No user logged in');
     }
   }
+
+  void showToast(String message) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: Text(message),
+        action: SnackBarAction(label: 'OK', onPressed: scaffold.hideCurrentSnackBar),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,10 +106,11 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
         ),
         centerTitle: true,
         leading: GestureDetector(
-            onTap: () {
-              Get.back();
-            },
-            child: const Icon(Icons.arrow_back_ios)),
+          onTap: () {
+            Get.back();
+          },
+          child: const Icon(Icons.arrow_back_ios),
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -97,12 +120,10 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Who would you prefer to live in the property ?',
+                'Who would you prefer to live in the property?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               const Text(
                 'Choose at least one option.',
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.black),
@@ -114,13 +135,14 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                     onChanged: (value) {
                       setState(() {
                         male = value ?? false;
+                        showGenderError = false;
                       });
                     },
                   ),
                   const Text(
                     'Male',
                     style: TextStyle(fontSize: 12),
-                  )
+                  ),
                 ],
               ),
               Row(
@@ -130,13 +152,14 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                     onChanged: (value) {
                       setState(() {
                         female = value ?? false;
+                        showGenderError = false;
                       });
                     },
                   ),
                   const Text(
                     'Female',
                     style: TextStyle(fontSize: 12),
-                  )
+                  ),
                 ],
               ),
               Row(
@@ -146,20 +169,24 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                     onChanged: (value) {
                       setState(() {
                         nonBinary = value ?? false;
+                        showGenderError = false;
                       });
                     },
                   ),
                   const Text(
                     'Non-binary',
                     style: TextStyle(fontSize: 12),
-                  )
+                  ),
                 ],
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              if (showGenderError)
+                const Text(
+                  'Please select at least one gender',
+                  style: TextStyle(color: Colors.red),
+                ),
+              const SizedBox(height: 10),
               const Text(
-                'What the preferred age group?',
+                'What is the preferred age group?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
               Align(
@@ -188,9 +215,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                   });
                 },
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               const Text(
                 'And their current situation?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
@@ -204,10 +229,13 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                     onChanged: (value) {
                       setState(() {
                         isWorking = value!;
+                        isStudying = false;
+                        isDontMind = false;
+                        showSituationError = false;
                       });
                     },
                   ),
-                  const Text('Working')
+                  const Text('Working'),
                 ],
               ),
               Row(
@@ -219,10 +247,13 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                     onChanged: (value) {
                       setState(() {
                         isStudying = value!;
+                        isWorking = false;
+                        isDontMind = false;
+                        showSituationError = false;
                       });
                     },
                   ),
-                  const Text('Studying')
+                  const Text('Studying'),
                 ],
               ),
               Row(
@@ -234,12 +265,20 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                     onChanged: (value) {
                       setState(() {
                         isDontMind = value!;
+                        isWorking = false;
+                        isStudying = false;
+                        showSituationError = false;
                       });
                     },
                   ),
-                  const Text('I dont mind')
+                  const Text('I don\'t mind'),
                 ],
               ),
+              if (showSituationError)
+                const Text(
+                  'Please select at least one situation',
+                  style: TextStyle(color: Colors.red),
+                ),
             ],
           ),
         ),
@@ -247,22 +286,30 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
       bottomNavigationBar: SizedBox(
         width: double.infinity,
         child: Padding(
-            padding: const EdgeInsets.all(15.0).copyWith(bottom: 10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: CommonButton(
-                    text: 'Continue',
-                    color: const Color(0xffFF730A),
-                    textColor: Colors.white,
-                    onPressed: () {
+          padding: const EdgeInsets.all(15.0).copyWith(bottom: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: CommonButton(
+                  text: 'Continue',
+                  color: const Color(0xffFF730A),
+                  textColor: Colors.white,
+                  onPressed: () {
+                    if (isFormValid()) {
                       saveFlatmatesData();
-
-                    },
-                  ),
+                    } else {
+                      setState(() {
+                        showGenderError = !(male || female || nonBinary);
+                        showSituationError = !(isWorking || isStudying || isDontMind);
+                      });
+                      showToast('Please fill in all required fields');
+                    }
+                  },
                 ),
-              ],
-            )),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

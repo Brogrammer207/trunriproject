@@ -7,16 +7,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as path;
-import 'package:uuid/uuid.dart';
+
 import '../widgets/commomButton.dart';
 import '../widgets/helper.dart';
 import '../widgets/imageWidget.dart';
 import 'flatmatesScreen.dart';
 
 class AddMediaScreen extends StatefulWidget {
-  String ? dateTime;
-  AddMediaScreen({super.key,this.dateTime});
-
+  String? dateTime;
+  AddMediaScreen({super.key, this.dateTime});
 
   @override
   State<AddMediaScreen> createState() => _AddMediaScreenState();
@@ -30,7 +29,19 @@ class _AddMediaScreenState extends State<AddMediaScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+
+  bool isFormValid() {
+    return selectedFiles.length >= 3 &&
+        titleController.text.trim().isNotEmpty &&
+        descriptionController.text.trim().isNotEmpty;
+  }
+
   Future<void> saveMediaData() async {
+    if (!isFormValid()) {
+      showToast('Please fill in all required fields');
+      return;
+    }
+
     OverlayEntry loader = NewHelper.overlayLoader(context);
     Overlay.of(context).insert(loader);
     User? user = _auth.currentUser;
@@ -46,7 +57,7 @@ class _AddMediaScreenState extends State<AddMediaScreen> {
       }
 
       QuerySnapshot querySnapshot =
-          await _firestore.collection('accommodation').where('formID', isEqualTo: widget.dateTime).get();
+      await _firestore.collection('accommodation').where('formID', isEqualTo: widget.dateTime).get();
 
       if (querySnapshot.docs.isNotEmpty) {
         for (var doc in querySnapshot.docs) {
@@ -56,7 +67,7 @@ class _AddMediaScreenState extends State<AddMediaScreen> {
             'Add a description': descriptionController.text.trim(),
           });
         }
-        Get.to(FlatmateScreen(dateTime: widget.dateTime,));
+        Get.to(FlatmateScreen(dateTime: widget.dateTime));
         NewHelper.hideLoader(loader);
         showToast('Media saved');
       } else {
@@ -67,6 +78,16 @@ class _AddMediaScreenState extends State<AddMediaScreen> {
       NewHelper.hideLoader(loader);
       print('No user logged in');
     }
+  }
+
+  void showToast(String message) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: Text(message),
+        action: SnackBarAction(label: 'OK', onPressed: scaffold.hideCurrentSnackBar),
+      ),
+    );
   }
 
   @override
@@ -110,9 +131,12 @@ class _AddMediaScreenState extends State<AddMediaScreen> {
                   },
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              if (selectedFiles.length < 3)
+                const Text(
+                  'Please add at least 3 photos',
+                  style: TextStyle(color: Colors.red),
+                ),
+              const SizedBox(height: 20),
               const Text(
                 'Give your listing a title',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
@@ -120,12 +144,16 @@ class _AddMediaScreenState extends State<AddMediaScreen> {
               TextFormField(
                 controller: titleController,
                 decoration: const InputDecoration(
-                    hintText: 'No deposit room in Tooley Street',
-                    hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w300)),
+                  hintText: 'No deposit room in Tooley Street',
+                  hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
+                ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              if (titleController.text.trim().isEmpty)
+                const Text(
+                  'Please enter a title',
+                  style: TextStyle(color: Colors.red),
+                ),
+              const SizedBox(height: 20),
               const Text(
                 'Add a description',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
@@ -133,9 +161,15 @@ class _AddMediaScreenState extends State<AddMediaScreen> {
               TextFormField(
                 controller: descriptionController,
                 decoration: const InputDecoration(
-                    hintText: 'No deposit room in Tooley Street',
-                    hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w300)),
+                  hintText: 'No deposit room in Tooley Street',
+                  hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
+                ),
               ),
+              if (descriptionController.text.trim().isEmpty)
+                const Text(
+                  'Please enter a description',
+                  style: TextStyle(color: Colors.red),
+                ),
             ],
           ),
         ),
@@ -143,21 +177,27 @@ class _AddMediaScreenState extends State<AddMediaScreen> {
       bottomNavigationBar: SizedBox(
         width: double.infinity,
         child: Padding(
-            padding: const EdgeInsets.all(15.0).copyWith(bottom: 10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: CommonButton(
-                    text: 'Continue',
-                    color: const Color(0xffFF730A),
-                    textColor: Colors.white,
-                    onPressed: () {
+          padding: const EdgeInsets.all(15.0).copyWith(bottom: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: CommonButton(
+                  text: 'Continue',
+                  color: const Color(0xffFF730A),
+                  textColor: Colors.white,
+                  onPressed: () {
+                    if (isFormValid()) {
                       saveMediaData();
-                    },
-                  ),
+                    } else {
+                      showToast('Please fill in all required fields');
+                      setState(() {});
+                    }
+                  },
                 ),
-              ],
-            )),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

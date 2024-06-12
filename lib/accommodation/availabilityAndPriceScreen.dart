@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart'; // Add this import for date formatting
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../widgets/commomButton.dart';
@@ -11,9 +11,8 @@ import '../widgets/helper.dart';
 import 'addMediaScreen.dart';
 
 class AvailabilityAndPriceScreen extends StatefulWidget {
-  String ? dateTime;
-  AvailabilityAndPriceScreen({super.key,this.dateTime});
-
+  String? dateTime;
+  AvailabilityAndPriceScreen({super.key, this.dateTime});
 
   @override
   State<AvailabilityAndPriceScreen> createState() => _AvailabilityAndPriceScreenState();
@@ -31,7 +30,6 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
   bool cityHallRegistrationSupport = false;
   bool maintenanceService = false;
 
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -47,10 +45,7 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
 
       if (querySnapshot.docs.isNotEmpty) {
         for (var doc in querySnapshot.docs) {
-          await _firestore
-              .collection('accommodation')
-              .doc(doc.id)
-              .update({
+          await _firestore.collection('accommodation').doc(doc.id).update({
             'selectedAvailabilityDate': selectedAvailabilityDate,
             'selectedNoDate': selectedNoDate,
             'selectedMinStay': selectedMinStay,
@@ -61,10 +56,9 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
             'cleaningService': cleaningService,
             'cityHallRegistrationSupport': cityHallRegistrationSupport,
             'maintenanceService': maintenanceService,
-
           });
         }
-        Get.to(AddMediaScreen(dateTime: widget.dateTime,));
+        Get.to(AddMediaScreen(dateTime: widget.dateTime));
         NewHelper.hideLoader(loader);
         showToast('Availability and price saved');
       } else {
@@ -77,7 +71,6 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
     }
   }
 
-  // Method to show date picker and update selected date
   Future<void> _selectDate(BuildContext context, bool isAvailabilityDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -104,8 +97,26 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
   List<String> _generateMonths(int count) {
     return List<String>.generate(count, (int index) => '${index + 1} Month${index + 1 > 1 ? 's' : ''}');
   }
+
   List<String> _generateYears(int count) {
     return List<String>.generate(count, (int index) => '${index + 1} Year${index + 1 > 1 ? 's' : ''}');
+  }
+
+  bool isFormComplete() {
+    if (selectedAvailabilityDate == null || selectedNoDate == null || selectedMinStay.isEmpty || selectedMaxStay.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
+  void showToast(String message) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: Text(message),
+        action: SnackBarAction(label: 'OK', onPressed: scaffold.hideCurrentSnackBar),
+      ),
+    );
   }
 
   @override
@@ -174,6 +185,11 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
                   ),
                 ],
               ),
+              if (selectedAvailabilityDate == null || selectedNoDate == null)
+                const Text(
+                  'Please select availability dates',
+                  style: TextStyle(color: Colors.red),
+                ),
               const SizedBox(height: 20),
               Row(
                 children: [
@@ -295,9 +311,15 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
               ),
               TextFormField(
                 decoration: const InputDecoration(
-                  suffix: Text('GBP/month'),
-                  prefix: Text(r'$')
+                    suffix: Text('GBP/month'),
+                    prefix: Text(r'$')
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter monthly rent';
+                  }
+                  return null;
+                },
               ),
               Row(
                 children: [
@@ -338,6 +360,12 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
               ),
               TextFormField(
                 decoration: const InputDecoration(),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter deposit amount';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 20),
               const Text(
@@ -424,8 +452,11 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
                   color: const Color(0xffFF730A),
                   textColor: Colors.white,
                   onPressed: () {
-                    savePriceData();
-
+                    if (isFormComplete()) {
+                      savePriceData();
+                    } else {
+                      showToast('Please fill in all required fields');
+                    }
                   },
                 ),
               ),

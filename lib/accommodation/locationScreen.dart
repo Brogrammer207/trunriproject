@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/accommodation/propertyScreen.dart';
 import 'package:trunriproject/widgets/helper.dart';
@@ -30,6 +31,7 @@ class _LocationScreenState extends State<LocationScreen> {
 
   final List<String> cityList = ['Sydney','Albury','Armidale','Bathurst','Blue Mountains','Broken Hill'];
   String? selectedCity;
+  final formKey = GlobalKey<FormState>();
 
   Future<void> saveLocationData() async {
     OverlayEntry loader = NewHelper.overlayLoader(context);
@@ -85,70 +87,87 @@ class _LocationScreenState extends State<LocationScreen> {
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.only(left: 20, right: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'City',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              DropdownButtonFormField<String>(
-                value: selectedCity,
-                items: cityList.map((String city) {
-                  return DropdownMenuItem<String>(
-                    value: city,
-                    child: Text(city),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    selectedCity = newValue;
-                  });
-                },
-                decoration: const InputDecoration(
-                  hintText: 'Select City',
-                  hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
-
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'City',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
                 ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              const Text(
-                'Full Address',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              TextFormField(
-                controller: addressController,
-                decoration: const InputDecoration(
-                    hintText: 'Eg. : Laxmi nagar', hintStyle: TextStyle(color: Colors.grey, fontSize: 14)),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              const Text(
-                'Stair,floor and door',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              TextFormField(
-                controller: floorController,
-                decoration: const InputDecoration(
-                    hintText: 'Eg. : floor no 2', hintStyle: TextStyle(color: Colors.grey, fontSize: 14)),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-            ],
+                const SizedBox(
+                  height: 10,
+                ),
+                DropdownButtonFormField<String>(
+                  value: selectedCity,
+                  items: cityList.map((String city) {
+                    return DropdownMenuItem<String>(
+                      value: city,
+                      child: Text(city),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      selectedCity = newValue;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    hintText: 'Select City',
+                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+
+                  ),
+                  validator: (value) {
+                    if (value == null) {
+                      return 'City is required';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                const Text(
+                  'Full Address',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: addressController,
+                  decoration: const InputDecoration(
+                      hintText: 'Eg. : Laxmi nagar',
+                      hintStyle: TextStyle(color: Colors.grey, fontSize: 14)),
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: 'Full Address is required'),
+                    ]).call
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                const Text(
+                  'Stair,floor and door',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: floorController,
+                  decoration: const InputDecoration(
+                      hintText: 'Eg. : floor no 2',
+                      hintStyle: TextStyle(color: Colors.grey, fontSize: 14)),
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: 'Stair,floor and door is required'),
+                    ]).call
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -164,7 +183,10 @@ class _LocationScreenState extends State<LocationScreen> {
                     color: const Color(0xffFF730A),
                     textColor: Colors.white,
                     onPressed: () {
-                      saveLocationData();
+                      if(formKey.currentState!.validate()){
+                        saveLocationData();
+                      }
+
 
                     },
                   ),
