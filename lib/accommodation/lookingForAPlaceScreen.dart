@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../home/search_field.dart';
+import 'filterOptionScreen.dart';
 
 class LookingForAPlaceScreen extends StatefulWidget {
   const LookingForAPlaceScreen({super.key});
@@ -13,7 +14,17 @@ class LookingForAPlaceScreen extends StatefulWidget {
 }
 
 class _LookingForAPlaceScreenState extends State<LookingForAPlaceScreen> {
-  final List<String> cityList = ['Sydney', 'Albury', 'Armidale', 'Bathurst', 'Blue Mountains', 'Broken Hill'];
+  final List<String> cityList = [
+    'Sydney', 'Albury', 'Armidale', 'Bathurst', 'Blue Mountains', 'Broken Hill',
+    'Melbourne', 'Canberra', 'Brisbane', 'Adelaide', 'Perth', 'Hobart', 'Darwin',
+    'Gold Coast', 'Newcastle', 'Wollongong', 'Geelong', 'Cairns', 'Townsville',
+    'Toowoomba', 'Ballarat', 'Bendigo', 'Launceston', 'Mackay', 'Rockhampton',
+    'Bunbury', 'Bundaberg', 'Hervey Bay', 'Mildura', 'Wagga Wagga', 'Shepparton',
+    'Gladstone', 'Port Macquarie', 'Tamworth', 'Orange', 'Dubbo', 'Geraldton',
+    'Alice Springs', 'Kalgoorlie', 'Mount Gambier', 'Busselton', 'Bunbury',
+    'Albany', 'Coffs Harbour', 'Lismore', 'Gympie', 'Burnie', 'Devonport',
+    'Goulburn', 'Katherine', 'Broome'
+  ];
   String? selectedCity;
   List<DocumentSnapshot> accommodationList = [];
 
@@ -45,6 +56,31 @@ class _LookingForAPlaceScreenState extends State<LookingForAPlaceScreen> {
         automaticallyImplyLeading: false,
         title: const Text('Book your room securely',style: TextStyle(fontWeight: FontWeight.bold),),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.more_vert),
+            onPressed: () {
+              // Show the popup menu
+              showMenu(
+                context: context,
+                position: RelativeRect.fromLTRB(1000.0, 80.0, 0.0, 0.0),
+                items: [
+                  PopupMenuItem<String>(
+                    value: 'filter',
+                    child: Text('Filter'),
+                  ),
+                ],
+              ).then((value) {
+                // Handle the selection of the menu item
+                if (value == 'filter') {
+                  Get.to(FilterOptionScreen());
+                  print('Filter action selected');
+                }
+              });
+            },
+          ),
+          SizedBox(width: 15,)
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(
