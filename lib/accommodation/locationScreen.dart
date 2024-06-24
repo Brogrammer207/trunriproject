@@ -29,17 +29,8 @@ class _LocationScreenState extends State<LocationScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  final List<String> cityList = [
-    'Sydney', 'Albury', 'Armidale', 'Bathurst', 'Blue Mountains', 'Broken Hill',
-    'Melbourne', 'Canberra', 'Brisbane', 'Adelaide', 'Perth', 'Hobart', 'Darwin',
-    'Gold Coast', 'Newcastle', 'Wollongong', 'Geelong', 'Cairns', 'Townsville',
-    'Toowoomba', 'Ballarat', 'Bendigo', 'Launceston', 'Mackay', 'Rockhampton',
-    'Bunbury', 'Bundaberg', 'Hervey Bay', 'Mildura', 'Wagga Wagga', 'Shepparton',
-    'Gladstone', 'Port Macquarie', 'Tamworth', 'Orange', 'Dubbo', 'Geraldton',
-    'Alice Springs', 'Kalgoorlie', 'Mount Gambier', 'Busselton', 'Bunbury',
-    'Albany', 'Coffs Harbour', 'Lismore', 'Gympie', 'Burnie', 'Devonport',
-    'Goulburn', 'Katherine', 'Broome'
-  ];
+  final List<String> cityList = ['Queensland', 'Victoria', 'NSW','South Australia', 'Western Australia', 'Northern Territory','Tasmania'];
+
   String? selectedCity;
   final formKey = GlobalKey<FormState>();
 

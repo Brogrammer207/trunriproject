@@ -5,10 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ShowFilterDataScreen extends StatefulWidget {
-  final List<String> propertyAmenities;
-  final List<String> homeRules;
+  final List<String>? propertyAmenities;
+  final List<String>? homeRules;
+  final String? selectedCity;
+  final String? bedroomFacing;
 
-  ShowFilterDataScreen({Key? key, required this.propertyAmenities, required this.homeRules}) : super(key: key);
+
+
+  ShowFilterDataScreen({Key? key,  this.propertyAmenities,  this.homeRules,this.selectedCity,this.bedroomFacing}) : super(key: key);
 
   @override
   State<ShowFilterDataScreen> createState() => _ShowFilterDataScreenState();
@@ -32,11 +36,15 @@ class _ShowFilterDataScreenState extends State<ShowFilterDataScreen> {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         List<dynamic> amenities = data['propertyAmenities'] ?? [];
         List<dynamic> rules = data['homeRules'] ?? [];
+        String city = data['city'] ?? '';
+        String bedroomFacing = data['bedroomFacing'] ?? '';
 
-        bool amenitiesMatch = widget.propertyAmenities.every((amenity) => amenities.contains(amenity));
-        bool rulesMatch = widget.homeRules.every((rule) => rules.contains(rule));
+        bool amenitiesMatch = widget.propertyAmenities!.every((amenity) => amenities.contains(amenity));
+        bool rulesMatch = widget.homeRules!.every((rule) => rules.contains(rule));
+        bool cityMatch = widget.selectedCity == null || widget.selectedCity == city;
+        bool bedroomFacingMatch = widget.bedroomFacing == null || widget.bedroomFacing == bedroomFacing;
 
-        if (amenitiesMatch && rulesMatch) {
+        if (amenitiesMatch && rulesMatch && cityMatch && bedroomFacingMatch) {
           filteredList.add(data);
         }
       }
@@ -101,6 +109,7 @@ class _ShowFilterDataScreenState extends State<ShowFilterDataScreen> {
                           ],
                         ),
                       ),
+
                     ],
                   ),
                 );
