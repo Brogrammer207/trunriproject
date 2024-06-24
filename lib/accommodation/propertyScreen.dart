@@ -223,7 +223,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                 ),
               const SizedBox(height: 10),
               const Text(
-                'How many bedrooms?',
+                'How many bedrooms are you looking for?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
               const SizedBox(height: 10),
@@ -239,7 +239,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                 ),
               const SizedBox(height: 20),
               const Text(
-                'How many bathrooms?',
+                'How many bathrooms are you looking for?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
               const SizedBox(height: 10),

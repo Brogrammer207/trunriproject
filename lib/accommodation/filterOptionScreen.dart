@@ -449,7 +449,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                     RangeSlider(
                       values: currentRangeValues,
                       min: 0,
-                      max: 100,
+                      max: 750,
                       divisions: 20,
                       labels: RangeLabels(
                         '\$${currentRangeValues.start.round()}',
@@ -549,7 +549,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                         Get.to(() => ShowFilterDataScreen(
                               propertyAmenities: propertyAmenities,
                               homeRules: homeRules,
-                              // bathrooms: bathrooms,
+                               bathrooms: bathrooms,
                               bedroomFacing: bedroomFacing,
                               // currentRangeValues: currentRangeValues,
                               // doubleBadRoom: doubleBadRoom,

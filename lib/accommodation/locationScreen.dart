@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:trunriproject/accommodation/propertyScreen.dart';
 import 'package:trunriproject/widgets/helper.dart';
 import 'package:uuid/uuid.dart';
@@ -14,8 +15,8 @@ import '../widgets/appTheme.dart';
 import '../widgets/commomButton.dart';
 
 class LocationScreen extends StatefulWidget {
-  String ? dateTime;
-  LocationScreen({super.key,this.dateTime});
+  String? dateTime;
+  LocationScreen({super.key, this.dateTime});
 
   @override
   State<LocationScreen> createState() => _LocationScreenState();
@@ -29,10 +30,64 @@ class _LocationScreenState extends State<LocationScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  final List<String> cityList = ['Queensland', 'Victoria', 'NSW','South Australia', 'Western Australia', 'Northern Territory','Tasmania'];
+  final List<String> stateList = [
+    'Queensland',
+    'Victoria',
+    'NSW',
+    'South Australia',
+    'Western Australia',
+    'Northern Territory',
+    'Tasmania'
+  ];
+  final List<String> cityList = [
+    'Victoria',
+    'NSW',
+    'South Australia',
+    'Western Australia',
+    'Northern Territory',
+    'Tasmania'
+  ];
 
   String? selectedCity;
+  String? selectedState;
   final formKey = GlobalKey<FormState>();
+
+  Future<Position> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled, don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    return await Geolocator.getCurrentPosition();
+  }
 
   Future<void> saveLocationData() async {
     OverlayEntry loader = NewHelper.overlayLoader(context);
@@ -46,17 +101,20 @@ class _LocationScreenState extends State<LocationScreen> {
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
+        Position position = await _getCurrentLocation();
+        double latitude = position.latitude;
+        double longitude = position.longitude;
+
         for (var doc in querySnapshot.docs) {
-          await _firestore
-              .collection('accommodation')
-              .doc(doc.id)
-              .update({
+          await _firestore.collection('accommodation').doc(doc.id).update({
+            'state': selectedState,
             'city': selectedCity,
-            'address': addressController.text,
-            'floor': floorController.text,
+            'fullAddress': addressController.text,
+            'lat': latitude,
+            'long': longitude,
           });
         }
-        Get.to(PropertyScreen(dateTime: widget.dateTime,));
+        Get.to(PropertyScreen(dateTime: widget.dateTime));
         NewHelper.hideLoader(loader);
         showToast('Location saved');
       } else {
@@ -95,8 +153,48 @@ class _LocationScreenState extends State<LocationScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
+                  'State',
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                DropdownButtonFormField<String>(
+                  value: selectedState,
+                  items: stateList.map((String city) {
+                    return DropdownMenuItem<String>(
+                      value: city,
+                      child: Text(city),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      selectedState = newValue;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    hintText: 'Select state',
+                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                  validator: (value) {
+                    if (value == null) {
+                      return 'State is required';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                const Text(
                   'City',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
                 ),
                 const SizedBox(
                   height: 10,
@@ -117,7 +215,6 @@ class _LocationScreenState extends State<LocationScreen> {
                   decoration: const InputDecoration(
                     hintText: 'Select City',
                     hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
-
                   ),
                   validator: (value) {
                     if (value == null) {
@@ -131,41 +228,25 @@ class _LocationScreenState extends State<LocationScreen> {
                 ),
                 const Text(
                   'Full Address',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 TextFormField(
-                  controller: addressController,
-                  decoration: const InputDecoration(
-                      hintText: 'Eg. : Laxmi nagar',
-                      hintStyle: TextStyle(color: Colors.grey, fontSize: 14)),
+                    controller: addressController,
+                    decoration: const InputDecoration(
+                        hintText:
+                        'Ex: H.No/Apartment no, street name, suburb name',
+                        hintStyle: TextStyle(color: Colors.grey, fontSize: 14)),
                     validator: MultiValidator([
                       RequiredValidator(errorText: 'Full Address is required'),
-                    ]).call
-                ),
+                    ]).call),
                 const SizedBox(
                   height: 30,
-                ),
-                const Text(
-                  'Stair,floor and door',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextFormField(
-                  controller: floorController,
-                  decoration: const InputDecoration(
-                      hintText: 'Eg. : floor no 2',
-                      hintStyle: TextStyle(color: Colors.grey, fontSize: 14)),
-                    validator: MultiValidator([
-                      RequiredValidator(errorText: 'Stair,floor and door is required'),
-                    ]).call
-                ),
-                const SizedBox(
-                  height: 10,
                 ),
               ],
             ),
@@ -184,11 +265,9 @@ class _LocationScreenState extends State<LocationScreen> {
                     color: const Color(0xffFF730A),
                     textColor: Colors.white,
                     onPressed: () {
-                      if(formKey.currentState!.validate()){
+                      if (formKey.currentState!.validate()) {
                         saveLocationData();
                       }
-
-
                     },
                   ),
                 ),

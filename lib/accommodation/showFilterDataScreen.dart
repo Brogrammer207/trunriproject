@@ -9,10 +9,11 @@ class ShowFilterDataScreen extends StatefulWidget {
   final List<String>? homeRules;
   final String? selectedCity;
   final String? bedroomFacing;
+  final int? bathrooms;
 
 
 
-  ShowFilterDataScreen({Key? key,  this.propertyAmenities,  this.homeRules,this.selectedCity,this.bedroomFacing}) : super(key: key);
+  ShowFilterDataScreen({Key? key,  this.propertyAmenities,  this.homeRules,this.selectedCity,this.bedroomFacing,this.bathrooms}) : super(key: key);
 
   @override
   State<ShowFilterDataScreen> createState() => _ShowFilterDataScreenState();
@@ -25,6 +26,7 @@ class _ShowFilterDataScreenState extends State<ShowFilterDataScreen> {
   void initState() {
     super.initState();
     _filteredData = _fetchFilteredData();
+    log('bathrooms${widget.bathrooms.toString()}');
   }
 
   Future<List<Map<String, dynamic>>> _fetchFilteredData() async {
@@ -38,13 +40,15 @@ class _ShowFilterDataScreenState extends State<ShowFilterDataScreen> {
         List<dynamic> rules = data['homeRules'] ?? [];
         String city = data['city'] ?? '';
         String bedroomFacing = data['bedroomFacing'] ?? '';
+        int bathrooms = data['bathrooms'] ?? 0;
 
         bool amenitiesMatch = widget.propertyAmenities!.every((amenity) => amenities.contains(amenity));
         bool rulesMatch = widget.homeRules!.every((rule) => rules.contains(rule));
         bool cityMatch = widget.selectedCity == null || widget.selectedCity == city;
         bool bedroomFacingMatch = widget.bedroomFacing == null || widget.bedroomFacing == bedroomFacing;
+        bool bathroomsMatch = widget.bathrooms == null || widget.bathrooms == bathrooms;
 
-        if (amenitiesMatch && rulesMatch && cityMatch && bedroomFacingMatch) {
+        if (amenitiesMatch && rulesMatch && cityMatch && bedroomFacingMatch && bathroomsMatch) {
           filteredList.add(data);
         }
       }
