@@ -451,6 +451,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                       min: 0,
                       max: 750,
                       divisions: 20,
+                      activeColor: Color(0xffFF730A),
                       labels: RangeLabels(
                         '\$${currentRangeValues.start.round()}',
                         '\$${currentRangeValues.end.round()}',

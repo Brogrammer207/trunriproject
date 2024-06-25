@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,9 +8,6 @@ import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:trunriproject/accommodation/propertyScreen.dart';
 import 'package:trunriproject/widgets/helper.dart';
-import 'package:uuid/uuid.dart';
-
-import '../widgets/appTheme.dart';
 import '../widgets/commomButton.dart';
 
 class LocationScreen extends StatefulWidget {
@@ -39,29 +35,128 @@ class _LocationScreenState extends State<LocationScreen> {
     'Northern Territory',
     'Tasmania'
   ];
-  final List<String> cityList = [
-    'Victoria',
-    'NSW',
-    'South Australia',
-    'Western Australia',
-    'Northern Territory',
-    'Tasmania'
-  ];
+
+  final Map<String, List<String>> stateCityMap = {
+    'Queensland': [
+      'Brisbane',
+      'Gold Coast',
+      'Sunshine Coast',
+      'Townsville',
+      'Cairns',
+      'Toowoomba',
+      'Mackay',
+      'Rockhampton',
+      'Bundaberg',
+      'Hervey Bay',
+      'Gladstone',
+      'Maryborough',
+      'Mount Isa',
+      'Gympie',
+      'Warwick',
+      'Emerald',
+      'Dalby',
+      'Bowen',
+      'Charters Towers',
+      'Kingaroy',
+    ],
+    'Victoria': [
+      'Melbourne',
+      'Geelong',
+      'Ballarat',
+      'Bendigo',
+      'Shepparton',
+      'Mildura',
+      'Warrnambool',
+      'Traralgon',
+      'Wodonga',
+      'Wangaratta',
+      'Horsham',
+      'Moe',
+      'Morwell',
+      'Sale',
+      'Bairnsdale',
+      'Benalla',
+    ],
+    'NSW': [
+      'Sydney',
+      'Newcastle',
+      'Central Coast',
+      'Wollongong',
+      'Albury',
+      'Armidale',
+      'Bathurst',
+      'Blue Mountains',
+      'Broken Hill',
+      'Campbelltown',
+      'Cessnock',
+      'Dubbo',
+      'Goulburn',
+      'Grafton',
+      'Griffith',
+      'Lake Macquarie',
+      'Lismore',
+      'Lithgow',
+      'Maitland',
+      'Nowra',
+      'Orange',
+      'Parramatta',
+      'Penrith',
+      'Port Macquarie',
+      'Queanbeyan',
+      'Richmond-Windsor',
+      'Shellharbour',
+      'Shoalhaven',
+      'Tamworth',
+      'Taree',
+      'Tweed Heads',
+      'Wagga Wagga',
+      'Wyong',
+      'Fairfield',
+      'Hawkesbury',
+      'Kiama',
+      'Singleton',
+      'Yass',
+    ],
+    'South Australia': [
+      'Adelaide',
+      'Mount Gambier',
+      'Port Augusta',
+      'Port Lincoln',
+      'Port Pirie',
+      'Whyalla',
+    ],
+    'Western Australia': [
+      'Perth',
+      'Albany',
+      'Armadale',
+      'Bunbury',
+      'Busselton',
+      'Fremantle',
+      'Geraldton',
+      'Kalgoorlie',
+    ],
+    'Northern Territory': [
+      'Darwin',
+      'Palmerston',
+    ],
+    'Tasmania': [
+      'Hobart',
+      'Launceston',
+      'Devonport',
+      'Burnie',
+    ],
+  };
 
   String? selectedCity;
   String? selectedState;
+  List<String> cityList = [];
   final formKey = GlobalKey<FormState>();
 
   Future<Position> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
-
-    // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // Location services are not enabled, don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
       return Future.error('Location services are disabled.');
     }
 
@@ -69,23 +164,13 @@ class _LocationScreenState extends State<LocationScreen> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
         return Future.error('Location permissions are denied');
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
     }
-
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
   }
 
@@ -95,10 +180,8 @@ class _LocationScreenState extends State<LocationScreen> {
     User? user = _auth.currentUser;
     log(widget.dateTime.toString());
     if (user != null) {
-      QuerySnapshot querySnapshot = await _firestore
-          .collection('accommodation')
-          .where('formID', isEqualTo: widget.dateTime)
-          .get();
+      QuerySnapshot querySnapshot =
+          await _firestore.collection('accommodation').where('formID', isEqualTo: widget.dateTime).get();
 
       if (querySnapshot.docs.isNotEmpty) {
         Position position = await _getCurrentLocation();
@@ -154,25 +237,24 @@ class _LocationScreenState extends State<LocationScreen> {
               children: [
                 const Text(
                   'State',
-                  style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 DropdownButtonFormField<String>(
                   value: selectedState,
-                  items: stateList.map((String city) {
+                  items: stateList.map((String state) {
                     return DropdownMenuItem<String>(
-                      value: city,
-                      child: Text(city),
+                      value: state,
+                      child: Text(state),
                     );
                   }).toList(),
                   onChanged: (newValue) {
                     setState(() {
                       selectedState = newValue;
+                      cityList = stateCityMap[newValue] ?? [];
+                      selectedCity = null; // Reset selected city
                     });
                   },
                   decoration: const InputDecoration(
@@ -191,10 +273,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 ),
                 const Text(
                   'City',
-                  style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
                 ),
                 const SizedBox(
                   height: 10,
@@ -228,10 +307,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 ),
                 const Text(
                   'Full Address',
-                  style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
                 ),
                 const SizedBox(
                   height: 10,
@@ -239,12 +315,12 @@ class _LocationScreenState extends State<LocationScreen> {
                 TextFormField(
                     controller: addressController,
                     decoration: const InputDecoration(
-                        hintText:
-                        'Ex: H.No/Apartment no, street name, suburb name',
+                        hintText: 'Ex: H.No/Apartment no, street name, suburb name',
                         hintStyle: TextStyle(color: Colors.grey, fontSize: 14)),
                     validator: MultiValidator([
-                      RequiredValidator(errorText: 'Full Address is required'),
-                    ]).call),
+                      RequiredValidator(errorText: 'Address is required'),
+                      MinLengthValidator(6, errorText: 'Minimum 6 characters are required')
+                    ])),
                 const SizedBox(
                   height: 30,
                 ),
