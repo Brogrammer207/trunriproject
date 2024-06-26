@@ -25,9 +25,9 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
   List<dynamic> _restaurants = [];
   final apiKey = 'AIzaSyDDl-_JOy_bj4MyQhYbKbGkZ0sfpbTZDNU';
   final serviceController = Get.put(ServiceController());
+  bool _isLoading = true; // Add this line
 
   String defaultImageUrl = 'https://via.placeholder.com/400';
-
 
   @override
   void initState() {
@@ -37,13 +37,14 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
 
   Future<void> _fetchIndianRestaurants(double latitude, double longitude) async {
     final url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=restaurant&keyword=indian&key=$apiKey';
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=5000&type=restaurant&keyword=indian&key=$apiKey';
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
         _restaurants = data['results'];
+        _isLoading = false; // Add this line
       });
     } else {
       throw Exception('Failed to fetch data');
@@ -80,10 +81,10 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Row(
+        title: Row(
           children: [
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 Get.back();
               },
               child: Icon(
@@ -99,7 +100,9 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
         ),
         automaticallyImplyLeading: false,
       ),
-      body: Column(
+      body: _isLoading // Add this line
+          ? Center(child: CircularProgressIndicator()) // Add this line
+          : Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -129,7 +132,7 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
                 final reviews = restaurant['reviews'];
                 final description = restaurant['description'] ?? 'No Description Available';
                 final openingHours =
-                    restaurant['opening_hours'] != null ? restaurant['opening_hours']['weekday_text'] : 'Not Available';
+                restaurant['opening_hours'] != null ? restaurant['opening_hours']['weekday_text'] : 'Not Available';
                 final closingTime = restaurant['closing_time'] ?? 'Not Available';
                 final photoReference = restaurant['photos'] != null ? restaurant['photos'][0]['photo_reference'] : null;
                 final photoUrl = photoReference != null

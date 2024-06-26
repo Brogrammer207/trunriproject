@@ -26,6 +26,7 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
   List<dynamic> _groceryStores = [];
   final apiKey = 'AIzaSyDDl-_JOy_bj4MyQhYbKbGkZ0sfpbTZDNU';
   final serviceController = Get.put(ServiceController());
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -33,10 +34,9 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
     _getCurrentLocation();
   }
 
-
   Future<void> _fetchGroceryStores(double latitude, double longitude) async {
     final url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=grocery_or_supermarket&keyword=Indian&key=$apiKey';
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=4000&type=grocery_or_supermarket&keyword=grocery&key=$apiKey';
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -44,9 +44,13 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
       if (mounted) {
         setState(() {
           _groceryStores = data['results'];
+          _isLoading = false; // Set _isLoading to false after data is fetched
         });
       }
     } else {
+      setState(() {
+        _isLoading = false; // Set _isLoading to false even if the fetch fails
+      });
       throw Exception('Failed to fetch data');
     }
   }
@@ -76,8 +80,8 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
       _fetchGroceryStores(position.latitude, position.longitude);
     });
   }
-  String defaultImageUrl = 'https://via.placeholder.com/400';
 
+  String defaultImageUrl = 'https://via.placeholder.com/400';
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +90,7 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
         title: Row(
           children: [
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 Get.back();
               },
               child: Icon(
@@ -102,103 +106,109 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
         ),
         automaticallyImplyLeading: false,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 10,),
-          const Padding(
-            padding: EdgeInsets.only(left: 15),
-            child: Text(
-              'Grocery Store List',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20, color: Colors.black),
-            ),
-          ),
-          const SizedBox(height: 10,),
-          Expanded(
-            child: GridView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: _groceryStores.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10.0,
-                mainAxisSpacing: 10.0,
-              ),
-              itemBuilder: (context, index) {
-                final groceryStore = _groceryStores[index];
-                final name = groceryStore['name'];
-                final address = groceryStore['vicinity'];
-                final rating = (groceryStore['rating'] as num?)?.toDouble() ?? 0.0;
-                final description = groceryStore['description'] ?? 'No Description Available';
-                final openingHours =
-                groceryStore['opening_hours'] != null ? groceryStore['opening_hours']['weekday_text'] : 'Not Available';
-                final closingTime = groceryStore['closing_time'] ?? 'Not Available';
-                final photoReference = groceryStore['photos'] != null ? groceryStore['photos'][0]['photo_reference'] : null;
-                final photoUrl = photoReference != null
-                    ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
-                    : defaultImageUrl;
-                final lat = groceryStore['geometry']['location']['lat'];
-                final lng = groceryStore['geometry']['location']['lng'];
-
-                groceryStoreLat = lat.toString();
-                groceryStoreLong = lng.toString();
-
-                return GestureDetector(
-                  onTap: () {
-                    Get.to(
-                      ResturentDetailsScreen(
-                        name: name.toString(),
-                        rating: rating,
-                        desc: description.toString(),
-                        openingTime: openingHours.toString(),
-                        closingTime: closingTime.toString(),
-                        address: address.toString(),
-                        image: photoUrl.toString(),
+      body: _isLoading // Show progress indicator when loading
+          ? Center(child: CircularProgressIndicator())
+          : _groceryStores.isEmpty // Check if the list is empty
+              ? Center(child: Text("No grocery stores found"))
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 10),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 15),
+                      child: Text(
+                        'Grocery Store List',
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20, color: Colors.black),
                       ),
-                      arguments: [lat, lng],
-                    );
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 15, right: 15),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (photoUrl != null)
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: CachedNetworkImage(
-                              height: 130,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              imageUrl: photoUrl,
-                              errorWidget: (_, __, ___) => const Icon(Icons.person),
-                              placeholder: (_, __) => const SizedBox(),
-                            ),
-
-                          ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Text(
-                            name,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w600),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                          ),
-                        ),
-                      ],
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: GridView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: _groceryStores.length,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10.0,
+                          mainAxisSpacing: 10.0,
+                        ),
+                        itemBuilder: (context, index) {
+                          final groceryStore = _groceryStores[index];
+                          final name = groceryStore['name'];
+                          final address = groceryStore['vicinity'];
+                          final rating = (groceryStore['rating'] as num?)?.toDouble() ?? 0.0;
+                          final description = groceryStore['description'] ?? 'No Description Available';
+                          final openingHours = groceryStore['opening_hours'] != null
+                              ? groceryStore['opening_hours']['weekday_text']
+                              : 'Not Available';
+                          final closingTime = groceryStore['closing_time'] ?? 'Not Available';
+                          final photoReference =
+                              groceryStore['photos'] != null ? groceryStore['photos'][0]['photo_reference'] : null;
+                          final photoUrl = photoReference != null
+                              ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
+                              : defaultImageUrl;
+                          final lat = groceryStore['geometry']['location']['lat'];
+                          final lng = groceryStore['geometry']['location']['lng'];
+
+                          groceryStoreLat = lat.toString();
+                          groceryStoreLong = lng.toString();
+
+                          return GestureDetector(
+                            onTap: () {
+                              Get.to(
+                                ResturentDetailsScreen(
+                                  name: name.toString(),
+                                  rating: rating,
+                                  desc: description.toString(),
+                                  openingTime: openingHours.toString(),
+                                  closingTime: closingTime.toString(),
+                                  address: address.toString(),
+                                  image: photoUrl.toString(),
+                                ),
+                                arguments: [lat, lng],
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(left: 15, right: 15),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (photoUrl != null)
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: CachedNetworkImage(
+                                        height: 130,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                        imageUrl: photoUrl,
+                                        errorWidget: (_, __, ___) => const Icon(Icons.person),
+                                        placeholder: (_, __) => const SizedBox(),
+                                      ),
+                                    ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Text(
+                                      name,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          color: Colors.black, fontSize: 12, fontWeight: FontWeight.w600),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
     );
   }
 }

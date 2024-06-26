@@ -205,6 +205,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 min: 0,
                 max: 100,
                 divisions: 100,
+                activeColor: Color(0xffFF730A),
                 labels: RangeLabels(
                   _currentRangeValues.start.round().toString(),
                   _currentRangeValues.end.round().toString(),

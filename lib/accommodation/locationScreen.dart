@@ -244,6 +244,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 ),
                 DropdownButtonFormField<String>(
                   value: selectedState,
+                  dropdownColor: Colors.white,
                   items: stateList.map((String state) {
                     return DropdownMenuItem<String>(
                       value: state,
@@ -280,6 +281,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 ),
                 DropdownButtonFormField<String>(
                   value: selectedCity,
+                  dropdownColor: Colors.white,
                   items: cityList.map((String city) {
                     return DropdownMenuItem<String>(
                       value: city,

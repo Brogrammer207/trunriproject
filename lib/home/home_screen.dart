@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchIndianRestaurants(double latitude, double longitude) async {
     final url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=restaurant&keyword=indian&key=$apiKey';
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=4000&type=restaurant&keyword=indian&key=$apiKey';
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -106,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchGroceryStores(double latitude, double longitude) async {
     final url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=grocery_or_supermarket&keyword=Indian&key=$apiKey';
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=4000&type=grocery_or_supermarket&keyword=grocery&key=$apiKey';
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
