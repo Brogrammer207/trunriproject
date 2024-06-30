@@ -103,9 +103,6 @@ class _PropertyScreenState extends State<PropertyScreen> {
         livingNonBinary == 0) {
       return false;
     }
-    if (bedroomFacing.isEmpty) {
-      return false;
-    }
     return true;
   }
 
@@ -136,7 +133,6 @@ class _PropertyScreenState extends State<PropertyScreen> {
             'livingMale': livingMale,
             'livingNonBinary': livingNonBinary,
             'isLiftAvailable': isLiftAvailable,
-            'bedroomFacing': bedroomFacing,
             'isBedInRoom': isBedInRoom,
             'roomAmenities': roomAmenities,
             'propertyAmenities': propertyAmenities,
@@ -223,7 +219,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                 ),
               const SizedBox(height: 10),
               const Text(
-                'How many bedrooms are you looking for?',
+                'How many bedrooms are available?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
               const SizedBox(height: 10),
@@ -239,7 +235,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                 ),
               const SizedBox(height: 20),
               const Text(
-                'How many bathrooms are you looking for?',
+                'How many bathrooms are available?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
               const SizedBox(height: 10),
@@ -273,51 +269,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                   'Please add at least one occupant',
                   style: TextStyle(color: Colors.red),
                 ),
-              const SizedBox(height: 20),
-              const Text(
-                'Is it exterior or interior?',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
-              ),
-              const SizedBox(height: 5),
-              const Text(
-                'Select exterior if your room faces the street or interior if it faces the buildings interior patio',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: Colors.grey),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Radio<String>(
-                    value: 'interior',
-                    groupValue: bedroomFacing,
-                    onChanged: (value) {
-                      setState(() {
-                        bedroomFacing = value!;
-                      });
-                    },
-                  ),
-                  const Text('Interior'),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Radio<String>(
-                    value: 'exterior',
-                    groupValue: bedroomFacing,
-                    onChanged: (value) {
-                      setState(() {
-                        bedroomFacing = value!;
-                      });
-                    },
-                  ),
-                  const Text('Exterior'),
-                ],
-              ),
-              if (showError && bedroomFacing.isEmpty)
-                const Text(
-                  'Please select the bedroom facing',
-                  style: TextStyle(color: Colors.red),
-                ),
+
               const SizedBox(height: 20),
               const Text(
                 'Is there a bed in the room?',
@@ -371,6 +323,8 @@ class _PropertyScreenState extends State<PropertyScreen> {
                     'Air conditioning',
                     'heating controls',
                     'WI-FI',
+                    'curtains',
+                    'shelves'
                   ])
                     GestureDetector(
                       onTap: () {
@@ -407,10 +361,25 @@ class _PropertyScreenState extends State<PropertyScreen> {
                   for (String amenity in [
                     'Gym',
                     'Garden',
-                    'Security',
                     'Laundry facilities',
-                    'Playground',
                     'Swimming pool'
+                    'garage',
+                    'parking space',
+                    'television',
+                    'iron',
+                    'refrigerator',
+                    'microwave',
+                    'dishwasher',
+                    'bath tub',
+                    'grill',
+                    'fire pit',
+                    'smoke Alarams',
+                    'security system',
+                    'balcony',
+                    'deck',
+                    'sound system',
+
+
                   ])
                     GestureDetector(
                       onTap: () {
@@ -448,6 +417,9 @@ class _PropertyScreenState extends State<PropertyScreen> {
                     'No smoking',
                     'Night out',
                     'no drinking',
+                    'no pets',
+                    'no guests',
+                    'no parties'
                   ])
                     GestureDetector(
                       onTap: () {

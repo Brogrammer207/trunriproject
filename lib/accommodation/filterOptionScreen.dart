@@ -37,9 +37,12 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
   bool male = false;
   bool female = false;
   bool nonBinary = false;
-  bool isWorking = false;
-  bool isStudying = false;
-  bool isDontMind = false;
+  bool  isstudents = false;
+  bool  isemployees = false;
+  bool  isfamilies = false;
+  bool  isSingleIndividuals = false;
+  bool  isCouples = false;
+
 
   bool showGenderError = false;
   bool showSituationError = false;
@@ -51,7 +54,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
 
   bool isFormValid() {
     bool genderSelected = male || female || nonBinary;
-    bool situationSelected = isWorking || isStudying || isDontMind;
+    bool situationSelected = isstudents || isemployees || isfamilies || isSingleIndividuals || isCouples;
     return genderSelected && situationSelected;
   }
 
@@ -283,37 +286,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                         'Please add at least one person',
                         style: TextStyle(color: Colors.red),
                       ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Bedroom Facing',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
-                    ),
-                    const SizedBox(height: 10),
-                    RadioListTile<String>(
-                      title: const Text('Interior'),
-                      value: 'interior',
-                      groupValue: bedroomFacing,
-                      onChanged: (value) {
-                        setState(() {
-                          bedroomFacing = value!;
-                        });
-                      },
-                    ),
-                    RadioListTile<String>(
-                      title: const Text('Exterior'),
-                      value: 'exterior',
-                      groupValue: bedroomFacing,
-                      onChanged: (value) {
-                        setState(() {
-                          bedroomFacing = value!;
-                        });
-                      },
-                    ),
-                    if (showError && bedroomFacing.isEmpty)
-                      const Text(
-                        'Please select bedroom facing',
-                        style: TextStyle(color: Colors.red),
-                      ),
+
                     const SizedBox(height: 20),
                     const Text(
                       'Room Amenities',
@@ -510,31 +483,49 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                     ),
                     const SizedBox(height: 10),
                     CheckboxListTile(
-                      title: const Text('Working'),
-                      value: isWorking,
+                      title: const Text('students'),
+                      value: isstudents,
                       onChanged: (value) {
                         setState(() {
-                          isWorking = value!;
+                          isstudents = value!;
                           showSituationError = false;
                         });
                       },
                     ),
                     CheckboxListTile(
-                      title: const Text('Studying'),
-                      value: isStudying,
+                      title: const Text('employees'),
+                      value: isemployees,
                       onChanged: (value) {
                         setState(() {
-                          isStudying = value!;
+                          isemployees = value!;
                           showSituationError = false;
                         });
                       },
                     ),
                     CheckboxListTile(
-                      title: const Text('Don\'t Mind'),
-                      value: isDontMind,
+                      title: const Text('families'),
+                      value: isfamilies,
                       onChanged: (value) {
                         setState(() {
-                          isDontMind = value!;
+                          isfamilies = value!;
+                          showSituationError = false;
+                        });
+                      },
+                    ), CheckboxListTile(
+                      title: const Text('single individuals'),
+                      value: isSingleIndividuals,
+                      onChanged: (value) {
+                        setState(() {
+                          isSingleIndividuals = value!;
+                          showSituationError = false;
+                        });
+                      },
+                    ),CheckboxListTile(
+                      title: const Text('couples'),
+                      value: isCouples,
+                      onChanged: (value) {
+                        setState(() {
+                          isCouples = value!;
                           showSituationError = false;
                         });
                       },

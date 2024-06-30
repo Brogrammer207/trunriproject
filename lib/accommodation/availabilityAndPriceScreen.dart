@@ -29,6 +29,9 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
   bool cleaningService = false;
   bool cityHallRegistrationSupport = false;
   bool maintenanceService = false;
+  bool lawnCare = false;
+  bool poolAccess = false;
+  bool gym = false;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -56,6 +59,9 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
             'cleaningService': cleaningService,
             'cityHallRegistrationSupport': cityHallRegistrationSupport,
             'maintenanceService': maintenanceService,
+            'lawnCare': lawnCare,
+            'poolAccess': poolAccess,
+            'gym': gym,
           });
         }
         Get.to(AddMediaScreen(dateTime: widget.dateTime));
@@ -306,70 +312,7 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
               ),
               const SizedBox(height: 20),
               const Text(
-                'Whats the monthly rent?',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                    suffix: Text('GBP/month'),
-                    prefix: Text(r'$')
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter monthly rent';
-                  }
-                  return null;
-                },
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: billsInclude,
-                    onChanged: (value) {
-                      setState(() {
-                        billsInclude = value ?? false;
-                      });
-                    },
-                  ),
-                  const Text(
-                    'Bills include',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'And the deposit?',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: noDepositRequired,
-                    onChanged: (value) {
-                      setState(() {
-                        noDepositRequired = value ?? false;
-                      });
-                    },
-                  ),
-                  const Text(
-                    'No deposit required',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
-              ),
-              TextFormField(
-                decoration: const InputDecoration(),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter deposit amount';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Any services include in the rent? (optional)',
+                'Which did utilities and amenities will be covered in the rent?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
               Row(
@@ -432,6 +375,54 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
                   ),
                   const Text(
                     'Maintenance service',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Checkbox(
+                    value: lawnCare,
+                    onChanged: (value) {
+                      setState(() {
+                        lawnCare = value ?? false;
+                      });
+                    },
+                  ),
+                  const Text(
+                    'Lawn care',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Checkbox(
+                    value: poolAccess,
+                    onChanged: (value) {
+                      setState(() {
+                        poolAccess = value ?? false;
+                      });
+                    },
+                  ),
+                  const Text(
+                    'Pool access',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Checkbox(
+                    value: gym,
+                    onChanged: (value) {
+                      setState(() {
+                        gym = value ?? false;
+                      });
+                    },
+                  ),
+                  const Text(
+                    'Gym',
                     style: TextStyle(fontSize: 12),
                   ),
                 ],

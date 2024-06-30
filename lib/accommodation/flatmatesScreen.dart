@@ -21,9 +21,12 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
   bool male = false;
   bool female = false;
   bool nonBinary = false;
-  bool isWorking = false;
-  bool isStudying = false;
-  bool isDontMind = false;
+  bool isStudents = false;
+  bool isEmployees = false;
+  bool isFamilies = false;
+  bool isSingle = false;
+  bool isIndividuals = false;
+  bool isCouples = false;
   RangeValues _currentRangeValues = const RangeValues(0, 100);
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -34,7 +37,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
 
   bool isFormValid() {
     bool genderSelected = male || female || nonBinary;
-    bool situationSelected = isWorking || isStudying || isDontMind;
+    bool situationSelected = isStudents || isEmployees || isFamilies || isSingle || isIndividuals || isCouples;
     return genderSelected && situationSelected;
   }
 
@@ -42,7 +45,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
     if (!isFormValid()) {
       setState(() {
         showGenderError = !(male || female || nonBinary);
-        showSituationError = !(isWorking || isStudying || isDontMind);
+        showSituationError = !(isStudents || isEmployees || isFamilies || isSingle || isIndividuals || isCouples);
       });
       showToast('Please fill in all required fields');
       return;
@@ -63,9 +66,12 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
             'male': male,
             'female': female,
             'nonBinary': nonBinary,
-            'isWorking': isWorking,
-            'isStudying': isStudying,
-            'isDontMind': isDontMind,
+            'isStudents': isStudents,
+            'isEmployees': isEmployees,
+            'isFamilies': isFamilies,
+            'isSingle': isSingle,
+            'isIndividuals': isIndividuals,
+            'isCouples': isCouples,
             'currentRangeValues': {
               'start': _currentRangeValues.start,
               'end': _currentRangeValues.end,
@@ -205,7 +211,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 min: 0,
                 max: 100,
                 divisions: 100,
-                activeColor: Color(0xffFF730A),
+                activeColor: const Color(0xffFF730A),
                 labels: RangeLabels(
                   _currentRangeValues.start.round().toString(),
                   _currentRangeValues.end.round().toString(),
@@ -218,7 +224,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
               ),
               const SizedBox(height: 20),
               const Text(
-                'And their current situation?',
+                'Who are looking to accommodate in your rental home?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
               Row(
@@ -226,17 +232,20 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 children: [
                   Radio<bool>(
                     value: true,
-                    groupValue: isWorking,
+                    groupValue: isStudents,
                     onChanged: (value) {
                       setState(() {
-                        isWorking = value!;
-                        isStudying = false;
-                        isDontMind = false;
+                        isStudents = value!;
+                        isEmployees = false;
+                        isFamilies = false;
+                        isSingle = false;
+                        isIndividuals = false;
+                        isCouples = false;
                         showSituationError = false;
                       });
                     },
                   ),
-                  const Text('Working'),
+                  const Text('Students'),
                 ],
               ),
               Row(
@@ -244,17 +253,20 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 children: [
                   Radio<bool>(
                     value: true,
-                    groupValue: isStudying,
+                    groupValue: isEmployees,
                     onChanged: (value) {
                       setState(() {
-                        isStudying = value!;
-                        isWorking = false;
-                        isDontMind = false;
+                        isEmployees = value!;
+                        isStudents = false;
+                        isFamilies = false;
+                        isSingle = false;
+                        isIndividuals = false;
+                        isCouples = false;
                         showSituationError = false;
                       });
                     },
                   ),
-                  const Text('Studying'),
+                  const Text('Employees'),
                 ],
               ),
               Row(
@@ -262,17 +274,83 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 children: [
                   Radio<bool>(
                     value: true,
-                    groupValue: isDontMind,
+                    groupValue: isFamilies,
                     onChanged: (value) {
                       setState(() {
-                        isDontMind = value!;
-                        isWorking = false;
-                        isStudying = false;
+                        isFamilies = value!;
+                        isStudents = false;
+                        isEmployees = false;
+                        isSingle = false;
+                        isIndividuals = false;
+                        isCouples = false;
                         showSituationError = false;
                       });
                     },
                   ),
-                  const Text('I don\'t mind'),
+                  const Text('Families'),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Radio<bool>(
+                    value: true,
+                    groupValue: isSingle,
+                    onChanged: (value) {
+                      setState(() {
+                        isSingle = value!;
+                        isStudents = false;
+                        isEmployees = false;
+                        isFamilies = false;
+                        isIndividuals = false;
+                        isCouples = false;
+                        showSituationError = false;
+                      });
+                    },
+                  ),
+                  const Text('Single'),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Radio<bool>(
+                    value: true,
+                    groupValue: isIndividuals,
+                    onChanged: (value) {
+                      setState(() {
+                        isIndividuals = value!;
+                        isStudents = false;
+                        isEmployees = false;
+                        isFamilies = false;
+                        isSingle = false;
+                        isCouples = false;
+                        showSituationError = false;
+                      });
+                    },
+                  ),
+                  const Text('Individuals'),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Radio<bool>(
+                    value: true,
+                    groupValue: isCouples,
+                    onChanged: (value) {
+                      setState(() {
+                        isCouples = value!;
+                        isStudents = false;
+                        isEmployees = false;
+                        isFamilies = false;
+                        isSingle = false;
+                        isIndividuals = false;
+                        showSituationError = false;
+                      });
+                    },
+                  ),
+                  const Text('Couples'),
                 ],
               ),
               if (showSituationError)
@@ -301,7 +379,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                     } else {
                       setState(() {
                         showGenderError = !(male || female || nonBinary);
-                        showSituationError = !(isWorking || isStudying || isDontMind);
+                        showSituationError = !(isStudents || isEmployees || isFamilies || isSingle || isIndividuals || isCouples);
                       });
                       showToast('Please fill in all required fields');
                     }
