@@ -292,128 +292,568 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                       'Room Amenities',
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
                     ),
-                    const SizedBox(height: 10),
-                    FilterChip(
-                      label: const Text('Balcony'),
-                      selected: roomAmenities.contains('Balcony'),
-                      onSelected: (bool selected) {
-                        setState(() {
-                          if (selected) {
-                            roomAmenities.add('Balcony');
-                          } else {
-                            roomAmenities.removeWhere((String name) {
-                              return name == 'Balcony';
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('Wardrobe'),
+                          selected: roomAmenities.contains('Wardrobe'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                roomAmenities.add('Wardrobe');
+                              } else {
+                                roomAmenities.removeWhere((String name) {
+                                  return name == 'Wardrobe';
+                                });
+                              }
                             });
-                          }
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    FilterChip(
-                      label: const Text('Attached Bathroom'),
-                      selected: roomAmenities.contains('Attached Bathroom'),
-                      onSelected: (bool selected) {
-                        setState(() {
-                          if (selected) {
-                            roomAmenities.add('Attached Bathroom');
-                          } else {
-                            roomAmenities.removeWhere((String name) {
-                              return name == 'Attached Bathroom';
+                          },
+                        ),
+                        SizedBox(width: 5,),
+                        FilterChip(
+                          label: const Text('Air conditioning'),
+                          selected: roomAmenities.contains('Air conditioning'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                roomAmenities.add('Air conditioning');
+                              } else {
+                                roomAmenities.removeWhere((String name) {
+                                  return name == 'Air conditioning';
+                                });
+                              }
                             });
-                          }
-                        });
-                      },
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 10),
-                    FilterChip(
-                      label: const Text('Air Conditioner'),
-                      selected: roomAmenities.contains('Air Conditioner'),
-                      onSelected: (bool selected) {
-                        setState(() {
-                          if (selected) {
-                            roomAmenities.add('Air Conditioner');
-                          } else {
-                            roomAmenities.removeWhere((String name) {
-                              return name == 'Air Conditioner';
-                            });
-                          }
-                        });
-                      },
-                    ),
+                     Row(
+                       children: [
+                         FilterChip(
+                           label: const Text('heating controls'),
+                           selected: roomAmenities.contains('heating controls'),
+                           onSelected: (bool selected) {
+                             setState(() {
+                               if (selected) {
+                                 roomAmenities.add('heating controls');
+                               } else {
+                                 roomAmenities.removeWhere((String name) {
+                                   return name == 'heating controls';
+                                 });
+                               }
+                             });
+                           },
+                         ),
+                         SizedBox(width: 5,),
+                         FilterChip(
+                           label: const Text('WI-FI'),
+                           selected: roomAmenities.contains('WI-FI'),
+                           onSelected: (bool selected) {
+                             setState(() {
+                               if (selected) {
+                                 roomAmenities.add('WI-FI');
+                               } else {
+                                 roomAmenities.removeWhere((String name) {
+                                   return name == 'WI-FI';
+                                 });
+                               }
+                             });
+                           },
+                         ),
+                       ],
+                     ),
+                   Row(
+                     children: [
+                       FilterChip(
+                         label: const Text('curtains'),
+                         selected: roomAmenities.contains('curtains'),
+                         onSelected: (bool selected) {
+                           setState(() {
+                             if (selected) {
+                               roomAmenities.add('curtains');
+                             } else {
+                               roomAmenities.removeWhere((String name) {
+                                 return name == 'curtains';
+                               });
+                             }
+                           });
+                         },
+                       ),
+                       SizedBox(width: 5,),
+                       FilterChip(
+                         label: const Text('shelves'),
+                         selected: roomAmenities.contains('shelves'),
+                         onSelected: (bool selected) {
+                           setState(() {
+                             if (selected) {
+                               roomAmenities.add('shelves');
+                             } else {
+                               roomAmenities.removeWhere((String name) {
+                                 return name == 'shelves';
+                               });
+                             }
+                           });
+                         },
+                       ),
+                     ],
+                   ),
+
                     const SizedBox(height: 20),
                     const Text(
                       'Property Amenities',
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
                     ),
                     const SizedBox(height: 10),
-                    FilterChip(
-                      label: const Text('Gym'),
-                      selected: propertyAmenities.contains('Gym'),
-                      onSelected: (bool selected) {
-                        setState(() {
-                          if (selected) {
-                            propertyAmenities.add('Gym');
-                          } else {
-                            propertyAmenities.removeWhere((String name) {
-                              return name == 'Gym';
+
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('Gym'),
+                          selected: propertyAmenities.contains('Gym'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('Gym');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'Gym';
+                                });
+                              }
                             });
-                          }
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    FilterChip(
-                      label: const Text('Security'),
-                      selected: propertyAmenities.contains('Security'),
-                      onSelected: (bool selected) {
-                        setState(() {
-                          if (selected) {
-                            propertyAmenities.add('Security');
-                          } else {
-                            propertyAmenities.removeWhere((String name) {
-                              return name == 'Security';
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        FilterChip(
+                          label: const Text('Garden'),
+                          selected: propertyAmenities.contains('Garden'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('Garden');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'Garden';
+                                });
+                              }
                             });
-                          }
-                        });
-                      },
+                          },
+                        ),
+                      ],
                     ),
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('Laundry facilities'),
+                          selected: propertyAmenities.contains('Laundry facilities'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('Laundry facilities');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'Laundry facilities';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        FilterChip(
+                          label: const Text('Swimming pool'),
+                          selected: propertyAmenities.contains('Swimming pool'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('Swimming pool');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'Swimming pool';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('garage'),
+                          selected: propertyAmenities.contains('garage'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('garage');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'garage';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        FilterChip(
+                          label: const Text('parking space'),
+                          selected: propertyAmenities.contains('parking space'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('parking space');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'parking space';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('television'),
+                          selected: propertyAmenities.contains('television'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('television');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'television';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        FilterChip(
+                          label: const Text('iron'),
+                          selected: propertyAmenities.contains('iron'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('iron');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'iron';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('refrigerator'),
+                          selected: propertyAmenities.contains('refrigerator'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('refrigerator');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'refrigerator';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        FilterChip(
+                          label: const Text('microwave'),
+                          selected: propertyAmenities.contains('microwave'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('microwave');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'microwave';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('dishwasher'),
+                          selected: propertyAmenities.contains('dishwasher'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('dishwasher');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'dishwasher';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        FilterChip(
+                          label: const Text('bath tub'),
+                          selected: propertyAmenities.contains('bath tub'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('bath tub');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'bath tub';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('grill'),
+                          selected: propertyAmenities.contains('grill'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('grill');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'grill';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        FilterChip(
+                          label: const Text('fire pit'),
+                          selected: propertyAmenities.contains('fire pit'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('fire pit');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'fire pit';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('smoke Alarams'),
+                          selected: propertyAmenities.contains('smoke Alarams'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('smoke Alarams');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'smoke Alarams';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        FilterChip(
+                          label: const Text('security system'),
+                          selected: propertyAmenities.contains('security system'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('security system');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'security system';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('balcony'),
+                          selected: propertyAmenities.contains('balcony'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('balcony');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'balcony';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        FilterChip(
+                          label: const Text('deck'),
+                          selected: propertyAmenities.contains('deck'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('deck');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'deck';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('sound system'),
+                          selected: propertyAmenities.contains('sound system'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                propertyAmenities.add('sound system');
+                              } else {
+                                propertyAmenities.removeWhere((String name) {
+                                  return name == 'sound system';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                      ],
+                    ),
+
                     const SizedBox(height: 20),
                     const Text(
                       'Home Rules',
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
                     ),
                     const SizedBox(height: 10),
-                    FilterChip(
-                      label: const Text('no drinking'),
-                      selected: homeRules.contains('no drinking'),
-                      onSelected: (bool selected) {
-                        setState(() {
-                          if (selected) {
-                            homeRules.add('no drinking');
-                          } else {
-                            homeRules.removeWhere((String name) {
-                              return name == 'no drinking';
+
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('no drinking'),
+                          selected: homeRules.contains('no drinking'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                homeRules.add('no drinking');
+                              } else {
+                                homeRules.removeWhere((String name) {
+                                  return name == 'no drinking';
+                                });
+                              }
                             });
-                          }
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    FilterChip(
-                      label: const Text('Pets Allowed'),
-                      selected: homeRules.contains('Pets Allowed'),
-                      onSelected: (bool selected) {
-                        setState(() {
-                          if (selected) {
-                            homeRules.add('Pets Allowed');
-                          } else {
-                            homeRules.removeWhere((String name) {
-                              return name == 'Pets Allowed';
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        FilterChip(
+                          label: const Text('No smoking'),
+                          selected: homeRules.contains('No smoking'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                homeRules.add('No smoking');
+                              } else {
+                                homeRules.removeWhere((String name) {
+                                  return name == 'No smoking';
+                                });
+                              }
                             });
-                          }
-                        });
-                      },
+                          },
+                        ),
+                      ],
                     ),
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('Night out'),
+                          selected: homeRules.contains('Night out'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                homeRules.add('Night out');
+                              } else {
+                                homeRules.removeWhere((String name) {
+                                  return name == 'Night out';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        FilterChip(
+                          label: const Text('no pets'),
+                          selected: homeRules.contains('no pets'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                homeRules.add('no pets');
+                              } else {
+                                homeRules.removeWhere((String name) {
+                                  return name == 'no pets';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        FilterChip(
+                          label: const Text('no guests'),
+                          selected: homeRules.contains('no guests'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                homeRules.add('no guests');
+                              } else {
+                                homeRules.removeWhere((String name) {
+                                  return name == 'no guests';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 5),
+                        FilterChip(
+                          label: const Text('no parties'),
+                          selected: homeRules.contains('no parties'),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              if (selected) {
+                                homeRules.add('no parties');
+                              } else {
+                                homeRules.removeWhere((String name) {
+                                  return name == 'no parties';
+                                });
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+
                     const SizedBox(height: 20),
                     const Text(
                       'Price Range',
