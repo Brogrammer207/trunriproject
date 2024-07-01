@@ -350,22 +350,6 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
               Row(
                 children: [
                   Checkbox(
-                    value: cityHallRegistrationSupport,
-                    onChanged: (value) {
-                      setState(() {
-                        cityHallRegistrationSupport = value ?? false;
-                      });
-                    },
-                  ),
-                  const Text(
-                    'City hall registration support',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Checkbox(
                     value: maintenanceService,
                     onChanged: (value) {
                       setState(() {

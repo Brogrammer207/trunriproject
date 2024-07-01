@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,7 +24,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
   int toilets = 0;
   int livingFemale = 0;
   int livingMale = 0;
-  int livingNonBinary = 0;
+  bool livingNonBinary = false;
   List<String> roomAmenities = [];
   List<String> propertyAmenities = [];
   List<String> homeRules = [];
@@ -57,9 +55,6 @@ class _PropertyScreenState extends State<PropertyScreen> {
           break;
         case 'livingMale':
           livingMale = increment ? livingMale + 1 : (livingMale > 0 ? livingMale - 1 : 0);
-          break;
-        case 'livingNonBinary':
-          livingNonBinary = increment ? livingNonBinary + 1 : (livingNonBinary > 0 ? livingNonBinary - 1 : 0);
           break;
       }
     });
@@ -100,7 +95,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
         toilets == 0 &&
         livingFemale == 0 &&
         livingMale == 0 &&
-        livingNonBinary == 0) {
+        !livingNonBinary) {
       return false;
     }
     return true;
@@ -263,13 +258,24 @@ class _PropertyScreenState extends State<PropertyScreen> {
               const SizedBox(height: 5),
               Divider(thickness: 1, color: Colors.grey.shade300),
               const SizedBox(height: 5),
-              _buildCounterRow('Non-Binary', 'livingNonBinary', livingNonBinary),
-              if (showError && livingFemale == 0 && livingMale == 0 && livingNonBinary == 0)
+              Row(
+                children: [
+                  Checkbox(
+                    value: livingNonBinary,
+                    onChanged: (value) {
+                      setState(() {
+                        livingNonBinary = value!;
+                      });
+                    },
+                  ),
+                  const Text('Non-Binary'),
+                ],
+              ),
+              if (showError && livingFemale == 0 && livingMale == 0 && !livingNonBinary)
                 const Text(
                   'Please add at least one occupant',
                   style: TextStyle(color: Colors.red),
                 ),
-
               const SizedBox(height: 20),
               const Text(
                 'Is there a bed in the room?',
@@ -321,10 +327,10 @@ class _PropertyScreenState extends State<PropertyScreen> {
                   for (String amenity in [
                     'Wardrobe',
                     'Air conditioning',
-                    'heating controls',
+                    'Heating controls',
                     'WI-FI',
-                    'curtains',
-                    'shelves'
+                    'Curtains',
+                    'Shelves'
                   ])
                     GestureDetector(
                       onTap: () {
@@ -362,24 +368,22 @@ class _PropertyScreenState extends State<PropertyScreen> {
                     'Gym',
                     'Garden',
                     'Laundry facilities',
-                    'Swimming pool'
-                    'garage',
-                    'parking space',
-                    'television',
-                    'iron',
-                    'refrigerator',
-                    'microwave',
-                    'dishwasher',
-                    'bath tub',
-                    'grill',
-                    'fire pit',
-                    'smoke Alarams',
-                    'security system',
-                    'balcony',
-                    'deck',
-                    'sound system',
-
-
+                    'Swimming pool',
+                    'Garage',
+                    'Parking space',
+                    'Television',
+                    'Iron',
+                    'Refrigerator',
+                    'Microwave',
+                    'Dishwasher',
+                    'Bath tub',
+                    'Grill',
+                    'Fire pit',
+                    'Smoke alarm',
+                    'Security system',
+                    'Balcony',
+                    'Deck',
+                    'Sound system',
                   ])
                     GestureDetector(
                       onTap: () {
@@ -415,11 +419,11 @@ class _PropertyScreenState extends State<PropertyScreen> {
                 children: [
                   for (String amenity in [
                     'No smoking',
-                    'Night out',
-                    'no drinking',
-                    'no pets',
-                    'no guests',
-                    'no parties'
+                    'No loud music after 9pm',
+                    'No drinking',
+                    'No pets',
+                    'No guests',
+                    'No parties'
                   ])
                     GestureDetector(
                       onTap: () {

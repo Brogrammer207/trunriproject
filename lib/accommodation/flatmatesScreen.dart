@@ -224,133 +224,109 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
               ),
               const SizedBox(height: 20),
               const Text(
-                'Who are looking to accommodate in your rental home?',
+                'Who are you looking to accommodate in your rental home?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Radio<bool>(
-                    value: true,
-                    groupValue: isStudents,
+                  Checkbox(
+                    value: isStudents,
                     onChanged: (value) {
                       setState(() {
-                        isStudents = value!;
-                        isEmployees = false;
-                        isFamilies = false;
-                        isSingle = false;
-                        isIndividuals = false;
-                        isCouples = false;
+                        isStudents = value ?? false;
                         showSituationError = false;
                       });
                     },
                   ),
-                  const Text('Students'),
+                  const Text(
+                    'Students',
+                    style: TextStyle(fontSize: 12),
+                  ),
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Radio<bool>(
-                    value: true,
-                    groupValue: isEmployees,
+                  Checkbox(
+                    value: isEmployees,
                     onChanged: (value) {
                       setState(() {
-                        isEmployees = value!;
-                        isStudents = false;
-                        isFamilies = false;
-                        isSingle = false;
-                        isIndividuals = false;
-                        isCouples = false;
+                        isEmployees = value ?? false;
                         showSituationError = false;
                       });
                     },
                   ),
-                  const Text('Employees'),
+                  const Text(
+                    'Employees',
+                    style: TextStyle(fontSize: 12),
+                  ),
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Radio<bool>(
-                    value: true,
-                    groupValue: isFamilies,
+                  Checkbox(
+                    value: isFamilies,
                     onChanged: (value) {
                       setState(() {
-                        isFamilies = value!;
-                        isStudents = false;
-                        isEmployees = false;
-                        isSingle = false;
-                        isIndividuals = false;
-                        isCouples = false;
+                        isFamilies = value ?? false;
                         showSituationError = false;
                       });
                     },
                   ),
-                  const Text('Families'),
+                  const Text(
+                    'Families',
+                    style: TextStyle(fontSize: 12),
+                  ),
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Radio<bool>(
-                    value: true,
-                    groupValue: isSingle,
+                  Checkbox(
+                    value: isSingle,
                     onChanged: (value) {
                       setState(() {
-                        isSingle = value!;
-                        isStudents = false;
-                        isEmployees = false;
-                        isFamilies = false;
-                        isIndividuals = false;
-                        isCouples = false;
+                        isSingle = value ?? false;
                         showSituationError = false;
                       });
                     },
                   ),
-                  const Text('Single'),
+                  const Text(
+                    'Single',
+                    style: TextStyle(fontSize: 12),
+                  ),
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Radio<bool>(
-                    value: true,
-                    groupValue: isIndividuals,
+                  Checkbox(
+                    value: isIndividuals,
                     onChanged: (value) {
                       setState(() {
-                        isIndividuals = value!;
-                        isStudents = false;
-                        isEmployees = false;
-                        isFamilies = false;
-                        isSingle = false;
-                        isCouples = false;
+                        isIndividuals = value ?? false;
                         showSituationError = false;
                       });
                     },
                   ),
-                  const Text('Individuals'),
+                  const Text(
+                    'Individuals',
+                    style: TextStyle(fontSize: 12),
+                  ),
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Radio<bool>(
-                    value: true,
-                    groupValue: isCouples,
+                  Checkbox(
+                    value: isCouples,
                     onChanged: (value) {
                       setState(() {
-                        isCouples = value!;
-                        isStudents = false;
-                        isEmployees = false;
-                        isFamilies = false;
-                        isSingle = false;
-                        isIndividuals = false;
+                        isCouples = value ?? false;
                         showSituationError = false;
                       });
                     },
                   ),
-                  const Text('Couples'),
+                  const Text(
+                    'Couples',
+                    style: TextStyle(fontSize: 12),
+                  ),
                 ],
               ),
               if (showSituationError)
