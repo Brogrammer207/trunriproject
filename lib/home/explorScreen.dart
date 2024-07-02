@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/home/resturentItemListScreen.dart';
+import 'package:trunriproject/job/jobHomePageScreen.dart';
 
 import '../accommodation/accommodationHomeScreen.dart';
 import '../accommodation/accommodationOptionScreen.dart';
@@ -80,6 +81,9 @@ class _ExplorScreenState extends State<ExplorScreen> {
               height: 10,
             ),
             ListTile(
+              onTap: (){
+                Get.to(const JobHomePageScreen());
+              },
               leading: Image.asset('assets/images/job.png'),
               title: const Text('Jobs'),
               trailing: const Icon(
