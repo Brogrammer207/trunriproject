@@ -312,7 +312,7 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
               ),
               const SizedBox(height: 20),
               const Text(
-                'Which did utilities and amenities will be covered in the rent?',
+                'Are the amenities and utilities included in the rental price?',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
               ),
               Row(

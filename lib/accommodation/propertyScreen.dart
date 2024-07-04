@@ -70,7 +70,8 @@ class _PropertyScreenState extends State<PropertyScreen> {
           child: const CircleAvatar(
             maxRadius: 15,
             minRadius: 15,
-            child: Icon(Icons.remove),
+            backgroundColor: Color(0xffFF730A),
+            child: Icon(Icons.remove,color: Colors.white,),
           ),
         ),
         const SizedBox(width: 10),
@@ -81,7 +82,8 @@ class _PropertyScreenState extends State<PropertyScreen> {
           child: const CircleAvatar(
             maxRadius: 15,
             minRadius: 15,
-            child: Icon(Icons.add),
+            backgroundColor: Color(0xffFF730A),
+            child: Icon(Icons.add,color: Colors.white,),
           ),
         ),
       ],

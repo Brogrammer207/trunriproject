@@ -588,7 +588,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: double.infinity,
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(11)),
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance.collection('accommodations').snapshots(),
+                  stream: FirebaseFirestore.instance.collection('accommodation').snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());
@@ -618,44 +618,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: images.isNotEmpty
-                                    ? CarouselSlider(
-                                  options: CarouselOptions(
-                                    height: 200.0,
-                                    enlargeCenterPage: true,
-                                    autoPlay: true,
-                                    aspectRatio: 16 / 9,
-                                    autoPlayCurve: Curves.fastOutSlowIn,
-                                    enableInfiniteScroll: true,
-                                    autoPlayAnimationDuration: Duration(milliseconds: 800),
-                                    viewportFraction: 0.8,
-                                  ),
-                                  items: images.map((imageUrl) {
-                                    return Builder(
-                                      builder: (BuildContext context) {
-                                        return Image.network(
-                                          imageUrl,
-                                          fit: BoxFit.cover,
-                                          width: MediaQuery.of(context).size.width,
-                                        );
-                                      },
-                                    );
-                                  }).toList(),
+                                    ? Image.network(
+                                  images[0],
+                                  fit: BoxFit.cover,
+                                  width: MediaQuery.of(context).size.width,
                                 )
                                     : SizedBox(),
                               ),
                               Container(
                                 margin: const EdgeInsets.only(right: 10),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    data['name'] ?? 'No name',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                width: 56, // Adjust width if needed
+                                child: Text(
+                                  data['fullAddress'] ?? 'No Address',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 12, // Adjust the font size as needed
                                   ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2, // Allow text to wrap to 2 lines if needed
                                 ),
                               ),
+
                             ],
                           ),
                         );
@@ -664,6 +648,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               )
+
 
 
 
