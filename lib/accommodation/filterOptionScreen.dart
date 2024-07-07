@@ -105,8 +105,9 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
           onTap: () => _updateCounter(key, false),
           child: const CircleAvatar(
             maxRadius: 15,
+            backgroundColor: Color(0xffFF730A),
             minRadius: 15,
-            child: Icon(Icons.remove),
+            child: Icon(Icons.remove,color: Colors.white,),
           ),
         ),
         const SizedBox(width: 10),
@@ -117,7 +118,8 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
           child: const CircleAvatar(
             maxRadius: 15,
             minRadius: 15,
-            child: Icon(Icons.add),
+            backgroundColor: Color(0xffFF730A),
+            child: Icon(Icons.add,color: Colors.white,),
           ),
         ),
       ],
@@ -189,6 +191,137 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                     }
                     return null;
                   },
+                ),
+                const SizedBox(height: 20,),
+                const Text(
+                  'What type of residence are you interested in?',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
+                ),
+                Row(
+                  children: [
+                    FilterChip(
+                      label: const Text('A room'),
+                      selected: roomAmenities.contains('A room'),
+                      onSelected: (bool selected) {
+                        setState(() {
+                          if (selected) {
+                            roomAmenities.add('A room');
+                          } else {
+                            roomAmenities.removeWhere((String name) {
+                              return name == 'A room';
+                            });
+                          }
+                        });
+                      },
+                    ),
+                    SizedBox(width: 5,),
+                    FilterChip(
+                      label: const Text('Entire home for rent'),
+                      selected: roomAmenities.contains('Entire home for rent'),
+                      onSelected: (bool selected) {
+                        setState(() {
+                          if (selected) {
+                            roomAmenities.add('Entire home for rent');
+                          } else {
+                            roomAmenities.removeWhere((String name) {
+                              return name == 'Entire home for rent';
+                            });
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    FilterChip(
+                      label: const Text('Studio unit'),
+                      selected: roomAmenities.contains('Studio unit'),
+                      onSelected: (bool selected) {
+                        setState(() {
+                          if (selected) {
+                            roomAmenities.add('Studio unit');
+                          } else {
+                            roomAmenities.removeWhere((String name) {
+                              return name == 'Studio unit';
+                            });
+                          }
+                        });
+                      },
+                    ),
+                    SizedBox(width: 5,),
+                    FilterChip(
+                      label: const Text('Granny flat'),
+                      selected: roomAmenities.contains('Granny flat'),
+                      onSelected: (bool selected) {
+                        setState(() {
+                          if (selected) {
+                            roomAmenities.add('Granny flat');
+                          } else {
+                            roomAmenities.removeWhere((String name) {
+                              return name == 'Granny flat';
+                            });
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    FilterChip(
+                      label: const Text('Single bed unit'),
+                      selected: roomAmenities.contains('Single bed unit'),
+                      onSelected: (bool selected) {
+                        setState(() {
+                          if (selected) {
+                            roomAmenities.add('Single bed unit');
+                          } else {
+                            roomAmenities.removeWhere((String name) {
+                              return name == 'Single bed unit';
+                            });
+                          }
+                        });
+                      },
+                    ),
+                    SizedBox(width: 5,),
+                    FilterChip(
+                      label: const Text('Shared bedroom'),
+                      selected: roomAmenities.contains('Shared bedroom'),
+                      onSelected: (bool selected) {
+                        setState(() {
+                          if (selected) {
+                            roomAmenities.add('Shared bedroom');
+                          } else {
+                            roomAmenities.removeWhere((String name) {
+                              return name == 'Shared bedroom';
+                            });
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    FilterChip(
+                      label: const Text('Shared room / rooms in shared house'),
+                      selected: roomAmenities.contains('Shared room / rooms in shared house'),
+                      onSelected: (bool selected) {
+                        setState(() {
+                          if (selected) {
+                            roomAmenities.add('Shared room / rooms in shared house');
+                          } else {
+                            roomAmenities.removeWhere((String name) {
+                              return name == 'Shared room / rooms in shared house';
+                            });
+                          }
+                        });
+                      },
+                    ),
+                    SizedBox(width: 5,),
+
+                  ],
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
