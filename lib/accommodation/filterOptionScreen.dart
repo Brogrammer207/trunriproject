@@ -204,6 +204,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                       children: [
                         Radio<bool>(
                           value: true,
+                          activeColor: Color(0xffFF730A),
                           groupValue: isLiftAvailable,
                           onChanged: (value) {
                             setState(() {
@@ -219,6 +220,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                       children: [
                         Radio<bool>(
                           value: false,
+                          activeColor: Color(0xffFF730A),
                           groupValue: isLiftAvailable,
                           onChanged: (value) {
                             setState(() {
@@ -884,6 +886,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                     CheckboxListTile(
                       title: const Text('Male'),
                       value: male,
+                      activeColor: Color(0xffFF730A),
                       onChanged: (value) {
                         setState(() {
                           male = value!;
@@ -894,6 +897,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                     CheckboxListTile(
                       title: const Text('Female'),
                       value: female,
+                      activeColor: Color(0xffFF730A),
                       onChanged: (value) {
                         setState(() {
                           female = value!;
@@ -904,6 +908,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                     CheckboxListTile(
                       title: const Text('Non-Binary'),
                       value: nonBinary,
+                      activeColor: Color(0xffFF730A),
                       onChanged: (value) {
                         setState(() {
                           nonBinary = value!;
@@ -925,6 +930,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                     CheckboxListTile(
                       title: const Text('students'),
                       value: isstudents,
+                      activeColor: Color(0xffFF730A),
                       onChanged: (value) {
                         setState(() {
                           isstudents = value!;
@@ -935,6 +941,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                     CheckboxListTile(
                       title: const Text('employees'),
                       value: isemployees,
+                      activeColor: Color(0xffFF730A),
                       onChanged: (value) {
                         setState(() {
                           isemployees = value!;
@@ -945,6 +952,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                     CheckboxListTile(
                       title: const Text('families'),
                       value: isfamilies,
+                      activeColor: Color(0xffFF730A),
                       onChanged: (value) {
                         setState(() {
                           isfamilies = value!;
@@ -954,6 +962,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                     ), CheckboxListTile(
                       title: const Text('single individuals'),
                       value: isSingleIndividuals,
+                      activeColor: Color(0xffFF730A),
                       onChanged: (value) {
                         setState(() {
                           isSingleIndividuals = value!;
@@ -963,6 +972,7 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
                     ),CheckboxListTile(
                       title: const Text('couples'),
                       value: isCouples,
+                      activeColor: Color(0xffFF730A),
                       onChanged: (value) {
                         setState(() {
                           isCouples = value!;

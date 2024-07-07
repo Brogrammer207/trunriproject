@@ -184,6 +184,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                 children: [
                   Radio<bool>(
                     value: true,
+                    activeColor: Color(0xffFF730A),
                     groupValue: isLiftAvailable,
                     onChanged: (value) {
                       setState(() {
@@ -199,6 +200,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                 children: [
                   Radio<bool>(
                     value: false,
+                    activeColor: Color(0xffFF730A),
                     groupValue: isLiftAvailable,
                     onChanged: (value) {
                       setState(() {
@@ -264,6 +266,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                 children: [
                   Checkbox(
                     value: livingNonBinary,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         livingNonBinary = value!;
@@ -288,6 +291,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                 children: [
                   Radio<bool>(
                     value: true,
+                    activeColor: Color(0xffFF730A),
                     groupValue: isBedInRoom,
                     onChanged: (value) {
                       setState(() {
@@ -303,6 +307,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                 children: [
                   Radio<bool>(
                     value: false,
+                    activeColor: Color(0xffFF730A),
                     groupValue: isBedInRoom,
                     onChanged: (value) {
                       setState(() {

@@ -138,6 +138,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 children: [
                   Checkbox(
                     value: male,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         male = value ?? false;
@@ -155,6 +156,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 children: [
                   Checkbox(
                     value: female,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         female = value ?? false;
@@ -172,6 +174,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 children: [
                   Checkbox(
                     value: nonBinary,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         nonBinary = value ?? false;
@@ -231,6 +234,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 children: [
                   Checkbox(
                     value: isStudents,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         isStudents = value ?? false;
@@ -248,6 +252,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 children: [
                   Checkbox(
                     value: isEmployees,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         isEmployees = value ?? false;
@@ -265,6 +270,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 children: [
                   Checkbox(
                     value: isFamilies,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         isFamilies = value ?? false;
@@ -282,6 +288,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 children: [
                   Checkbox(
                     value: isSingle,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         isSingle = value ?? false;
@@ -299,6 +306,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 children: [
                   Checkbox(
                     value: isIndividuals,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         isIndividuals = value ?? false;
@@ -316,6 +324,7 @@ class _FlatmateScreenState extends State<FlatmateScreen> {
                 children: [
                   Checkbox(
                     value: isCouples,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         isCouples = value ?? false;

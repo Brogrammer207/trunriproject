@@ -319,6 +319,7 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
                 children: [
                   Checkbox(
                     value: rentalContract,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         rentalContract = value ?? false;
@@ -335,6 +336,7 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
                 children: [
                   Checkbox(
                     value: cleaningService,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         cleaningService = value ?? false;
@@ -351,6 +353,7 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
                 children: [
                   Checkbox(
                     value: maintenanceService,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         maintenanceService = value ?? false;
@@ -367,6 +370,7 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
                 children: [
                   Checkbox(
                     value: lawnCare,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         lawnCare = value ?? false;
@@ -383,6 +387,7 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
                 children: [
                   Checkbox(
                     value: poolAccess,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         poolAccess = value ?? false;
@@ -399,6 +404,7 @@ class _AvailabilityAndPriceScreenState extends State<AvailabilityAndPriceScreen>
                 children: [
                   Checkbox(
                     value: gym,
+                    activeColor: Color(0xffFF730A),
                     onChanged: (value) {
                       setState(() {
                         gym = value ?? false;
