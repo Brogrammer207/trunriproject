@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:trunriproject/job/uploadResumeScreen.dart';
 
 class JobDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -7,6 +9,7 @@ class JobDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text(data['positionName']),
@@ -126,6 +129,31 @@ class JobDetailsScreen extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(height: 20,),
+              GestureDetector(
+               onTap: (){
+                 Get.to(const UploadResumeScreen());
+               },
+                child: Container(
+                  width: size.width,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xffFF730A),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "Apply Now",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 22,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20,),
             ],
           ),
         ),

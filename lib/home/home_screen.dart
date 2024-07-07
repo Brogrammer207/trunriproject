@@ -121,7 +121,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-
   List<String> imageUrls = [];
   Future<List<String>> fetchImageData() async {
     try {
@@ -619,10 +618,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 child: images.isNotEmpty
                                     ? Image.network(
-                                  images[0],
-                                  fit: BoxFit.cover,
-                                  width: MediaQuery.of(context).size.width,
-                                )
+                                        images[0],
+                                        fit: BoxFit.cover,
+                                        width: MediaQuery.of(context).size.width,
+                                      )
                                     : SizedBox(),
                               ),
                               Container(
@@ -639,7 +638,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   maxLines: 2, // Allow text to wrap to 2 lines if needed
                                 ),
                               ),
-
                             ],
                           ),
                         );
@@ -648,10 +646,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               )
-
-
-
-
             ],
           ),
         ),

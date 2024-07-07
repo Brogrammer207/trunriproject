@@ -55,6 +55,7 @@ class _JobHomePageScreenState extends State<JobHomePageScreen> {
                   return ListView.builder(
                       itemCount: Documents.length,
                       shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         var data = Documents[index].data() as Map<String, dynamic>;
 
@@ -75,139 +76,188 @@ class _JobHomePageScreenState extends State<JobHomePageScreen> {
                           onTap: (){
                             Get.to(JobDetailsScreen(data: data,));
                           },
-                          child: Container(
-                            margin: const EdgeInsets.only(left: 10, right: 10),
-                            padding: const EdgeInsets.all(15),
-                            height: 160,
-                            decoration:
-                                BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(11)),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  data['positionName'],
-                                  style: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.shopping_bag_outlined,
-                                      size: 15,
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      data['experience'],
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    const VerticalDivider(
-                                      width: 2,
-                                      color: Colors.black,
-                                    ),
-                                    const Icon(
-                                      Icons.monetization_on_rounded,
-                                      size: 15,
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      data['salary'],
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    const VerticalDivider(
-                                      width: 2,
-                                      color: Colors.black,
-                                    ),
-                                    const Icon(
-                                      Icons.navigation_rounded,
-                                      size: 15,
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      data['address'] ?? "",
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.description_outlined, size: 15),
-                                    const SizedBox(width: 5),
-                                    Expanded(
-                                      child: Text(
-                                        data['jobDescription'],
-                                        style: const TextStyle(fontSize: 12),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
+                          child: Stack(
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(left: 10, right: 10,bottom: 10),
+                                padding: const EdgeInsets.all(15),
+                                height: 160,
+                                decoration:
+                                BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: const [ BoxShadow(
+                                      color: Colors.black26,
+                                      offset: Offset(
+                                        0.2,
+                                        0.2,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                Row(
+                                      blurRadius: 1,
+                                    ),],
+                                    borderRadius: BorderRadius.circular(11)),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      data['industryType'],
-                                      style: const TextStyle(fontSize: 12),
+                                      data['positionName'],
+                                      style: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(
-                                      width: 5,
+                                      height: 5,
                                     ),
-                                    const Text(
-                                      '-',
-                                      style: const TextStyle(fontSize: 10),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.shopping_bag_outlined,
+                                          size: 15,
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                          data['experience'],
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        const VerticalDivider(
+                                          width: 2,
+                                          color: Colors.black,
+                                        ),
+                                        const Icon(
+                                          Icons.monetization_on_rounded,
+                                          size: 15,
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.only(left: 10,right: 10),
+                                          decoration: BoxDecoration(
+                                              color: Colors.red.shade200,
+                                              borderRadius: BorderRadius.circular(5)
+                                          ),
+                                          child:    Text(
+                                            data['salary'],
+                                            style: const TextStyle(fontSize: 12),
+                                          ),
+                                        ),
+
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        const VerticalDivider(
+                                          width: 2,
+                                          color: Colors.black,
+                                        ),
+                                        const Icon(
+                                          Icons.navigation_rounded,
+                                          size: 15,
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                          data['address'] ?? "",
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      ],
                                     ),
                                     const SizedBox(
-                                      width: 5,
+                                      height: 8,
+                                    ),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.description_outlined, size: 15),
+                                        const SizedBox(width: 5),
+                                        Expanded(
+                                          child: Text(
+                                            data['jobDescription'],
+                                            style: const TextStyle(fontSize: 12),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.only(left: 10,right: 10),
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade200,
+                                            borderRadius: BorderRadius.circular(5)
+                                          ),
+                                          child: Text(
+                                            data['industryType'],
+                                            style: const TextStyle(fontSize: 12),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        const Text(
+                                          '-',
+                                          style: const TextStyle(fontSize: 10),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.only(left: 10,right: 10),
+                                          decoration: BoxDecoration(
+                                              color: Colors.grey.shade200,
+                                              borderRadius: BorderRadius.circular(5)
+                                          ),
+                                          child:   Text(
+                                            data['employmentType'],
+                                            style: const TextStyle(fontSize: 12),
+                                          ),
+                                        ),
+
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        const Text(
+                                          '-',
+                                          style: const TextStyle(fontSize: 10),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.only(left: 10,right: 10),
+                                          decoration: BoxDecoration(
+                                              color: Colors.green.shade200,
+                                              borderRadius: BorderRadius.circular(5)
+                                          ),
+                                          child:   Text(
+                                            data['department'] ?? "",
+                                            style: const TextStyle(fontSize: 12),
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
                                     ),
                                     Text(
-                                      data['employmentType'],
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    const Text(
-                                      '-',
-                                      style: const TextStyle(fontSize: 10),
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      data['department'] ?? "",
+                                      timeAgo,
                                       style: const TextStyle(fontSize: 12),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                Text(
-                                  timeAgo,
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
+                              ),
+                              Positioned(
+                                top: 10,
+                                  right: 20,
+                                  child: Image.asset('assets/icons/save.png',height: 25,))
+                            ],
                           ),
                         );
                       });
