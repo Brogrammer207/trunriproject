@@ -44,28 +44,24 @@ class _AddJobScreenState extends State<AddJobScreen> {
 
   final List<String> employmentTypeOption = [
     'Casual',
-    'Temp',
+    'Temporary',
     'Contract',
     'Part time',
     'Full time',
+    'Permanent',
+    'Freelance',
+    'Apprenticeship',
+    'Internship'
   ];
 
   String? schedule;
 
   final List<String> scheduleOption = [
-    '8 hour shift',
-    '10 hour shift',
-    '12 hour shift',
-    'shift work',
-    'morning shift',
-    'day shift',
-    'afternoon shift',
-    'evening shift',
-    'night shift',
-    'rotating roster',
-    'fixed shift',
-    'monday to friday',
-    'every weekend',
+    '8 Hour shift',
+    '10 Hour shift',
+    '12 Hour shift',
+    'Less than 8 hours',
+
 
   ];
 
@@ -97,8 +93,8 @@ class _AddJobScreenState extends State<AddJobScreen> {
   String minSalary = '0';
   String maxSalary = '100';
 
-  final List<String> salaryTypes = ['Hourly', 'Monthly', 'Weekly'];
-  final List<String> minSalaryOptions = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+  final List<String> salaryTypes = ['Daily','Hourly', 'Monthly', 'Weekly','Yearly'];
+  final List<String> minSalaryOptions = ['0', '15', '20', '25', '30','35','40','45'];
   final List<String> maxSalaryOptions = List.generate(901, (index) => (index + 100).toString());
 
 
@@ -172,6 +168,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: DropdownButtonFormField<String>(
                   value: experience,
+                  dropdownColor: Colors.white,
                   items: experienceOptions.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -201,6 +198,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: DropdownButtonFormField<String>(
                   value: schedule,
+                  dropdownColor: Colors.white,
                   items: scheduleOption.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -232,6 +230,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
                   children: [
                     DropdownButtonFormField<String>(
                       value: salaryType,
+                      dropdownColor: Colors.white,
                       items: salaryTypes.map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -256,10 +255,11 @@ class _AddJobScreenState extends State<AddJobScreen> {
                           flex: 1,
                           child: DropdownButtonFormField<String>(
                             value: minSalary,
+                            dropdownColor: Colors.white,
                             items: minSalaryOptions.map((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
-                                child: Text(value),
+                                child: Text('AU\$ $value'),
                               );
                             }).toList(),
                             onChanged: (newValue) {
@@ -278,10 +278,11 @@ class _AddJobScreenState extends State<AddJobScreen> {
                           flex: 1,
                           child: DropdownButtonFormField<String>(
                             value: maxSalary,
+                            dropdownColor: Colors.white,
                             items: maxSalaryOptions.map((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
-                                child: Text(value),
+                                child: Text('AU\$ $value'),
                               );
                             }).toList(),
                             onChanged: (newValue) {
@@ -330,6 +331,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: DropdownButtonFormField<String>(
                   value: industryType,
+                  dropdownColor: Colors.white,
                   items: industryTypeOption.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -369,6 +371,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: DropdownButtonFormField<String>(
                   value: employmentType,
+                  dropdownColor: Colors.white,
                   items: employmentTypeOption.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -389,16 +392,6 @@ class _AddJobScreenState extends State<AddJobScreen> {
                 ),
               ),
               const SizedBox(height: 15,),
-              const Padding(
-                padding: EdgeInsets.only(left: 25),
-                child: Text('Role Category'),
-              ),
-              CommonTextField(
-                  hintText: 'Role Category',
-                  controller: roleCategoryController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'Role Category is required'),
-                  ]).call),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Education'),
@@ -422,7 +415,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
               const SizedBox(height: 15,),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
-                child: Text('How long this job will show'),
+                child: Text('How long should this job posting be active?'),
               ),
               const SizedBox(height: 15,),
               Padding(
@@ -431,6 +424,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
                   children: [
                     DropdownButtonFormField<String>(
                       value: timeOfAdd,
+                      dropdownColor: Colors.white,
                       items: timeOfAddOption.map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -462,6 +456,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
                   maxLines: 5,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'Job description is required'),
+                    MinLengthValidator(30, errorText: 'Job description must be at least 30 characters long'),
                   ]).call),
               const Padding(
                 padding: EdgeInsets.only(left: 25),

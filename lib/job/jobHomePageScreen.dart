@@ -19,19 +19,11 @@ class _JobHomePageScreenState extends State<JobHomePageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Search Job'),
         automaticallyImplyLeading: false,
-        actions: [
-          GestureDetector(
-              onTap: () {
-                Get.to(const AddJobScreen());
-              },
-              child: const Icon(Icons.add_circle_outline_outlined)),
-          const SizedBox(
-            width: 15,
-          )
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -39,6 +31,60 @@ class _JobHomePageScreenState extends State<JobHomePageScreen> {
             const Padding(
               padding: EdgeInsets.only(left: 10, right: 10),
               child: SearchField(),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10,right: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: (){},
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.grey.shade200),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Center(child: Text('Filter')),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Icon(Icons.filter_list)
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: (){
+                        Get.to(const AddJobScreen());
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.grey.shade200),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Center(child: Text('Add a post')),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Icon(Icons.add_circle_outline_outlined)
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(
               height: 10,

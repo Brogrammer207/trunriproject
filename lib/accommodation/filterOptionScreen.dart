@@ -15,15 +15,7 @@ class FilterOptionScreen extends StatefulWidget {
 class _FilterOptionScreenState extends State<FilterOptionScreen> {
   List<String> propertyAmenities = [];
   List<String> homeRules = [];
-  final List<String> cityList = [
-    'Queensland',
-    'Victoria',
-    'NSW',
-    'South Australia',
-    'Western Australia',
-    'Northern Territory',
-    'Tasmania'
-  ];
+
   String? selectedCity;
   int singleBadRoom = 0;
   int doubleBadRoom = 0;
@@ -52,6 +44,130 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
   bool isBedInRoom = false;
   bool showError = false;
 
+  final List<String> stateList = [
+    'Queensland',
+    'Victoria',
+    'NSW',
+    'South Australia',
+    'Western Australia',
+    'Northern Territory',
+    'Tasmania'
+  ];
+
+  final Map<String, List<String>> stateCityMap = {
+    'Queensland': [
+      'Brisbane',
+      'Gold Coast',
+      'Sunshine Coast',
+      'Townsville',
+      'Cairns',
+      'Toowoomba',
+      'Mackay',
+      'Rockhampton',
+      'Bundaberg',
+      'Hervey Bay',
+      'Gladstone',
+      'Maryborough',
+      'Mount Isa',
+      'Gympie',
+      'Warwick',
+      'Emerald',
+      'Dalby',
+      'Bowen',
+      'Charters Towers',
+      'Kingaroy',
+    ],
+    'Victoria': [
+      'Melbourne',
+      'Geelong',
+      'Ballarat',
+      'Bendigo',
+      'Shepparton',
+      'Mildura',
+      'Warrnambool',
+      'Traralgon',
+      'Wodonga',
+      'Wangaratta',
+      'Horsham',
+      'Moe',
+      'Morwell',
+      'Sale',
+      'Bairnsdale',
+      'Benalla',
+    ],
+    'NSW': [
+      'Sydney',
+      'Newcastle',
+      'Central Coast',
+      'Wollongong',
+      'Albury',
+      'Armidale',
+      'Bathurst',
+      'Blue Mountains',
+      'Broken Hill',
+      'Campbelltown',
+      'Cessnock',
+      'Dubbo',
+      'Goulburn',
+      'Grafton',
+      'Griffith',
+      'Lake Macquarie',
+      'Lismore',
+      'Lithgow',
+      'Maitland',
+      'Nowra',
+      'Orange',
+      'Parramatta',
+      'Penrith',
+      'Port Macquarie',
+      'Queanbeyan',
+      'Richmond-Windsor',
+      'Shellharbour',
+      'Shoalhaven',
+      'Tamworth',
+      'Taree',
+      'Tweed Heads',
+      'Wagga Wagga',
+      'Wyong',
+      'Fairfield',
+      'Hawkesbury',
+      'Kiama',
+      'Singleton',
+      'Yass',
+    ],
+    'South Australia': [
+      'Adelaide',
+      'Mount Gambier',
+      'Port Augusta',
+      'Port Lincoln',
+      'Port Pirie',
+      'Whyalla',
+    ],
+    'Western Australia': [
+      'Perth',
+      'Albany',
+      'Armadale',
+      'Bunbury',
+      'Busselton',
+      'Fremantle',
+      'Geraldton',
+      'Kalgoorlie',
+    ],
+    'Northern Territory': [
+      'Darwin',
+      'Palmerston',
+    ],
+    'Tasmania': [
+      'Hobart',
+      'Launceston',
+      'Devonport',
+      'Burnie',
+    ],
+  };
+
+
+  String? selectedState;
+  List<String> cityList = [];
   bool isFormValid() {
     bool genderSelected = male || female || nonBinary;
     bool situationSelected = isstudents || isemployees || isfamilies || isSingleIndividuals || isCouples;
@@ -164,12 +280,52 @@ class _FilterOptionScreenState extends State<FilterOptionScreen> {
               children: [
                 const SizedBox(height: 20),
                 const Text(
+                  'State',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                DropdownButtonFormField<String>(
+                  value: selectedState,
+                  dropdownColor: Colors.white,
+                  items: stateList.map((String state) {
+                    return DropdownMenuItem<String>(
+                      value: state,
+                      child: Text(state),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      selectedState = newValue;
+                      cityList = stateCityMap[newValue] ?? [];
+                      selectedCity = null; // Reset selected city
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    hintText: 'Select state',
+                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                  validator: (value) {
+                    if (value == null) {
+                      return 'State is required';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                const Text(
                   'City',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(
+                  height: 10,
+                ),
                 DropdownButtonFormField<String>(
                   value: selectedCity,
+                  dropdownColor: Colors.white,
                   items: cityList.map((String city) {
                     return DropdownMenuItem<String>(
                       value: city,
