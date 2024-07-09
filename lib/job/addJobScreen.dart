@@ -49,6 +49,50 @@ class _AddJobScreenState extends State<AddJobScreen> {
     'Part time',
     'Full time',
   ];
+
+  String? schedule;
+
+  final List<String> scheduleOption = [
+    '8 hour shift',
+    '10 hour shift',
+    '12 hour shift',
+    'shift work',
+    'morning shift',
+    'day shift',
+    'afternoon shift',
+    'evening shift',
+    'night shift',
+    'rotating roster',
+    'fixed shift',
+    'monday to friday',
+    'every weekend',
+
+  ];
+
+  String? timeOfAdd;
+
+  final List<String> timeOfAddOption = [
+    '1 to 3 days',
+    '3 to 7 days',
+    '1 to 2 weeks',
+    '2 to 4 weeks',
+    'more Then 4 weeks',
+  ];
+
+  String? industryType;
+
+  final List<String> industryTypeOption = [
+    'Media, Advertising & Online',
+    'Transport & Logistics',
+    'Manufacturing',
+    'Construction, Design & Engineering',
+    'Information & Communication Technology (ICT)',
+    'Financial & Insurance Services',
+    'Real Estate & Property Services',
+    'Professional Services',
+    'Healthcare & Social Assistance',
+    'Education, Training',
+  ];
   String salaryType = 'Hourly';
   String minSalary = '0';
   String maxSalary = '100';
@@ -68,7 +112,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
       'salary': '$salaryType: \$$minSalary - \$$maxSalary',
       'openings': openingsController.text,
       'role': roleController.text,
-      'industryType': industryTypeController.text,
+      'industryType': industryType,
       'department': departmentController.text,
       'employmentType': employmentType,
       'roleCategory': roleCategoryController.text,
@@ -76,6 +120,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
       'keySkills': keySkillsController.text,
       'jobDescription': jobDescriptionController.text,
       'aboutCompany': aboutCompanyController.text,
+      'timeOfAdd' : timeOfAdd
     }).then((value) {
       showToast('Add Jobs Successfully');
       Get.to(const JobHomePageScreen());
@@ -138,12 +183,41 @@ class _AddJobScreenState extends State<AddJobScreen> {
                       experience = newValue!;
                     });
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Work Experience',
                     border: OutlineInputBorder(),
                   ),
                   validator: RequiredValidator(
                       errorText: 'Experience is required'),
+                ),
+              ),
+              const SizedBox(height: 15,),
+              const Padding(
+                padding: EdgeInsets.only(left: 25),
+                child: Text('Schedule'),
+              ),
+              const SizedBox(height: 15,),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                child: DropdownButtonFormField<String>(
+                  value: schedule,
+                  items: scheduleOption.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      schedule = newValue!;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'schedule',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: RequiredValidator(
+                      errorText: 'schedule is required'),
                 ),
               ),
               const SizedBox(height: 15,),
@@ -169,12 +243,12 @@ class _AddJobScreenState extends State<AddJobScreen> {
                           salaryType = newValue!;
                         });
                       },
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Salary Type',
                         border: OutlineInputBorder(),
                       ),
                     ),
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
                     Row(
                       children: [
 
@@ -193,13 +267,13 @@ class _AddJobScreenState extends State<AddJobScreen> {
                                 minSalary = newValue!;
                               });
                             },
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Min Salary',
                               border: OutlineInputBorder(),
                             ),
                           ),
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         Expanded(
                           flex: 1,
                           child: DropdownButtonFormField<String>(
@@ -215,7 +289,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
                                 maxSalary = newValue!;
                               });
                             },
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Max Salary',
                               border: OutlineInputBorder(),
                             ),
@@ -226,13 +300,13 @@ class _AddJobScreenState extends State<AddJobScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 10,),
+              const SizedBox(height: 10,),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
                 child: Text('How many positions are open ?'),
               ),
               CommonTextField(
-                  hintText: 'How many positions are open ?',
+                  hintText: '10',
                   controller: openingsController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'How many positions are open is required'),
@@ -251,12 +325,31 @@ class _AddJobScreenState extends State<AddJobScreen> {
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Industry Type'),
               ),
-              CommonTextField(
-                  hintText: 'Industry Type',
-                  controller: industryTypeController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'Industry Type is required'),
-                  ]).call),
+              const SizedBox(height: 10,),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                child: DropdownButtonFormField<String>(
+                  value: industryType,
+                  items: industryTypeOption.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value,style: const TextStyle(fontSize: 10),),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      industryType = newValue!;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Industry Type',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: RequiredValidator(
+                      errorText: 'Industry Type'),
+                ),
+              ),
+              const SizedBox(height: 15,),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Department'),
@@ -287,7 +380,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
                       employmentType = newValue!;
                     });
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Job Type',
                     border: OutlineInputBorder(),
                   ),
@@ -295,7 +388,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
                       errorText: 'Job Type'),
                 ),
               ),
-              SizedBox(height: 15,),
+              const SizedBox(height: 15,),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Role Category'),
@@ -326,6 +419,38 @@ class _AddJobScreenState extends State<AddJobScreen> {
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'Key Skills is required'),
                   ]).call),
+              const SizedBox(height: 15,),
+              const Padding(
+                padding: EdgeInsets.only(left: 25),
+                child: Text('How long this job will show'),
+              ),
+              const SizedBox(height: 15,),
+              Padding(
+                padding: const EdgeInsets.only(left: 25,right: 25),
+                child: Column(
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value: timeOfAdd,
+                      items: timeOfAddOption.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          timeOfAdd = newValue!;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'How long this add will show',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 15,),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Job description'),
@@ -359,7 +484,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
 
                 },
                 child: Container(
-                  margin: EdgeInsets.only(left: 25,right: 25),
+                  margin: const EdgeInsets.only(left: 25,right: 25),
                   width: size.width,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
