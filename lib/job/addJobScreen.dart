@@ -19,6 +19,8 @@ class _AddJobScreenState extends State<AddJobScreen> {
   TextEditingController positionNameController = TextEditingController();
   TextEditingController companyNameController = TextEditingController();
   TextEditingController salaryController = TextEditingController();
+  TextEditingController minimumSalaryController = TextEditingController();
+  TextEditingController maximunSalaryController = TextEditingController();
   TextEditingController openingsController = TextEditingController();
   TextEditingController roleController = TextEditingController();
   TextEditingController industryTypeController = TextEditingController();
@@ -34,12 +36,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
 
   String? experience;
 
-  final List<String> experienceOptions = [
-    '0-1 years',
-    '1-3 years',
-    '3-5 years',
-    '5+ years'
-  ];
+  final List<String> experienceOptions = ['0-1 years', '1-3 years', '3-5 years', '5+ years'];
   String? employmentType;
 
   final List<String> employmentTypeOption = [
@@ -61,8 +58,6 @@ class _AddJobScreenState extends State<AddJobScreen> {
     '10 Hour shift',
     '12 Hour shift',
     'Less than 8 hours',
-
-
   ];
 
   String? timeOfAdd;
@@ -90,13 +85,8 @@ class _AddJobScreenState extends State<AddJobScreen> {
     'Education, Training',
   ];
   String salaryType = 'Hourly';
-  String minSalary = '0';
-  String maxSalary = '100';
 
-  final List<String> salaryTypes = ['Daily','Hourly', 'Monthly', 'Weekly','Yearly'];
-  final List<String> minSalaryOptions = ['0', '15', '20', '25', '30','35','40','45'];
-  final List<String> maxSalaryOptions = List.generate(901, (index) => (index + 100).toString());
-
+  final List<String> salaryTypes = ['Daily', 'Hourly', 'Monthly', 'Weekly', 'Yearly'];
 
   void addJobs() {
     FirebaseFirestore.instance.collection('jobs').doc().set({
@@ -105,7 +95,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
       'positionName': positionNameController.text,
       'companyName': companyNameController.text,
       'experience': experience,
-      'salary': '$salaryType: \$$minSalary - \$$maxSalary',
+      'salary': '$salaryType: \$${minimumSalaryController.text} - \$${maximunSalaryController.text}',
       'openings': openingsController.text,
       'role': roleController.text,
       'industryType': industryType,
@@ -116,7 +106,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
       'keySkills': keySkillsController.text,
       'jobDescription': jobDescriptionController.text,
       'aboutCompany': aboutCompanyController.text,
-      'timeOfAdd' : timeOfAdd
+      'timeOfAdd': timeOfAdd
     }).then((value) {
       showToast('Add Jobs Successfully');
       Get.to(const JobHomePageScreen());
@@ -163,7 +153,9 @@ class _AddJobScreenState extends State<AddJobScreen> {
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Required Work Experience'),
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: DropdownButtonFormField<String>(
@@ -184,16 +176,19 @@ class _AddJobScreenState extends State<AddJobScreen> {
                     labelText: 'Work Experience',
                     border: OutlineInputBorder(),
                   ),
-                  validator: RequiredValidator(
-                      errorText: 'Experience is required'),
+                  validator: RequiredValidator(errorText: 'Experience is required'),
                 ),
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Schedule'),
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: DropdownButtonFormField<String>(
@@ -214,18 +209,21 @@ class _AddJobScreenState extends State<AddJobScreen> {
                     labelText: 'schedule',
                     border: OutlineInputBorder(),
                   ),
-                  validator: RequiredValidator(
-                      errorText: 'schedule is required'),
+                  validator: RequiredValidator(errorText: 'schedule is required'),
                 ),
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Salary'),
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               Padding(
-                padding: const EdgeInsets.only(left: 25,right: 25),
+                padding: const EdgeInsets.only(left: 25, right: 25),
                 child: Column(
                   children: [
                     DropdownButtonFormField<String>(
@@ -247,61 +245,37 @@ class _AddJobScreenState extends State<AddJobScreen> {
                         border: OutlineInputBorder(),
                       ),
                     ),
-                    const SizedBox(height: 10,),
-                    Row(
-                      children: [
-
-                        Expanded(
-                          flex: 1,
-                          child: DropdownButtonFormField<String>(
-                            value: minSalary,
-                            dropdownColor: Colors.white,
-                            items: minSalaryOptions.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text('AU\$ $value'),
-                              );
-                            }).toList(),
-                            onChanged: (newValue) {
-                              setState(() {
-                                minSalary = newValue!;
-                              });
-                            },
-                            decoration: const InputDecoration(
-                              labelText: 'Min Salary',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          flex: 1,
-                          child: DropdownButtonFormField<String>(
-                            value: maxSalary,
-                            dropdownColor: Colors.white,
-                            items: maxSalaryOptions.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text('AU\$ $value'),
-                              );
-                            }).toList(),
-                            onChanged: (newValue) {
-                              setState(() {
-                                maxSalary = newValue!;
-                              });
-                            },
-                            decoration: const InputDecoration(
-                              labelText: 'Max Salary',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                      ],
+                    const SizedBox(
+                      height: 10,
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 10,),
+              Row(
+                children: [
+                  Expanded(
+                    child: CommonTextField(
+                        hintText: 'AU\$0.00',
+                        labelText: 'Min Salary',
+                        controller: minimumSalaryController,
+                        validator: MultiValidator([
+                          RequiredValidator(errorText: 'minimum Salary is required'),
+                        ]).call),
+                  ),
+                  Expanded(
+                    child: CommonTextField(
+                        hintText: 'AU\$0.00',
+                        labelText: 'Max Salary',
+                        controller: maximunSalaryController,
+                        validator: MultiValidator([
+                          RequiredValidator(errorText: 'maximun Salary is required'),
+                        ]).call),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
                 child: Text('How many positions are open ?'),
@@ -326,7 +300,9 @@ class _AddJobScreenState extends State<AddJobScreen> {
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Industry Type'),
               ),
-              const SizedBox(height: 10,),
+              const SizedBox(
+                height: 10,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: DropdownButtonFormField<String>(
@@ -335,7 +311,10 @@ class _AddJobScreenState extends State<AddJobScreen> {
                   items: industryTypeOption.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value,style: const TextStyle(fontSize: 10),),
+                      child: Text(
+                        value,
+                        style: const TextStyle(fontSize: 10),
+                      ),
                     );
                   }).toList(),
                   onChanged: (newValue) {
@@ -347,11 +326,12 @@ class _AddJobScreenState extends State<AddJobScreen> {
                     labelText: 'Industry Type',
                     border: OutlineInputBorder(),
                   ),
-                  validator: RequiredValidator(
-                      errorText: 'Industry Type'),
+                  validator: RequiredValidator(errorText: 'Industry Type'),
                 ),
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Department'),
@@ -366,7 +346,9 @@ class _AddJobScreenState extends State<AddJobScreen> {
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Job Type'),
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: DropdownButtonFormField<String>(
@@ -387,11 +369,12 @@ class _AddJobScreenState extends State<AddJobScreen> {
                     labelText: 'Job Type',
                     border: OutlineInputBorder(),
                   ),
-                  validator: RequiredValidator(
-                      errorText: 'Job Type'),
+                  validator: RequiredValidator(errorText: 'Job Type'),
                 ),
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Education'),
@@ -412,14 +395,18 @@ class _AddJobScreenState extends State<AddJobScreen> {
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'Key Skills is required'),
                   ]).call),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
                 child: Text('How long should this job posting be active?'),
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               Padding(
-                padding: const EdgeInsets.only(left: 25,right: 25),
+                padding: const EdgeInsets.only(left: 25, right: 25),
                 child: Column(
                   children: [
                     DropdownButtonFormField<String>(
@@ -444,7 +431,9 @@ class _AddJobScreenState extends State<AddJobScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Job description'),
@@ -470,16 +459,17 @@ class _AddJobScreenState extends State<AddJobScreen> {
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'About company is required'),
                   ]).call),
-              const SizedBox(height: 20,),
+              const SizedBox(
+                height: 20,
+              ),
               GestureDetector(
-                onTap: (){
-                  if(formKey1.currentState!.validate()){
+                onTap: () {
+                  if (formKey1.currentState!.validate()) {
                     addJobs();
                   }
-
                 },
                 child: Container(
-                  margin: const EdgeInsets.only(left: 25,right: 25),
+                  margin: const EdgeInsets.only(left: 25, right: 25),
                   width: size.width,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
@@ -498,7 +488,9 @@ class _AddJobScreenState extends State<AddJobScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 30,),
+              const SizedBox(
+                height: 30,
+              ),
             ],
           ),
         ),
