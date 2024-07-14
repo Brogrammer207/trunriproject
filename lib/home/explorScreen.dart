@@ -6,6 +6,7 @@ import 'package:trunriproject/job/jobHomePageScreen.dart';
 
 import '../accommodation/accommodationHomeScreen.dart';
 import '../accommodation/accommodationOptionScreen.dart';
+import '../temple/templeHomePageScreen.dart';
 import 'groceryStoreListScreen.dart';
 
 class ExplorScreen extends StatefulWidget {
@@ -86,6 +87,20 @@ class _ExplorScreenState extends State<ExplorScreen> {
               },
               leading: Image.asset('assets/images/job.png'),
               title: const Text('Jobs'),
+              trailing: const Icon(
+                Icons.arrow_forward_ios_outlined,
+                size: 15,
+              ),
+            ),
+            const Divider(
+              height: 10,
+            ),
+            ListTile(
+              onTap: (){
+                Get.to(const TempleHomePageScreen());
+              },
+              leading: Image.asset('assets/images/temple.png'),
+              title: const Text('Temple'),
               trailing: const Icon(
                 Icons.arrow_forward_ios_outlined,
                 size: 15,

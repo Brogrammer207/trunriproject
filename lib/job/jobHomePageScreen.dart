@@ -38,7 +38,7 @@ class _JobHomePageScreenState extends State<JobHomePageScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 10,right: 10),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Expanded(
                     child: GestureDetector(
@@ -49,10 +49,6 @@ class _JobHomePageScreenState extends State<JobHomePageScreen> {
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Center(child: Text('Filter')),
-                            SizedBox(
-                              width: 10,
-                            ),
                             Icon(Icons.filter_list)
                           ],
                         ),

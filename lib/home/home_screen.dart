@@ -75,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       _fetchIndianRestaurants(position.latitude, position.longitude);
       _fetchGroceryStores(position.latitude, position.longitude);
+      _fetchTemples(position.latitude,position.longitude);
     });
   }
 
@@ -116,6 +117,31 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     } else {
+      throw Exception('Failed to fetch data');
+    }
+  }
+  String templeLat = '';
+  String templeLong = '';
+  List<dynamic> _temples = [];
+  bool _isLoading = true;
+
+  Future<void> _fetchTemples(double latitude, double longitude) async {
+    final url =
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=4000&type=hindu_temple&keyword=temple&key=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (mounted) {
+        setState(() {
+          _temples = data['results'];
+          _isLoading = false; // Set _isLoading to false after data is fetched
+        });
+      }
+    } else {
+      setState(() {
+        _isLoading = false; // Set _isLoading to false even if the fetch fails
+      });
       throw Exception('Failed to fetch data');
     }
   }
@@ -644,7 +670,128 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-              )
+              ),
+              const SizedBox(height: 20),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: SectionTitle(
+                      title: "Near By Temples",
+                      press: () {},
+                    ),
+                  ),
+                  Container(
+                    height: 180,
+                    width: Get.width,
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(11)),
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _temples.length,
+                      itemBuilder: (context, index) {
+                        final temples = _temples[index];
+                        final name = temples['name'];
+                        final address = temples['vicinity'];
+                        final rating = (temples['rating'] as num?)?.toDouble() ?? 0.0;
+                        final reviews = temples['reviews'];
+                        final description = temples['description'] ?? 'No Description Available';
+                        final openingHours = temples['opening_hours'] != null
+                            ? temples['opening_hours']['weekday_text']
+                            : 'Not Available';
+                        final closingTime = temples['closing_time'] ?? 'Not Available';
+                        final photoReference =
+                        temples['photos'] != null ? temples['photos'][0]['photo_reference'] : null;
+                        final photoUrl = photoReference != null
+                            ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
+                            : null;
+                        final lat = temples['geometry']['location']['lat'];
+                        final lng = temples['geometry']['location']['lng'];
+
+                        resturentLat = lat.toString();
+                        resturentlong = lng.toString();
+
+                        return GestureDetector(
+                          onTap: () {
+                            log('message');
+                            Get.to(
+                                ResturentDetailsScreen(
+                                    name: name.toString(),
+                                    rating: rating,
+                                    desc: description.toString(),
+                                    openingTime: openingHours.toString(),
+                                    closingTime: closingTime.toString(),
+                                    address: address.toString(),
+                                    image: photoUrl.toString()),
+                                arguments: [lat, lng]);
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(left: 5),
+                            decoration:
+                            BoxDecoration(color: Color(0xFFFFECDF), borderRadius: BorderRadius.circular(11)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  height: 120,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFFECDF),
+                                    borderRadius: BorderRadius.circular(10),
+                                    // image: DecorationImage(
+                                    //   image: NetworkImage(icon),
+                                    //   fit: BoxFit.fill,
+                                    // ),
+                                  ),
+                                  child: photoUrl != null
+                                      ? Image.network(
+                                    photoUrl,
+                                    height: 100,
+                                    width: 100,
+                                    fit: BoxFit.fill,
+                                  )
+                                      : SizedBox(),
+                                ),
+                                const SizedBox(height: 4), // Add space between the image and the text
+                                Container(
+                                  margin: const EdgeInsets.only(right: 10),
+                                  width: 56, // Adjust width if needed
+                                  child: Text(
+                                    name,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 12, // Adjust the font size as needed
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+                                //
+                                // InkWell(
+                                //     onTap: () {
+                                //       _launchMap(lat, lng);
+                                //     },
+                                //     child: Container(
+                                //         padding: EdgeInsets.all(10),
+                                //         decoration: BoxDecoration(
+                                //           color: AppTheme.mainColor,
+                                //         ),
+                                //         child: Text(
+                                //           'Get Directions',
+                                //           style: TextStyle(color: Colors.white),
+                                //         )))
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
+
             ],
           ),
         ),

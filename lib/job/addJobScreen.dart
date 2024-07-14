@@ -58,6 +58,16 @@ class _AddJobScreenState extends State<AddJobScreen> {
     '10 Hour shift',
     '12 Hour shift',
     'Less than 8 hours',
+    'shift work',
+    'morning shift',
+    'day shift',
+    'afternoon shift',
+    'evening shift',
+    'night shift',
+    'rotating roster',
+    'fixed shift',
+    'monday to friday',
+    'every weekend',
   ];
 
   String? timeOfAdd;
@@ -445,7 +455,7 @@ class _AddJobScreenState extends State<AddJobScreen> {
                   maxLines: 5,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'Job description is required'),
-                    MinLengthValidator(30, errorText: 'Job description must be at least 30 characters long'),
+                    MinLengthValidator(30, errorText: 'Job description must be at least 30 characters'),
                   ]).call),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
