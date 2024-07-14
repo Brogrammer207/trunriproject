@@ -24,6 +24,11 @@ class _JobHomePageScreenState extends State<JobHomePageScreen> {
         backgroundColor: Colors.white,
         title: const Text('Search Job'),
         automaticallyImplyLeading: false,
+        leading: GestureDetector(
+          onTap: (){
+            Get.back();
+          },
+            child: Icon(Icons.arrow_back_ios,size: 18,)),
       ),
       body: SingleChildScrollView(
         child: Column(

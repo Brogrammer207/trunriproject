@@ -37,7 +37,7 @@ class _TempleHomePageScreenState extends State<TempleHomePageScreen> {
 
   Future<void> _fetchTemples(double latitude, double longitude) async {
     final url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=4000&type=hindu_temple&keyword=temple&key=$apiKey';
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=35000&type=hindu_temple&keyword=temple&key=$apiKey';
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
