@@ -7,6 +7,7 @@ import 'package:trunriproject/job/addJobScreen.dart';
 
 import '../home/search_field.dart';
 import 'jobDetailsScreen.dart';
+import 'jobFilterOption.dart';
 
 class JobHomePageScreen extends StatefulWidget {
   const JobHomePageScreen({super.key});
@@ -16,6 +17,16 @@ class JobHomePageScreen extends StatefulWidget {
 }
 
 class _JobHomePageScreenState extends State<JobHomePageScreen> {
+
+
+  void _showFilterBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return const JobFilterOptionScreen();
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +58,9 @@ class _JobHomePageScreenState extends State<JobHomePageScreen> {
                 children: [
                   Expanded(
                     child: GestureDetector(
-                      onTap: (){},
+                      onTap: (){
+                        _showFilterBottomSheet();
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.grey.shade200),

@@ -6,6 +6,7 @@ import 'package:trunriproject/job/jobHomePageScreen.dart';
 
 import '../accommodation/accommodationHomeScreen.dart';
 import '../accommodation/accommodationOptionScreen.dart';
+import '../events/event_list_screen.dart';
 import '../temple/templeHomePageScreen.dart';
 import 'groceryStoreListScreen.dart';
 
@@ -32,32 +33,28 @@ class _ExplorScreenState extends State<ExplorScreen> {
               onTap: () {
                 Get.to(const ResturentItemListScreen());
               },
-              leading: Image.asset('assets/images/restaurent.png'),
+              leading: Image.asset('assets/icons/rasturent.png'),
               title: const Text('Restaurant'),
               trailing: const Icon(
                 Icons.arrow_forward_ios_outlined,
                 size: 15,
               ),
             ),
-            const Divider(
-              height: 10,
-            ),
+
             ListTile(
               onTap: (){
                 Get.to(GroceryStoreListScreen());
               },
-              leading: Image.asset('assets/images/store.png'),
+              leading: Image.asset('assets/icons/grocery.png'),
               title: const Text('Grocery Stores'),
               trailing: const Icon(
                 Icons.arrow_forward_ios_outlined,
                 size: 15,
               ),
             ),
-            const Divider(
-              height: 10,
-            ),
+
             ListTile(
-              leading: Image.asset('assets/images/accommodation.png'),
+              leading: Image.asset('assets/icons/accommodation.png'),
               title: const Text('Accommodation'),
               onTap: (){
                 Get.to(const Accommodationoptionscreen());
@@ -67,40 +64,37 @@ class _ExplorScreenState extends State<ExplorScreen> {
                 size: 15,
               ),
             ),
-            const Divider(
-              height: 10,
-            ),
-            ListTile(
-              leading: Image.asset('assets/images/events.png'),
-              title: const Text('Events'),
-              trailing: const Icon(
-                Icons.arrow_forward_ios_outlined,
-                size: 15,
-              ),
-            ),
-            const Divider(
-              height: 10,
-            ),
+
             ListTile(
               onTap: (){
                 Get.to(const JobHomePageScreen());
               },
-              leading: Image.asset('assets/images/job.png'),
+              leading: Image.asset('assets/icons/jobs.png'),
               title: const Text('Jobs'),
               trailing: const Icon(
                 Icons.arrow_forward_ios_outlined,
                 size: 15,
               ),
             ),
-            const Divider(
-              height: 10,
-            ),
+
             ListTile(
               onTap: (){
                 Get.to(const TempleHomePageScreen());
               },
-              leading: Image.asset('assets/images/temple.png'),
+              leading: Image.asset('assets/icons/templs.png'),
               title: const Text('Temple'),
+              trailing: const Icon(
+                Icons.arrow_forward_ios_outlined,
+                size: 15,
+              ),
+            ),
+
+            ListTile(
+              onTap: (){
+                Get.to(EventListScreen());
+              },
+              leading: Image.asset('assets/icons/events.png'),
+              title: const Text('Event'),
               trailing: const Icon(
                 Icons.arrow_forward_ios_outlined,
                 size: 15,

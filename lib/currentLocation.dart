@@ -132,17 +132,19 @@ class _CurrentAddressState extends State<CurrentAddress> {
       'country': country,
       'zipcode': zipcode,
       'town': town,
-    }).then((value) {
-      String fullAddress = "$street, $city, $state, $country, $zipcode, $town";
-      FirebaseFirestore.instance.collection('User').doc(FirebaseAuth.instance.currentUser!.uid).update({
-        'address' : fullAddress
-      }).then((value)  {
+    }).
+    // then((value) {
+    //   String fullAddress = "$street, $city, $state, $country, $zipcode, $town";
+    //   FirebaseFirestore.instance.collection('User').doc(FirebaseAuth.instance.currentUser!.uid).update({
+    //     'address' : fullAddress
+    //   }).
+      then((value)  {
         Get.to(const VisaTypeScreen());
         showToast('Current Location Save Successfully');
         NewHelper.hideLoader(loader);
       });
 
-    });
+    // });
   }
 
   @override
