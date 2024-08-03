@@ -1,7 +1,4 @@
 import 'dart:developer';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -9,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:trunriproject/job/showFilterJobsScreen.dart';
 
 import '../widgets/customTextFormField.dart';
-import '../widgets/helper.dart';
 
 class JobFilterOptionScreen extends StatefulWidget {
   const JobFilterOptionScreen({super.key});
@@ -425,7 +421,10 @@ class _JobFilterOptionScreenState extends State<JobFilterOptionScreen> {
               ),
               GestureDetector(
                 onTap: () {
-
+                  log('Position Name: ${positionNameController.text}');
+                  log('Company Name: ${companyNameController.text}');
+                  log('Employment Type: $employmentType');
+                  log('Experience: $experience');
                   Get.to(
                       ShowJobsFilterDataScreen(
                         companyName: companyNameController.text,
@@ -434,9 +433,7 @@ class _JobFilterOptionScreenState extends State<JobFilterOptionScreen> {
                         positionName: positionNameController.text,
                       )
                   );
-
-                  log("fffffff${companyNameController.text}");
-                },
+                  },
                 child: Container(
                   margin: const EdgeInsets.only(left: 25, right: 25),
                   width: size.width,
