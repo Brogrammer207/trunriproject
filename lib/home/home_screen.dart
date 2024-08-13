@@ -12,14 +12,20 @@ import 'package:get/get.dart';
 import 'package:trunriproject/home/product.dart';
 import 'package:trunriproject/home/product_cart.dart';
 import 'package:trunriproject/home/resturentDetailsScreen.dart';
+import 'package:trunriproject/home/resturentItemListScreen.dart';
 import 'package:trunriproject/widgets/appTheme.dart';
 import 'package:trunriproject/widgets/helper.dart';
 import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
 
+import '../accommodation/accommodationHomeScreen.dart';
+import '../accommodation/lookingForAPlaceScreen.dart';
+import '../job/jobHomePageScreen.dart';
 import '../model/bannerModel.dart';
 import '../model/categoryModel.dart';
+import '../temple/templeHomePageScreen.dart';
 import 'Controller.dart';
 import 'bottom_bar.dart';
+import 'groceryStoreListScreen.dart';
 import 'icon_btn_with_counter.dart';
 import 'search_field.dart';
 import 'section_title.dart';
@@ -259,44 +265,57 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(
                 height: 10,
               ),
-              SizedBox(
-                height: 100,
-                child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  stream: FirebaseFirestore.instance.collection('categories').snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+              StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: FirebaseFirestore.instance.collection('categories').snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
 
-                    if (snapshot.hasError) {
-                      return const Center(
-                        child: Text('Error fetching products'),
-                      );
-                    }
+                  if (snapshot.hasError) {
+                    return const Center(
+                      child: Text('Error fetching products'),
+                    );
+                  }
 
-                    List<Category> category = snapshot.data!.docs.map((doc) {
-                      return Category.fromMap(doc.id, doc.data());
-                    }).toList();
-                    return ListView.builder(
+                  List<Category> category = snapshot.data!.docs.map((doc) {
+                    return Category.fromMap(doc.id, doc.data());
+                  }).toList();
+                  return SizedBox(
+                    height: 100,
+                    child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         shrinkWrap: true,
                         // padEnds: false,
                         // controller: PageController(viewportFraction: .2),
                         itemCount: category.length,
                         itemBuilder: (context, index) {
-                          return GestureDetector(
-                              onTap: () {
-                                // Get.to(() => CategoryScreen(
-                                //       keyId: category[index].name,
-                                //     ));
-                              },
-                              child: CategoryCard(
-                                  icon: category[index].imageUrl, text: category[index].name, press: () {}));
-                        });
-                  },
-                ),
+                         return CategoryCard(
+                             icon: category[index].imageUrl,
+                             text: category[index].name,
+                             press: () {
+                               if (category[index].name == 'Temples') {
+                                 Get.to(const TempleHomePageScreen());
+                               } else if(category[index].name == 'Grocery stores') {
+                                 Get.to(const GroceryStoreListScreen());
+                               }
+                               else if(category[index].name == 'Accommodation') {
+                                 Get.to(const LookingForAPlaceScreen());
+                               }
+                               else if(category[index].name == 'Restaurants') {
+                                 Get.to(const ResturentItemListScreen());
+                               }
+                               else if(category[index].name == 'Jobs') {
+                                 Get.to(const JobHomePageScreen());
+                               }
+                             }
+                         );
+
+                        }),
+                  );
+                },
               ),
               Column(
                 children: [
@@ -304,7 +323,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: SectionTitle(
                       title: "Upcoming Events",
-                      press: () {},
+                      press: () {
+
+                      },
                     ),
                   ),
                   SingleChildScrollView(
@@ -336,7 +357,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: SectionTitle(
                       title: "Near By Accommodation",
-                      press: () {},
+                      press: () {
+                        Get.to(const LookingForAPlaceScreen());
+                      },
                     ),
                   ),
                   SingleChildScrollView(
@@ -369,7 +392,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: SectionTitle(
                       title: "Near By Restaurant",
-                      press: () {},
+                      press: () {
+                        Get.to(const ResturentItemListScreen());
+                      },
                     ),
                   ),
                   Container(
@@ -489,7 +514,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: SectionTitle(
                       title: "Near By Grocery Store",
-                      press: () {},
+                      press: () {
+                        Get.to(const GroceryStoreListScreen());
+                      },
                     ),
                   ),
                   Container(
@@ -605,7 +632,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SectionTitle(
                   title: "Near By Accommodations",
-                  press: () {},
+                  press: () {
+                    Get.to(const LookingForAPlaceScreen());
+                  },
                 ),
               ),
               Container(
@@ -679,7 +708,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: SectionTitle(
                       title: "Near By Temples",
-                      press: () {},
+                      press: () {
+                        Get.to(const TempleHomePageScreen());
+                      },
                     ),
                   ),
                   Container(

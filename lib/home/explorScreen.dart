@@ -33,7 +33,7 @@ class _ExplorScreenState extends State<ExplorScreen> {
               onTap: () {
                 Get.to(const ResturentItemListScreen());
               },
-              leading: Image.asset('assets/icons/rasturent.png'),
+              leading: Image.asset('assets/icons/rasturent.png',),
               title: const Text('Restaurant'),
               trailing: const Icon(
                 Icons.arrow_forward_ios_outlined,
