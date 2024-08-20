@@ -41,6 +41,7 @@ class _AddressListScreenState extends State<AddressListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Address List'),
         leading: GestureDetector(

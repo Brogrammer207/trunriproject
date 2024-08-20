@@ -283,37 +283,43 @@ class _HomeScreenState extends State<HomeScreen> {
                   List<Category> category = snapshot.data!.docs.map((doc) {
                     return Category.fromMap(doc.id, doc.data());
                   }).toList();
-                  return SizedBox(
-                    height: 100,
-                    child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        shrinkWrap: true,
-                        // padEnds: false,
-                        // controller: PageController(viewportFraction: .2),
-                        itemCount: category.length,
-                        itemBuilder: (context, index) {
-                         return CategoryCard(
-                             icon: category[index].imageUrl,
-                             text: category[index].name,
-                             press: () {
-                               if (category[index].name == 'Temples') {
-                                 Get.to(const TempleHomePageScreen());
-                               } else if(category[index].name == 'Grocery stores') {
-                                 Get.to(const GroceryStoreListScreen());
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: SizedBox(
+                      height: 100,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          // padEnds: false,
+                          // controller: PageController(viewportFraction: .2),
+                          itemCount: category.length,
+                          itemBuilder: (context, index) {
+                           return CategoryCard(
+                               icon: category[index].imageUrl,
+                               text: category[index].name,
+                               press: () {
+                                 if (category[index].name == 'Temples') {
+                                   Get.to(const TempleHomePageScreen());
+                                 } else if(category[index].name == 'Grocery stores') {
+                                   Get.to(const GroceryStoreListScreen());
+                                 }
+                                 else if(category[index].name == 'Accommodation') {
+                                   Get.to(const LookingForAPlaceScreen());
+                                 }
+                                 else if(category[index].name == 'Restaurants') {
+                                   Get.to(const ResturentItemListScreen());
+                                 }
+                                 else if(category[index].name == 'Jobs') {
+                                   Get.to(const JobHomePageScreen());
+                                 }
+                                 else if(category[index].name == 'Events') {
+                                   Get.to(const JobHomePageScreen());
+                                 }
                                }
-                               else if(category[index].name == 'Accommodation') {
-                                 Get.to(const LookingForAPlaceScreen());
-                               }
-                               else if(category[index].name == 'Restaurants') {
-                                 Get.to(const ResturentItemListScreen());
-                               }
-                               else if(category[index].name == 'Jobs') {
-                                 Get.to(const JobHomePageScreen());
-                               }
-                             }
-                         );
+                           );
 
-                        }),
+                          }),
+                    ),
                   );
                 },
               ),
@@ -391,7 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: SectionTitle(
-                      title: "Near By Restaurant",
+                      title: "Near By Restaurants",
                       press: () {
                         Get.to(const ResturentItemListScreen());
                       },
@@ -513,7 +519,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: SectionTitle(
-                      title: "Near By Grocery Store",
+                      title: "Near By Grocery Stores",
                       press: () {
                         Get.to(const GroceryStoreListScreen());
                       },
@@ -691,6 +697,119 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SectionTitle(
+                  title: "Find Your Job",
+                  press: () {
+                    Get.to(const JobHomePageScreen());
+                  },
+                ),
+              ),
+              Container(
+                height: 180,
+                width: double.infinity,
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(11)),
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance.collection('jobs').snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(child: Text('No jobs found'));
+                    }
+                    return ListView(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      children: snapshot.data!.docs.map((DocumentSnapshot doc) {
+                        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+                        List<dynamic> images = data['images'] ?? [];
+
+                        return Container(
+                          margin: EdgeInsets.only(left: 5),
+                          decoration: BoxDecoration(color: Color(0xFFFFECDF), borderRadius: BorderRadius.circular(11)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Container(
+                              //   padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+                              //   height: 140,
+                              //   width: 120,
+                              //   decoration: BoxDecoration(
+                              //     color: const Color(0xFFFFECDF),
+                              //     borderRadius: BorderRadius.circular(10),
+                              //   ),
+                              //   child: images.isNotEmpty
+                              //       ? Image.network(
+                              //     images[0],
+                              //     fit: BoxFit.cover,
+                              //     width: MediaQuery.of(context).size.width,
+                              //   )
+                              //       : SizedBox(),
+                              // ),
+                              Container(
+                                padding: const EdgeInsets.all(5),
+                                margin: const EdgeInsets.only(right: 10),
+                                width: 120, // Adjust width if needed
+                                child: Column(
+                                  children: [
+                                    SizedBox(height: 10,),
+                                    Text(
+                                      "Name - ${data['companyName'] ?? 'No companyName'}",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12, // Adjust the font size as needed
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                    ),
+                                    SizedBox(height: 10,),
+                                    Text(
+                                      "Department - ${data['department'] ?? 'No department'}",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12, // Adjust the font size as needed
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                    ),
+                                    SizedBox(height: 10,),
+                                    Text(
+                                      "Eduction - ${data['eduction'] ?? 'No eduction'}",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12, // Adjust the font size as needed
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                    ),
+                                    SizedBox(height: 10,),
+                                    Text(
+                                      "EmploymentType - ${data['employmentType'] ?? 'No employmentType'}",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12, // Adjust the font size as needed
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
