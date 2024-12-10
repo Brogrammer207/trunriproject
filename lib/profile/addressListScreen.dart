@@ -43,6 +43,8 @@ class _AddressListScreenState extends State<AddressListScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 5,
+        backgroundColor: Colors.white,
         title: const Text('Address List'),
         leading: GestureDetector(
           onTap: (){

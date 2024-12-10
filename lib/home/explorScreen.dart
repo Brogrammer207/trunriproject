@@ -23,6 +23,7 @@ class _ExplorScreenState extends State<ExplorScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Discover Items'),
         automaticallyImplyLeading: false,
       ),

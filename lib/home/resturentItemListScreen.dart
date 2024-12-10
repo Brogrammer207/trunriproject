@@ -80,7 +80,9 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Row(
           children: [
             GestureDetector(

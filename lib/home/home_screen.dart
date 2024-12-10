@@ -134,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchTemples(double latitude, double longitude) async {
     final url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=4000&type=hindu_temple&keyword=temple&key=$apiKey';
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=35000&type=hindu_temple&keyword=temple&key=$apiKey';
 
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -356,41 +356,41 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: SectionTitle(
-                      title: "Near By Accommodation",
-                      press: () {
-                        Get.to(const LookingForAPlaceScreen());
-                      },
-                    ),
-                  ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        ...List.generate(
-                          demoProducts.length,
-                          (index) {
-                            if (demoProducts[index].isPopular) {
-                              return Padding(
-                                padding: const EdgeInsets.only(left: 20),
-                                child: ProductCard(product: demoProducts[index], onPress: () => {}),
-                              );
-                            }
-
-                            return const SizedBox.shrink(); // here by default width and height is 0
-                          },
-                        ),
-                        const SizedBox(width: 20),
-                      ],
-                    ),
-                  )
-                ],
-              ),
+              // const SizedBox(height: 20),
+              // Column(
+              //   children: [
+              //     Padding(
+              //       padding: const EdgeInsets.symmetric(horizontal: 20),
+              //       child: SectionTitle(
+              //         title: "Near By Accommodation",
+              //         press: () {
+              //           Get.to(const LookingForAPlaceScreen());
+              //         },
+              //       ),
+              //     ),
+              //     SingleChildScrollView(
+              //       scrollDirection: Axis.horizontal,
+              //       child: Row(
+              //         children: [
+              //           ...List.generate(
+              //             demoProducts.length,
+              //             (index) {
+              //               if (demoProducts[index].isPopular) {
+              //                 return Padding(
+              //                   padding: const EdgeInsets.only(left: 20),
+              //                   child: ProductCard(product: demoProducts[index], onPress: () => {}),
+              //                 );
+              //               }
+              //
+              //               return const SizedBox.shrink(); // here by default width and height is 0
+              //             },
+              //           ),
+              //           const SizedBox(width: 20),
+              //         ],
+              //       ),
+              //     )
+              //   ],
+              // ),
               const SizedBox(height: 20),
               Column(
                 children: [
@@ -446,65 +446,53 @@ class _HomeScreenState extends State<HomeScreen> {
                                     image: photoUrl.toString()),
                                 arguments: [lat, lng]);
                           },
-                          child: Container(
-                            margin: EdgeInsets.only(left: 5),
-                            decoration:
-                                BoxDecoration(color: Color(0xFFFFECDF), borderRadius: BorderRadius.circular(11)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(10),
-                                  height: 120,
-                                  width: 120,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFFECDF),
-                                    borderRadius: BorderRadius.circular(10),
-                                    // image: DecorationImage(
-                                    //   image: NetworkImage(icon),
-                                    //   fit: BoxFit.fill,
-                                    // ),
-                                  ),
-                                  child: photoUrl != null
-                                      ? Image.network(
-                                          photoUrl,
-                                          height: 100,
-                                          width: 100,
-                                          fit: BoxFit.fill,
-                                        )
-                                      : SizedBox(),
-                                ),
-                                const SizedBox(height: 4), // Add space between the image and the text
-                                Container(
-                                  margin: const EdgeInsets.only(right: 10),
-                                  width: 56, // Adjust width if needed
-                                  child: Text(
-                                    name,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 12, // Adjust the font size as needed
+                          child: Card(
+                            elevation: 4.0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                            child: Container(
+                              margin: EdgeInsets.only(left: 5),
+                              decoration:
+                                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    height: 118,
+                                    width: 118,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                    child: photoUrl != null
+                                        ? Image.network(
+                                            photoUrl,
+                                            height: 100,
+                                            width: 100,
+                                            fit: BoxFit.fill,
+                                          )
+                                        : SizedBox(),
                                   ),
-                                ),
-                                const SizedBox(height: 15),
-                                //
-                                // InkWell(
-                                //     onTap: () {
-                                //       _launchMap(lat, lng);
-                                //     },
-                                //     child: Container(
-                                //         padding: EdgeInsets.all(10),
-                                //         decoration: BoxDecoration(
-                                //           color: AppTheme.mainColor,
-                                //         ),
-                                //         child: Text(
-                                //           'Get Directions',
-                                //           style: TextStyle(color: Colors.white),
-                                //         )))
-                              ],
+                                  const SizedBox(height: 4), // Add space between the image and the text
+                                  Container(
+                                    margin: const EdgeInsets.only(right: 10),
+                                    width: 56, // Adjust width if needed
+                                    child: Text(
+                                      name,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12, // Adjust the font size as needed
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                    ),
+                                  ),
+                                  const SizedBox(height: 15),
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -567,65 +555,71 @@ class _HomeScreenState extends State<HomeScreen> {
                                     image: photoUrl.toString()),
                                 arguments: [lat, lng]);
                           },
-                          child: Container(
-                            margin: EdgeInsets.only(left: 5),
-                            decoration:
-                                BoxDecoration(color: Color(0xFFFFECDF), borderRadius: BorderRadius.circular(11)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(10),
-                                  height: 120,
-                                  width: 120,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFFECDF),
-                                    borderRadius: BorderRadius.circular(10),
-                                    // image: DecorationImage(
-                                    //   image: NetworkImage(icon),
-                                    //   fit: BoxFit.fill,
-                                    // ),
-                                  ),
-                                  child: photoUrl != null
-                                      ? Image.network(
-                                          photoUrl,
-                                          height: 100,
-                                          width: 100,
-                                          fit: BoxFit.fill,
-                                        )
-                                      : SizedBox(),
-                                ),
-                                const SizedBox(height: 4), // Add space between the image and the text
-                                Container(
-                                  margin: const EdgeInsets.only(right: 10),
-                                  width: 56, // Adjust width if needed
-                                  child: Text(
-                                    name,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 12, // Adjust the font size as needed
+                          child: Card(
+                            elevation: 4.0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                            child: Container(
+                              margin: EdgeInsets.only(left: 5),
+                              decoration:
+                                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    height: 118,
+                                    width: 118,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      // image: DecorationImage(
+                                      //   image: NetworkImage(icon),
+                                      //   fit: BoxFit.fill,
+                                      // ),
                                     ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                    child: photoUrl != null
+                                        ? Image.network(
+                                            photoUrl,
+                                            height: 100,
+                                            width: 100,
+                                            fit: BoxFit.fill,
+                                          )
+                                        : SizedBox(),
                                   ),
-                                ),
-                                const SizedBox(height: 15),
-                                //
-                                // InkWell(
-                                //     onTap: () {
-                                //       _launchMap(lat, lng);
-                                //     },
-                                //     child: Container(
-                                //         padding: EdgeInsets.all(10),
-                                //         decoration: BoxDecoration(
-                                //           color: AppTheme.mainColor,
-                                //         ),
-                                //         child: Text(
-                                //           'Get Directions',
-                                //           style: TextStyle(color: Colors.white),
-                                //         )))
-                              ],
+                                  const SizedBox(height: 4), // Add space between the image and the text
+                                  Container(
+                                    margin: const EdgeInsets.only(right: 10),
+                                    width: 56, // Adjust width if needed
+                                    child: Text(
+                                      name,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12, // Adjust the font size as needed
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                    ),
+                                  ),
+                                  const SizedBox(height: 15),
+                                  //
+                                  // InkWell(
+                                  //     onTap: () {
+                                  //       _launchMap(lat, lng);
+                                  //     },
+                                  //     child: Container(
+                                  //         padding: EdgeInsets.all(10),
+                                  //         decoration: BoxDecoration(
+                                  //           color: AppTheme.mainColor,
+                                  //         ),
+                                  //         child: Text(
+                                  //           'Get Directions',
+                                  //           style: TextStyle(color: Colors.white),
+                                  //         )))
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -663,43 +657,49 @@ class _HomeScreenState extends State<HomeScreen> {
                         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
                         List<dynamic> images = data['images'] ?? [];
 
-                        return Container(
-                          margin: EdgeInsets.only(left: 5),
-                          decoration: BoxDecoration(color: Color(0xFFFFECDF), borderRadius: BorderRadius.circular(11)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(left: 10, right: 10, top: 10),
-                                height: 140,
-                                width: 120,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFFECDF),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: images.isNotEmpty
-                                    ? Image.network(
-                                        images[0],
-                                        fit: BoxFit.cover,
-                                        width: MediaQuery.of(context).size.width,
-                                      )
-                                    : SizedBox(),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(right: 10),
-                                width: 56, // Adjust width if needed
-                                child: Text(
-                                  data['fullAddress'] ?? 'No Address',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 12, // Adjust the font size as needed
+                        return Card(
+                          elevation: 4.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(11),
+                          ),
+                          child: Container(
+                            margin: EdgeInsets.only(left: 5),
+                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+                                  height: 140,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                  child: images.isNotEmpty
+                                      ? Image.network(
+                                          images[0],
+                                          fit: BoxFit.cover,
+                                          width: MediaQuery.of(context).size.width,
+                                        )
+                                      : SizedBox(),
                                 ),
-                              ),
-                            ],
+                                Container(
+                                  margin: const EdgeInsets.only(right: 10),
+                                  width: 56, // Adjust width if needed
+                                  child: Text(
+                                    data['fullAddress'] ?? 'No Address',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 12, // Adjust the font size as needed
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       }).toList(),
@@ -737,82 +737,72 @@ class _HomeScreenState extends State<HomeScreen> {
                         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
                         List<dynamic> images = data['images'] ?? [];
 
-                        return Container(
-                          margin: EdgeInsets.only(left: 5),
-                          decoration: BoxDecoration(color: Color(0xFFFFECDF), borderRadius: BorderRadius.circular(11)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              // Container(
-                              //   padding: EdgeInsets.only(left: 10, right: 10, top: 10),
-                              //   height: 140,
-                              //   width: 120,
-                              //   decoration: BoxDecoration(
-                              //     color: const Color(0xFFFFECDF),
-                              //     borderRadius: BorderRadius.circular(10),
-                              //   ),
-                              //   child: images.isNotEmpty
-                              //       ? Image.network(
-                              //     images[0],
-                              //     fit: BoxFit.cover,
-                              //     width: MediaQuery.of(context).size.width,
-                              //   )
-                              //       : SizedBox(),
-                              // ),
-                              Container(
-                                padding: const EdgeInsets.all(5),
-                                margin: const EdgeInsets.only(right: 10),
-                                width: 120, // Adjust width if needed
-                                child: Column(
-                                  children: [
-                                    SizedBox(height: 10,),
-                                    Text(
-                                      "Name - ${data['companyName'] ?? 'No companyName'}",
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12, // Adjust the font size as needed
+                        return Card(
+                          elevation: 4.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(11),
+                          ),
+                          child: Container(
+                            margin: EdgeInsets.only(left: 5),
+                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(5),
+                                  margin: const EdgeInsets.only(right: 10),
+                                  width: 120, // Adjust width if needed
+                                  child: Column(
+                                    children: [
+                                      SizedBox(height: 10,),
+                                      Text(
+                                        "Name - ${data['companyName'] ?? 'No companyName'}",
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12, // Adjust the font size as needed
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2, // Allow text to wrap to 2 lines if needed
                                       ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2, // Allow text to wrap to 2 lines if needed
-                                    ),
-                                    SizedBox(height: 10,),
-                                    Text(
-                                      "Department - ${data['department'] ?? 'No department'}",
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12, // Adjust the font size as needed
+                                      SizedBox(height: 10,),
+                                      Text(
+                                        "Department - ${data['department'] ?? 'No department'}",
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12, // Adjust the font size as needed
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2, // Allow text to wrap to 2 lines if needed
                                       ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2, // Allow text to wrap to 2 lines if needed
-                                    ),
-                                    SizedBox(height: 10,),
-                                    Text(
-                                      "Eduction - ${data['eduction'] ?? 'No eduction'}",
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12, // Adjust the font size as needed
+                                      SizedBox(height: 10,),
+                                      Text(
+                                        "Eduction - ${data['eduction'] ?? 'No eduction'}",
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12, // Adjust the font size as needed
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2, // Allow text to wrap to 2 lines if needed
                                       ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2, // Allow text to wrap to 2 lines if needed
-                                    ),
-                                    SizedBox(height: 10,),
-                                    Text(
-                                      "EmploymentType - ${data['employmentType'] ?? 'No employmentType'}",
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12, // Adjust the font size as needed
+                                      SizedBox(height: 10,),
+                                      Text(
+                                        "EmploymentType - ${data['employmentType'] ?? 'No employmentType'}",
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12, // Adjust the font size as needed
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2, // Allow text to wrap to 2 lines if needed
                                       ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2, // Allow text to wrap to 2 lines if needed
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       }).toList(),
@@ -853,7 +843,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         final photoReference =
                         temples['photos'] != null ? temples['photos'][0]['photo_reference'] : null;
                         final photoUrl = photoReference != null
-                            ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
+                            ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=35000&photoreference=$photoReference&key=$apiKey'
                             : null;
                         final lat = temples['geometry']['location']['lat'];
                         final lng = temples['geometry']['location']['lng'];
@@ -875,65 +865,71 @@ class _HomeScreenState extends State<HomeScreen> {
                                     image: photoUrl.toString()),
                                 arguments: [lat, lng]);
                           },
-                          child: Container(
-                            margin: EdgeInsets.only(left: 5),
-                            decoration:
-                            BoxDecoration(color: Color(0xFFFFECDF), borderRadius: BorderRadius.circular(11)),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(10),
-                                  height: 120,
-                                  width: 120,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFFECDF),
-                                    borderRadius: BorderRadius.circular(10),
-                                    // image: DecorationImage(
-                                    //   image: NetworkImage(icon),
-                                    //   fit: BoxFit.fill,
-                                    // ),
-                                  ),
-                                  child: photoUrl != null
-                                      ? Image.network(
-                                    photoUrl,
-                                    height: 100,
-                                    width: 100,
-                                    fit: BoxFit.fill,
-                                  )
-                                      : SizedBox(),
-                                ),
-                                const SizedBox(height: 4), // Add space between the image and the text
-                                Container(
-                                  margin: const EdgeInsets.only(right: 10),
-                                  width: 56, // Adjust width if needed
-                                  child: Text(
-                                    name,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 12, // Adjust the font size as needed
+                          child: Card(
+                            elevation: 4.0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                            child: Container(
+                              margin: EdgeInsets.only(left: 5),
+                              decoration:
+                              BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    height: 118,
+                                    width: 118,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      // image: DecorationImage(
+                                      //   image: NetworkImage(icon),
+                                      //   fit: BoxFit.fill,
+                                      // ),
                                     ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                    child: photoUrl != null
+                                        ? Image.network(
+                                      photoUrl,
+                                      height: 100,
+                                      width: 100,
+                                      fit: BoxFit.fill,
+                                    )
+                                        : SizedBox(),
                                   ),
-                                ),
-                                const SizedBox(height: 15),
-                                //
-                                // InkWell(
-                                //     onTap: () {
-                                //       _launchMap(lat, lng);
-                                //     },
-                                //     child: Container(
-                                //         padding: EdgeInsets.all(10),
-                                //         decoration: BoxDecoration(
-                                //           color: AppTheme.mainColor,
-                                //         ),
-                                //         child: Text(
-                                //           'Get Directions',
-                                //           style: TextStyle(color: Colors.white),
-                                //         )))
-                              ],
+                                  const SizedBox(height: 4), // Add space between the image and the text
+                                  Container(
+                                    margin: const EdgeInsets.only(right: 10),
+                                    width: 56, // Adjust width if needed
+                                    child: Text(
+                                      name,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12, // Adjust the font size as needed
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2, // Allow text to wrap to 2 lines if needed
+                                    ),
+                                  ),
+                                  const SizedBox(height: 15),
+                                  //
+                                  // InkWell(
+                                  //     onTap: () {
+                                  //       _launchMap(lat, lng);
+                                  //     },
+                                  //     child: Container(
+                                  //         padding: EdgeInsets.all(10),
+                                  //         decoration: BoxDecoration(
+                                  //           color: AppTheme.mainColor,
+                                  //         ),
+                                  //         child: Text(
+                                  //           'Get Directions',
+                                  //           style: TextStyle(color: Colors.white),
+                                  //         )))
+                                ],
+                              ),
                             ),
                           ),
                         );

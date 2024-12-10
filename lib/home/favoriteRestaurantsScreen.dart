@@ -27,7 +27,9 @@ class _FavoriteRestaurantsScreenState extends State<FavoriteRestaurantsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Favorite Restaurants'),
         automaticallyImplyLeading: false,
       ),

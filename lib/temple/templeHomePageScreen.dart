@@ -87,7 +87,10 @@ class _TempleHomePageScreenState extends State<TempleHomePageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 5,
+        backgroundColor: Colors.white,
         title: Row(
           children: [
             GestureDetector(

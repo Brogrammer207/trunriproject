@@ -86,7 +86,9 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Row(
           children: [
             GestureDetector(
