@@ -48,9 +48,8 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
         .get();
 
     if (result.docs.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Email already in use"),
-      ));
+      showToast("Email already in use");
+      NewHelper.hideLoader(loader);
     } else {
      register();
     }

@@ -447,6 +447,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 arguments: [lat, lng]);
                           },
                           child: Card(
+                            color: Colors.white,
                             elevation: 4.0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(11),
@@ -556,6 +557,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 arguments: [lat, lng]);
                           },
                           child: Card(
+                            color: Colors.white,
                             elevation: 4.0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(11),
@@ -658,6 +660,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         List<dynamic> images = data['images'] ?? [];
 
                         return Card(
+                          color: Colors.white,
                           elevation: 4.0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(11),
@@ -738,6 +741,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         List<dynamic> images = data['images'] ?? [];
 
                         return Card(
+                          color: Colors.white,
                           elevation: 4.0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(11),
@@ -866,6 +870,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 arguments: [lat, lng]);
                           },
                           child: Card(
+                            color: Colors.white,
                             elevation: 4.0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(11),
