@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,7 +6,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/home/resturentDetailsScreen.dart';
 import 'package:http/http.dart' as http;
-import 'package:trunriproject/home/search_field.dart';
 import 'Controller.dart';
 
 class ResturentItemListScreen extends StatefulWidget {
@@ -23,16 +20,26 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
   String resturentLat = '';
   String resturentlong = '';
   List<dynamic> _restaurants = [];
+  List<dynamic> _filteredRestaurants = [];
   final apiKey = 'AIzaSyDDl-_JOy_bj4MyQhYbKbGkZ0sfpbTZDNU';
   final serviceController = Get.put(ServiceController());
-  bool _isLoading = true; // Add this line
-
+  bool _isLoading = true;
+  final TextEditingController searchController = TextEditingController();
   String defaultImageUrl = 'https://via.placeholder.com/400';
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
+
+    // Listen to searchController to filter restaurants
+    searchController.addListener(_filterRestaurants);
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchIndianRestaurants(double latitude, double longitude) async {
@@ -44,7 +51,8 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
       final data = json.decode(response.body);
       setState(() {
         _restaurants = data['results'];
-        _isLoading = false; // Add this line
+        _filteredRestaurants = _restaurants; // Initialize filtered list
+        _isLoading = false;
       });
     } else {
       throw Exception('Failed to fetch data');
@@ -77,6 +85,21 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
     });
   }
 
+  void _filterRestaurants() {
+    final query = searchController.text.toLowerCase();
+    if (query.isEmpty) {
+      setState(() {
+        _filteredRestaurants = _restaurants;
+      });
+    } else {
+      setState(() {
+        _filteredRestaurants = _restaurants
+            .where((restaurant) => restaurant['name'].toString().toLowerCase().contains(query))
+            .toList();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,62 +112,65 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
               onTap: () {
                 Get.back();
               },
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_back_ios,
                 size: 18,
               ),
             ),
-            SizedBox(
-              width: 10,
+            const SizedBox(width: 10),
+            Expanded(
+              child: TextFormField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: const Color(0xFF979797).withOpacity(0.1),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  hintText: "Search Restaurant",
+                  prefixIcon: const Icon(Icons.search),
+                ),
+              ),
             ),
-            Expanded(child: SearchField()),
           ],
         ),
         automaticallyImplyLeading: false,
       ),
-      body: _isLoading // Add this line
-          ? Center(child: CircularProgressIndicator()) // Add this line
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
           : Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 10,),
+          const SizedBox(height: 10),
           const Padding(
             padding: EdgeInsets.only(left: 15),
             child: Text(
-              'Resturent List',
+              'Restaurant List',
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20, color: Colors.black),
             ),
           ),
-          const SizedBox(height: 10,),
+          const SizedBox(height: 10),
           Expanded(
             child: GridView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: _restaurants.length,
+              itemCount: _filteredRestaurants.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 10.0,
                 mainAxisSpacing: 10.0,
               ),
               itemBuilder: (context, index) {
-                final restaurant = _restaurants[index];
+                final restaurant = _filteredRestaurants[index];
                 final name = restaurant['name'];
                 final address = restaurant['vicinity'];
                 final rating = (restaurant['rating'] as num?)?.toDouble() ?? 0.0;
-                final reviews = restaurant['reviews'];
-                final description = restaurant['description'] ?? 'No Description Available';
-                final openingHours =
-                restaurant['opening_hours'] != null ? restaurant['opening_hours']['weekday_text'] : 'Not Available';
-                final closingTime = restaurant['closing_time'] ?? 'Not Available';
-                final photoReference = restaurant['photos'] != null ? restaurant['photos'][0]['photo_reference'] : null;
+                final photoReference = restaurant['photos'] != null
+                    ? restaurant['photos'][0]['photo_reference']
+                    : null;
                 final photoUrl = photoReference != null
                     ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
                     : defaultImageUrl;
-                final lat = restaurant['geometry']['location']['lat'];
-                final lng = restaurant['geometry']['location']['lng'];
-
-                resturentLat = lat.toString();
-                resturentlong = lng.toString();
 
                 return GestureDetector(
                   onTap: () {
@@ -152,39 +178,39 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
                       ResturentDetailsScreen(
                         name: name.toString(),
                         rating: rating,
-                        desc: description.toString(),
-                        openingTime: openingHours.toString(),
-                        closingTime: closingTime.toString(),
+                        desc: 'No Description Available',
+                        openingTime: 'Not Available',
+                        closingTime: 'Not Available',
                         address: address.toString(),
                         image: photoUrl.toString(),
                       ),
-                      arguments: [lat, lng],
                     );
                   },
                   child: Container(
-                    margin: const EdgeInsets.only(left: 10, right: 10),
+                    margin: const EdgeInsets.all(10),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (photoUrl != null)
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              photoUrl,
-                              height: 125,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            photoUrl,
+                            height: 115,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
                           ),
+                        ),
                         Padding(
-                          padding: const EdgeInsets.all(1.0),
+                          padding: const EdgeInsets.all(4.0),
                           child: Text(
                             name,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500),
-                            overflow: TextOverflow.ellipsis,
                             maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ],
@@ -199,3 +225,4 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
     );
   }
 }
+

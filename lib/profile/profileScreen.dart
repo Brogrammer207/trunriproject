@@ -91,6 +91,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text('Profile'),
+        automaticallyImplyLeading: false,
+        // leading: Icon(Icons.arrow_back_ios),
         actions: [
           GestureDetector(
             onTap: () {
