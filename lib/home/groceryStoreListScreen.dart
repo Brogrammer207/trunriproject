@@ -24,14 +24,22 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
   String groceryStoreLat = '';
   String groceryStoreLong = '';
   List<dynamic> _groceryStores = [];
+  List<dynamic> _filterGroceryStores = [];
   final apiKey = 'AIzaSyDDl-_JOy_bj4MyQhYbKbGkZ0sfpbTZDNU';
   final serviceController = Get.put(ServiceController());
   bool _isLoading = true;
-
+  final TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
+    searchController.addListener(_filterRestaurants);
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchGroceryStores(double latitude, double longitude) async {
@@ -44,6 +52,7 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
       if (mounted) {
         setState(() {
           _groceryStores = data['results'];
+          _filterGroceryStores = _groceryStores;
           _isLoading = false; // Set _isLoading to false after data is fetched
         });
       }
@@ -80,6 +89,20 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
       _fetchGroceryStores(position.latitude, position.longitude);
     });
   }
+  void _filterRestaurants() {
+    final query = searchController.text.toLowerCase();
+    if (query.isEmpty) {
+      setState(() {
+        _filterGroceryStores = _groceryStores;
+      });
+    } else {
+      setState(() {
+        _filterGroceryStores = _groceryStores
+            .where((restaurant) => restaurant['name'].toString().toLowerCase().contains(query))
+            .toList();
+      });
+    }
+  }
 
   String defaultImageUrl = 'https://via.placeholder.com/400';
 
@@ -103,7 +126,21 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
             SizedBox(
               width: 10,
             ),
-            Expanded(child: SearchField()),
+            Expanded(
+              child: TextFormField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: const Color(0xFF979797).withOpacity(0.1),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  hintText: "Search Restaurant",
+                  prefixIcon: const Icon(Icons.search),
+                ),
+              ),
+            ),
           ],
         ),
         automaticallyImplyLeading: false,
@@ -128,14 +165,14 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
                     Expanded(
                       child: GridView.builder(
                         physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount: _groceryStores.length,
+                        itemCount: _filterGroceryStores.length,
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 10.0,
                           mainAxisSpacing: 10.0,
                         ),
                         itemBuilder: (context, index) {
-                          final groceryStore = _groceryStores[index];
+                          final groceryStore = _filterGroceryStores[index];
                           final name = groceryStore['name'];
                           final address = groceryStore['vicinity'];
                           final rating = (groceryStore['rating'] as num?)?.toDouble() ?? 0.0;

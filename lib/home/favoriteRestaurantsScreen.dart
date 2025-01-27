@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:trunriproject/home/home_screen.dart';
 import 'package:trunriproject/home/resturentDetailsScreen.dart';
 
 class FavoriteRestaurantsScreen extends StatefulWidget {
@@ -31,6 +32,11 @@ class _FavoriteRestaurantsScreenState extends State<FavoriteRestaurantsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text('Favorite Restaurants'),
+        leading: GestureDetector(
+          onTap: (){
+            Get.off(HomeScreen());
+          },
+            child: Icon(Icons.arrow_back_ios)),
         automaticallyImplyLeading: false,
       ),
       body: FutureBuilder<List<FavoriteRestaurant>>(

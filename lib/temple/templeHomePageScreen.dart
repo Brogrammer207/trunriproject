@@ -25,14 +25,21 @@ class _TempleHomePageScreenState extends State<TempleHomePageScreen> {
   String templeLat = '';
   String templeLong = '';
   List<dynamic> _temples = [];
+  List<dynamic> _filterTemples = [];
   final apiKey = 'AIzaSyDDl-_JOy_bj4MyQhYbKbGkZ0sfpbTZDNU';
   final serviceController = Get.put(ServiceController());
   bool _isLoading = true;
-
+  final TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
+    searchController.addListener(_filterRestaurants);
+  }
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchTemples(double latitude, double longitude) async {
@@ -45,6 +52,7 @@ class _TempleHomePageScreenState extends State<TempleHomePageScreen> {
       if (mounted) {
         setState(() {
           _temples = data['results'];
+          _filterTemples = _temples;
           _isLoading = false; // Set _isLoading to false after data is fetched
         });
       }
@@ -81,6 +89,20 @@ class _TempleHomePageScreenState extends State<TempleHomePageScreen> {
       _fetchTemples(position.latitude, position.longitude);
     });
   }
+  void _filterRestaurants() {
+    final query = searchController.text.toLowerCase();
+    if (query.isEmpty) {
+      setState(() {
+        _filterTemples = _temples;
+      });
+    } else {
+      setState(() {
+        _filterTemples = _temples
+            .where((restaurant) => restaurant['name'].toString().toLowerCase().contains(query))
+            .toList();
+      });
+    }
+  }
 
   String defaultImageUrl = 'https://via.placeholder.com/400';
 
@@ -105,7 +127,21 @@ class _TempleHomePageScreenState extends State<TempleHomePageScreen> {
             SizedBox(
               width: 10,
             ),
-            Expanded(child: SearchField()),
+            Expanded(
+              child: TextFormField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: const Color(0xFF979797).withOpacity(0.1),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  hintText: "Search Restaurant",
+                  prefixIcon: const Icon(Icons.search),
+                ),
+              ),
+            ),
           ],
         ),
         automaticallyImplyLeading: false,
@@ -122,14 +158,14 @@ class _TempleHomePageScreenState extends State<TempleHomePageScreen> {
           Expanded(
             child: GridView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: _temples.length,
+              itemCount: _filterTemples.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 10.0,
                 mainAxisSpacing: 10.0,
               ),
               itemBuilder: (context, index) {
-                final temple = _temples[index];
+                final temple = _filterTemples[index];
                 final name = temple['name'];
                 final address = temple['vicinity'];
                 final rating = (temple['rating'] as num?)?.toDouble() ?? 0.0;
