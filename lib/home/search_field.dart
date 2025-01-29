@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/home/resturentItemListScreen.dart';
 
+import 'icon_btn_with_counter.dart';
+
 
 class SearchField extends StatefulWidget {
   const SearchField({Key? key}) : super(key: key);
@@ -48,41 +50,72 @@ class _SearchFieldState extends State<SearchField> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Form(
-          child: TextFormField(
-            controller: _controller,
-            onChanged: (value) {
-              _filterItems(value);
-            },
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Color(0xFF979797).withOpacity(0.1),
-              contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+        Row(
+          children: [
+            Expanded(
+              child: Form(
+                child: TextFormField(
+                  controller: _controller,
+                  onChanged: (value) {
+                    _filterItems(value);
+                  },
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Color(0xFF979797).withOpacity(0.1),
+                    contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    hintText: "Search product",
+                    prefixIcon: const Icon(Icons.search),
+                  ),
+                ),
               ),
-              hintText: "Search product",
-              prefixIcon: const Icon(Icons.search),
             ),
-          ),
+            const SizedBox(width: 16),
+            IconBtnWithCounter(
+              svgSrc: "assets/images/navigation.png",
+              press: () => {},
+            ),
+            const SizedBox(width: 8),
+            IconBtnWithCounter(
+              svgSrc: "assets/images/notification.png",
+              numOfitem: 3,
+              press: () {},
+            ),
+          ],
         ),
+        SizedBox(height: 10,),
         if (_filteredItems.isNotEmpty)
           ListView.builder(
             shrinkWrap: true,
             itemCount: _filteredItems.length,
             itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(_filteredItems[index]),
-                onTap: () {
-                  _controller.text = _filteredItems[index];
-                  setState(() {
-                    _filteredItems.clear();
-                  });
-                  if(index == 0){
-                    Get.to(const ResturentItemListScreen());
-                  }
-                },
+              return Column(
+                children: [
+
+                  Container(
+                    decoration: BoxDecoration(border: Border.all(color: Colors.grey),borderRadius: BorderRadius.circular(10)),
+                    child: ListTile(
+                      leading: Icon(Icons.search),
+                      title: Text(_filteredItems[index]),
+                      onTap: () {
+                        _controller.text = _filteredItems[index];
+                        setState(() {
+                          _filteredItems.clear();
+                        });
+                        if(index == 0){
+                          Get.to(const ResturentItemListScreen());
+                        }
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0,right: 20),
+                    child: Divider(height: 0.5,thickness: 0.5,color: Colors.grey,),
+                  )
+                ],
               );
             },
           ),

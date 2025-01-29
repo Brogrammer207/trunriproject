@@ -191,21 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Expanded(child: SearchField()),
-                    const SizedBox(width: 16),
-                    Row(
-                      children: [
-                        IconBtnWithCounter(
-                          svgSrc: "assets/images/navigation.png",
-                          press: () => {},
-                        ),
-                        const SizedBox(width: 8),
-                        IconBtnWithCounter(
-                          svgSrc: "assets/images/notification.png",
-                          numOfitem: 3,
-                          press: () {},
-                        ),
-                      ],
-                    )
+
 
                   ],
                 ),
