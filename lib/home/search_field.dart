@@ -1,7 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:trunriproject/accommodation/accommodationHomeScreen.dart';
+import 'package:trunriproject/events/event_list_screen.dart';
+import 'package:trunriproject/home/groceryStoreListScreen.dart';
 import 'package:trunriproject/home/resturentItemListScreen.dart';
+import 'package:trunriproject/job/jobHomePageScreen.dart';
+import 'package:trunriproject/temple/templeHomePageScreen.dart';
 
 import 'icon_btn_with_counter.dart';
 
@@ -46,6 +51,30 @@ class _SearchFieldState extends State<SearchField> {
     });
   }
 
+  void _navigateToScreen(String selectedItem) {
+    switch (selectedItem.toLowerCase()) {
+      case "restaurants":
+        Get.to(const ResturentItemListScreen());
+        break;
+      case "grocery stores":
+        Get.to(const GroceryStoreListScreen());
+        break;
+      case "accommodation":
+        Get.to(const Accommodationhomescreen());
+        break;
+      case "temple":
+        Get.to(const TempleHomePageScreen());
+        break;
+      case "job":
+        Get.to(const JobHomePageScreen());
+        break;
+      case "events":
+        Get.to(EventListScreen());
+        break;
+      default:
+        Get.snackbar("Error", "No matching screen found for '$selectedItem'");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -101,13 +130,12 @@ class _SearchFieldState extends State<SearchField> {
                       leading: Icon(Icons.search),
                       title: Text(_filteredItems[index]),
                       onTap: () {
-                        _controller.text = _filteredItems[index];
+                        String selectedItem = _filteredItems[index];
+                        _controller.text = selectedItem;
                         setState(() {
                           _filteredItems.clear();
                         });
-                        if(index == 0){
-                          Get.to(const ResturentItemListScreen());
-                        }
+                        _navigateToScreen(selectedItem);
                       },
                     ),
                   ),

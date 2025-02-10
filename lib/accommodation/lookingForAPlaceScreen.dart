@@ -47,7 +47,7 @@ class _LookingForAPlaceScreenState extends State<LookingForAPlaceScreen> {
   Future<void> fetchAccommodationData() async {
     if (selectedCity != null) {
       QuerySnapshot querySnapshot =
-      await FirebaseFirestore.instance.collection('accommodation').where('city', isEqualTo: selectedCity).get();
+      await FirebaseFirestore.instance.collection('accommodation').where('state', isEqualTo: selectedCity).get();
 
       setState(() {
         accommodationList = querySnapshot.docs;
@@ -138,6 +138,7 @@ class _LookingForAPlaceScreenState extends State<LookingForAPlaceScreen> {
                       return GestureDetector(
                         onTap: () {
                           setState(() {
+                            print("objectobjectobjectobjectobjectobject");
                             selectedCity = cityList[index];
                             fetchAccommodationData();
                           });
