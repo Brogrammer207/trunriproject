@@ -138,7 +138,7 @@ class _JobHomePageScreenState extends State<JobHomePageScreen> {
               stream: FirebaseFirestore.instance.collection('jobs').snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (!snapshot.hasData) {
-                  return const CircularProgressIndicator();
+                  return const CircularProgressIndicator(color: Colors.orange,);
                 }
 
                 var documents = snapshot.data!.docs;

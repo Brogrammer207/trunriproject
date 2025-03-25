@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:email_otp/email_otp.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 import 'package:trunriproject/home/bottom_bar.dart';
+import 'package:trunriproject/signinscreen.dart';
 import 'package:trunriproject/widgets/helper.dart';
 
 import 'nativAddressScreen.dart';
@@ -15,7 +17,10 @@ import 'nativAddressScreen.dart';
 class NewOtpScreen extends StatefulWidget {
   static String route = "/OtpScreen";
 
-  const NewOtpScreen({Key? key}) : super(key: key);
+  final String phoneNumber;
+  final String verificationId;
+
+  NewOtpScreen({required this.phoneNumber, required this.verificationId});
 
   @override
   State<NewOtpScreen> createState() => _NewOtpScreenState();
@@ -38,6 +43,27 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
     });
   }
 
+
+
+  void verifyOTP() async {
+    OverlayEntry loader = NewHelper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
+
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: widget.verificationId,
+        smsCode: otpController.text.trim(),
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      showToast("Phone verified successfully");
+      Get.to(SignInScreen());
+    } catch (e) {
+      showToast("Invalid OTP");
+    }
+
+    NewHelper.hideLoader(loader);
+  }
   final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
@@ -124,7 +150,7 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
                             controller: otpController,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             keyboardType: TextInputType.number,
-                            length: 4,
+                            length: 6,
                             defaultPinTheme: defaultPinTheme,
                           ),
                           SizedBox(
@@ -170,29 +196,7 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
                   fontWeight: FontWeight.bold,
                 )),
             onPressed: () async {
-              OverlayEntry loader = NewHelper.overlayLoader(context);
-              Overlay.of(context).insert(loader);
-              myauth.verifyOTP(otp: otpController.text);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("OTP is verified"),
-              ));
-              Navigator.of(context).push(
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => const  MyBottomNavBar(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                    const begin = Offset(1.0, 0.0);
-                    const end = Offset.zero;
-                    const curve = Curves.ease;
-                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                    var offsetAnimation = animation.drive(tween);
-                    return SlideTransition(
-                      position: offsetAnimation,
-                      child: child,
-                    );
-                  },
-                ),
-              );
-              NewHelper.hideLoader(loader);
+              verifyOTP();
             },
             child: Padding(
               padding: const EdgeInsets.all(16.0),

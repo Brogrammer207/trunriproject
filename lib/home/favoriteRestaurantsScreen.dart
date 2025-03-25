@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:trunriproject/home/home_screen.dart';
 import 'package:trunriproject/home/resturentDetailsScreen.dart';
 
+import 'bottom_bar.dart';
+
 class FavoriteRestaurantsScreen extends StatefulWidget {
   @override
   _FavoriteRestaurantsScreenState createState() => _FavoriteRestaurantsScreenState();
@@ -34,7 +36,7 @@ class _FavoriteRestaurantsScreenState extends State<FavoriteRestaurantsScreen> {
         title: const Text('Favorite Restaurants'),
         leading: GestureDetector(
           onTap: (){
-            Get.off(HomeScreen());
+            Get.off(MyBottomNavBar());
           },
             child: Icon(Icons.arrow_back_ios)),
         automaticallyImplyLeading: false,
@@ -43,7 +45,7 @@ class _FavoriteRestaurantsScreenState extends State<FavoriteRestaurantsScreen> {
         future: _fetchFavorites(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Colors.orange,));
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -73,7 +75,7 @@ class _FavoriteRestaurantsScreenState extends State<FavoriteRestaurantsScreen> {
                         height: 100,
                         width: Get.width,
                         fit: BoxFit.fill,
-                        placeholder: (context, url) =>const Center(child:  CircularProgressIndicator()),
+                        placeholder: (context, url) =>const Center(child:  CircularProgressIndicator(color: Colors.orange,)),
                         errorWidget: (context, url, error) {
                           return Image.network('https://via.placeholder.com/400'); // Path to your default image
                         },

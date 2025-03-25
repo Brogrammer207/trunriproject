@@ -125,24 +125,22 @@ class _SearchFieldState extends State<SearchField> {
                 children: [
 
                   Container(
-                    decoration: BoxDecoration(border: Border.all(color: Colors.grey),borderRadius: BorderRadius.circular(10)),
                     child: ListTile(
                       leading: Icon(Icons.search),
                       title: Text(_filteredItems[index]),
                       onTap: () {
+                        FocusScope.of(context).unfocus();
                         String selectedItem = _filteredItems[index];
                         _controller.text = selectedItem;
                         setState(() {
                           _filteredItems.clear();
                         });
                         _navigateToScreen(selectedItem);
+                        _controller.clear();
+
                       },
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0,right: 20),
-                    child: Divider(height: 0.5,thickness: 0.5,color: Colors.grey,),
-                  )
                 ],
               );
             },

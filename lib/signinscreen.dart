@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,13 +13,16 @@ import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:trunriproject/recoveryPasswordScreen.dart';
 import 'package:trunriproject/signUpScreen.dart';
+import 'package:trunriproject/widgets/appTheme.dart';
 import 'package:trunriproject/widgets/customTextFormField.dart';
 import 'package:trunriproject/widgets/helper.dart';
 
 import 'facebook/firebaseservices.dart';
+import 'home/home_screen.dart';
 import 'nativAddressScreen.dart';
 import 'otpScreen.dart';
 
@@ -29,7 +34,7 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   RxBool hide = true.obs;
   RxBool hide1 = true.obs;
@@ -37,28 +42,45 @@ class _SignInScreenState extends State<SignInScreen> {
   bool showOtpField = false;
   bool value = false;
   bool showValidation = false;
-  void SignIn() {
-    FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: emailController.text.trim(), password: passwordController.text.trim())
-        .then((value) {
-      Navigator.of(context).push(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const NewOtpScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.ease;
-            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-            return SlideTransition(
-              position: offsetAnimation,
-              child: child,
-            );
-          },
-        ),
-      );
-    });
+  String code = "+91";
+  void loginUser() async {
+    OverlayEntry loader = NewHelper.overlayLoader(context);
+    Overlay.of(context).insert(loader);
+    String phone = phoneController.text.trim(); // Ensure phone number format
+    String password = passwordController.text.trim();
+
+    if (phone.isEmpty || password.isEmpty) {
+      showToast("Please enter both phone number and password");
+      return;
+    }
+
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("User")
+          .where("phoneNumber", isEqualTo: phone)
+          .where("password", isEqualTo: password)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        showToast("Login successful");
+        NewHelper.hideLoader(loader);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()), // Replace with your screen
+        );
+      } else {
+        log("phonephone${phone.toString()}");
+        log(password.toString());
+        NewHelper.hideLoader(loader);
+        // No matching user found
+        showToast("Invalid phone number or password");
+      }
+    } catch (e) {
+      NewHelper.hideLoader(loader);
+      showToast("Error: ${e.toString()}");
+    }
   }
+
 
   Future<dynamic> signInWithGoogle(BuildContext context) async {
     OverlayEntry loader = NewHelper.overlayLoader(context);
@@ -98,55 +120,6 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 
-  void checkEmailInFirestore() async {
-    OverlayEntry loader = NewHelper.overlayLoader(context);
-    Overlay.of(context).insert(loader);
-    final QuerySnapshot result =
-        await FirebaseFirestore.instance.collection('User').where('email', isEqualTo: emailController.text).get();
-
-    if (result.docs.isNotEmpty) {
-      checkPasswordInFirestore();
-      NewHelper.hideLoader(loader);
-    } else {
-      Fluttertoast.showToast(msg: 'Password is incorrect');
-      NewHelper.hideLoader(loader);
-    }
-  }
-
-  void checkPasswordInFirestore() async {
-    OverlayEntry loader = NewHelper.overlayLoader(context);
-    Overlay.of(context).insert(loader);
-    final QuerySnapshot result =
-        await FirebaseFirestore.instance.collection('User').where('password', isEqualTo: passwordController.text).get();
-    if (result.docs.isNotEmpty) {
-      myauth.setConfig(
-          appEmail: "contact@hdevcoder.com",
-          appName: "TRUNRI",
-          userEmail: emailController.text,
-          otpLength: 4,
-          otpType: OTPType.digitsOnly);
-      if (await myauth.sendOTP() == true) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("OTP has been sent"),
-        ));
-
-        SignIn();
-
-        NewHelper.hideLoader(loader);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Oops, OTP send failed"),
-        ));
-      }
-      setState(() {
-        showOtpField = true;
-      });
-      return;
-    } else {
-      Fluttertoast.showToast(msg: 'Password is incorrect');
-      NewHelper.hideLoader(loader);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,16 +129,6 @@ class _SignInScreenState extends State<SignInScreen> {
       body: SafeArea(
           child: ListView(
         children: [
-          // const Text(
-          //   "Hello Indian!",
-          //   textAlign: TextAlign.center,
-          //   style: TextStyle(
-          //     fontWeight: FontWeight.bold,
-          //     fontSize: 37,
-          //     color: Color(0xff353047),
-          //   ),
-          // ),
-          // const SizedBox(height: 15),
           Image.asset(
             "assets/images/hand.gif",
             height: 200.0,
@@ -178,13 +141,52 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
           SizedBox(height: size.height * 0.04),
           // for username and password
-          CommonTextField(
-              hintText: 'Email',
-              controller: emailController,
-              validator: MultiValidator([
-                RequiredValidator(errorText: 'Email is required'),
-                EmailValidator(errorText: 'Please enter valid email'.tr),
-              ]).call),
+          Padding(
+            padding: EdgeInsets.only(left: 25, right: 25),
+            child: IntlPhoneField(
+              key: ValueKey(code),
+              flagsButtonPadding: const EdgeInsets.all(8),
+              dropdownIconPosition: IconPosition.trailing,
+              showDropdownIcon: false, // Hide the country selection dropdown
+              enabled: true, // Ensure only the phone number input is editable
+              cursorColor: Colors.black,
+              textInputAction: TextInputAction.next,
+              dropdownTextStyle: const TextStyle(color: Colors.black),
+              style: const TextStyle(color: AppTheme.textColor),
+              controller: phoneController,
+              decoration: InputDecoration(
+                fillColor: Colors.grey.shade100,
+                filled: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 15),
+                hintStyle: const TextStyle(color: Colors.black45, fontSize: 19, fontWeight: FontWeight.w400),
+                hintText: 'Phone Number',
+                labelStyle: TextStyle(color: AppTheme.textColor),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(11),
+                  borderSide: BorderSide(),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                  borderRadius: BorderRadius.circular(11),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                  borderRadius: BorderRadius.circular(11),
+                ),
+              ),
+              initialCountryCode: "AU", // Set to Australia
+              onChanged: (phone) {
+                code = "+61"; // Force Australian country code
+              },
+              validator: (value) {
+                if (value == null || phoneController.text.isEmpty) {
+                  return 'Please enter a phone number';
+                }
+                return null;
+              },
+            ),
+          ),
+
           Obx(() {
             return CommonTextField(
               hintText: 'Password',
@@ -286,7 +288,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 GestureDetector(
                   onTap: () {
                     if (value == true) {
-                      checkEmailInFirestore();
+                      loginUser();
                     } else {
                       showToast('Select Terms And Conditions');
                     }

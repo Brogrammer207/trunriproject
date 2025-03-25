@@ -147,7 +147,7 @@ class _TempleHomePageScreenState extends State<TempleHomePageScreen> {
         automaticallyImplyLeading: false,
       ),
       body: _isLoading // Show progress indicator when loading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: Colors.orange,))
           : _temples.isEmpty // Check if the list is empty
           ? Center(child: Text("No temples found"))
           : Column(

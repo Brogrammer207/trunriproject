@@ -138,7 +138,7 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
         automaticallyImplyLeading: false,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: Colors.orange,))
           : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

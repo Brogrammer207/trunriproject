@@ -19,6 +19,7 @@ import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
 
 import '../accommodation/accommodationHomeScreen.dart';
 import '../accommodation/lookingForAPlaceScreen.dart';
+import '../events/eventHomeScreen.dart';
 import '../job/jobHomePageScreen.dart';
 import '../model/bannerModel.dart';
 import '../model/categoryModel.dart';
@@ -82,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       _fetchIndianRestaurants(position.latitude, position.longitude);
       _fetchGroceryStores(position.latitude, position.longitude);
-      _fetchTemples(position.latitude,position.longitude);
+      _fetchTemples(position.latitude, position.longitude);
     });
   }
 
@@ -127,6 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
       throw Exception('Failed to fetch data');
     }
   }
+
   String templeLat = '';
   String templeLong = '';
   List<dynamic> _temples = [];
@@ -185,14 +187,12 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Expanded(child: SearchField()),
-
-
+                    Expanded(child: SearchField()),
                   ],
                 ),
               ),
@@ -204,7 +204,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: Colors.orange,
+                      ),
                     );
                   }
 
@@ -261,7 +263,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: Colors.orange,
+                      ),
                     );
                   }
 
@@ -285,30 +289,24 @@ class _HomeScreenState extends State<HomeScreen> {
                           // controller: PageController(viewportFraction: .2),
                           itemCount: category.length,
                           itemBuilder: (context, index) {
-                           return CategoryCard(
-                               icon: category[index].imageUrl,
-                               text: category[index].name,
-                               press: () {
-                                 if (category[index].name == 'Temples') {
-                                   Get.to(const TempleHomePageScreen());
-                                 } else if(category[index].name == 'Grocery stores') {
-                                   Get.to(const GroceryStoreListScreen());
-                                 }
-                                 else if(category[index].name == 'Accommodation') {
-                                   Get.to(const LookingForAPlaceScreen());
-                                 }
-                                 else if(category[index].name == 'Restaurants') {
-                                   Get.to(const ResturentItemListScreen());
-                                 }
-                                 else if(category[index].name == 'Jobs') {
-                                   Get.to(const JobHomePageScreen());
-                                 }
-                                 else if(category[index].name == 'Events') {
-                                   Get.to(const JobHomePageScreen());
-                                 }
-                               }
-                           );
-
+                            return CategoryCard(
+                                icon: category[index].imageUrl,
+                                text: category[index].name,
+                                press: () {
+                                  if (category[index].name == 'Temples') {
+                                    Get.to(const TempleHomePageScreen());
+                                  } else if (category[index].name == 'Grocery stores') {
+                                    Get.to(const GroceryStoreListScreen());
+                                  } else if (category[index].name == 'Accommodation') {
+                                    Get.to(const LookingForAPlaceScreen());
+                                  } else if (category[index].name == 'Restaurants') {
+                                    Get.to(const ResturentItemListScreen());
+                                  } else if (category[index].name == 'Jobs') {
+                                    Get.to(const JobHomePageScreen());
+                                  } else if (category[index].name == 'Events') {
+                                    Get.to(const JobHomePageScreen());
+                                  }
+                                });
                           }),
                     ),
                   );
@@ -321,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: SectionTitle(
                       title: "Upcoming Events",
                       press: () {
-
+                        Get.to(EventDiscoveryScreen());
                       },
                     ),
                   ),
@@ -445,8 +443,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             child: Container(
                               margin: EdgeInsets.only(left: 5),
-                              decoration:
-                                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11)),
+                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11)),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -555,8 +552,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             child: Container(
                               margin: EdgeInsets.only(left: 5),
-                              decoration:
-                                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11)),
+                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11)),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -638,7 +634,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   stream: FirebaseFirestore.instance.collection('accommodation').snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return Center(
+                          child: CircularProgressIndicator(
+                        color: Colors.orange,
+                      ));
                     }
                     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                       return Center(child: Text('No accommodations found'));
@@ -719,7 +718,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   stream: FirebaseFirestore.instance.collection('jobs').snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return Center(
+                          child: CircularProgressIndicator(
+                        color: Colors.orange,
+                      ));
                     }
                     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                       return Center(child: Text('No jobs found'));
@@ -749,7 +751,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   width: 120, // Adjust width if needed
                                   child: Column(
                                     children: [
-                                      SizedBox(height: 10,),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
                                       Text(
                                         "Name - ${data['companyName'] ?? 'No companyName'}",
                                         textAlign: TextAlign.center,
@@ -760,7 +764,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 2, // Allow text to wrap to 2 lines if needed
                                       ),
-                                      SizedBox(height: 10,),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
                                       Text(
                                         "Department - ${data['department'] ?? 'No department'}",
                                         textAlign: TextAlign.center,
@@ -771,7 +777,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 2, // Allow text to wrap to 2 lines if needed
                                       ),
-                                      SizedBox(height: 10,),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
                                       Text(
                                         "Eduction - ${data['eduction'] ?? 'No eduction'}",
                                         textAlign: TextAlign.center,
@@ -782,7 +790,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 2, // Allow text to wrap to 2 lines if needed
                                       ),
-                                      SizedBox(height: 10,),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
                                       Text(
                                         "EmploymentType - ${data['employmentType'] ?? 'No employmentType'}",
                                         textAlign: TextAlign.center,
@@ -836,7 +846,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             : 'Not Available';
                         final closingTime = temples['closing_time'] ?? 'Not Available';
                         final photoReference =
-                        temples['photos'] != null ? temples['photos'][0]['photo_reference'] : null;
+                            temples['photos'] != null ? temples['photos'][0]['photo_reference'] : null;
                         final photoUrl = photoReference != null
                             ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=35000&photoreference=$photoReference&key=$apiKey'
                             : null;
@@ -868,8 +878,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             child: Container(
                               margin: EdgeInsets.only(left: 5),
-                              decoration:
-                              BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11)),
+                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(11)),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -887,11 +896,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     child: photoUrl != null
                                         ? Image.network(
-                                      photoUrl,
-                                      height: 100,
-                                      width: 100,
-                                      fit: BoxFit.fill,
-                                    )
+                                            photoUrl,
+                                            height: 100,
+                                            width: 100,
+                                            fit: BoxFit.fill,
+                                          )
                                         : SizedBox(),
                                   ),
                                   const SizedBox(height: 4), // Add space between the image and the text
@@ -934,7 +943,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 ],
               ),
-
             ],
           ),
         ),

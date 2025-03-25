@@ -67,7 +67,7 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
         title: Text('Indian Restaurants Nearby'),
       ),
       body: _currentPosition == null
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: Colors.orange,))
           : ListView.builder(
         itemCount: _restaurants.length,
         itemBuilder: (context, index) {

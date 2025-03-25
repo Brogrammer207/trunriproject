@@ -146,7 +146,7 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
         automaticallyImplyLeading: false,
       ),
       body: _isLoading // Show progress indicator when loading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: Colors.orange,))
           : _groceryStores.isEmpty // Check if the list is empty
               ? Center(child: Text("No grocery stores found"))
               : Column(
