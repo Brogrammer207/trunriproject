@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:developer';
 
@@ -36,6 +35,7 @@ class _TempleHomePageScreenState extends State<TempleHomePageScreen> {
     _getCurrentLocation();
     searchController.addListener(_filterRestaurants);
   }
+
   @override
   void dispose() {
     searchController.dispose();
@@ -89,6 +89,7 @@ class _TempleHomePageScreenState extends State<TempleHomePageScreen> {
       _fetchTemples(position.latitude, position.longitude);
     });
   }
+
   void _filterRestaurants() {
     final query = searchController.text.toLowerCase();
     if (query.isEmpty) {
@@ -97,9 +98,8 @@ class _TempleHomePageScreenState extends State<TempleHomePageScreen> {
       });
     } else {
       setState(() {
-        _filterTemples = _temples
-            .where((restaurant) => restaurant['name'].toString().toLowerCase().contains(query))
-            .toList();
+        _filterTemples =
+            _temples.where((restaurant) => restaurant['name'].toString().toLowerCase().contains(query)).toList();
       });
     }
   }
@@ -111,7 +111,6 @@ class _TempleHomePageScreenState extends State<TempleHomePageScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 5,
         backgroundColor: Colors.white,
         title: Row(
           children: [
@@ -147,100 +146,103 @@ class _TempleHomePageScreenState extends State<TempleHomePageScreen> {
         automaticallyImplyLeading: false,
       ),
       body: _isLoading // Show progress indicator when loading
-          ? Center(child: CircularProgressIndicator(color: Colors.orange,))
+          ? Center(
+              child: CircularProgressIndicator(
+              color: Colors.orange,
+            ))
           : _temples.isEmpty // Check if the list is empty
-          ? Center(child: Text("No temples found"))
-          : Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 10),
-          Expanded(
-            child: GridView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: _filterTemples.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10.0,
-                mainAxisSpacing: 10.0,
-              ),
-              itemBuilder: (context, index) {
-                final temple = _filterTemples[index];
-                final name = temple['name'];
-                final address = temple['vicinity'];
-                final rating = (temple['rating'] as num?)?.toDouble() ?? 0.0;
-                final description = temple['description'] ?? 'No Description Available';
-                final openingHours = temple['opening_hours'] != null
-                    ? temple['opening_hours']['weekday_text']
-                    : 'Not Available';
-                final closingTime = temple['closing_time'] ?? 'Not Available';
-                final photoReference =
-                temple['photos'] != null ? temple['photos'][0]['photo_reference'] : null;
-                final photoUrl = photoReference != null
-                    ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
-                    : defaultImageUrl;
-                final lat = temple['geometry']['location']['lat'];
-                final lng = temple['geometry']['location']['lng'];
+              ? Center(child: Text("No temples found"))
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: GridView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: _filterTemples.length,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10.0,
+                          mainAxisSpacing: 10.0,
+                        ),
+                        itemBuilder: (context, index) {
+                          final temple = _filterTemples[index];
+                          final name = temple['name'];
+                          final address = temple['vicinity'];
+                          final rating = (temple['rating'] as num?)?.toDouble() ?? 0.0;
+                          final description = temple['description'] ?? 'No Description Available';
+                          final openingHours = temple['opening_hours'] != null
+                              ? temple['opening_hours']['weekday_text']
+                              : 'Not Available';
+                          final closingTime = temple['closing_time'] ?? 'Not Available';
+                          final photoReference =
+                              temple['photos'] != null ? temple['photos'][0]['photo_reference'] : null;
+                          final photoUrl = photoReference != null
+                              ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
+                              : defaultImageUrl;
+                          final lat = temple['geometry']['location']['lat'];
+                          final lng = temple['geometry']['location']['lng'];
 
-                templeLat = lat.toString();
-                templeLong = lng.toString();
+                          templeLat = lat.toString();
+                          templeLong = lng.toString();
 
-                return GestureDetector(
-                  onTap: () {
-                    Get.to(
-                      ResturentDetailsScreen(
-                        name: name.toString(),
-                        rating: rating,
-                        desc: description.toString(),
-                        openingTime: openingHours.toString(),
-                        closingTime: closingTime.toString(),
-                        address: address.toString(),
-                        image: photoUrl.toString(),
-                      ),
-                      arguments: [lat, lng],
-                    );
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 15, right: 15),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (photoUrl != null)
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: CachedNetworkImage(
-                              height: 130,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              imageUrl: photoUrl,
-                              errorWidget: (_, __, ___) => const Icon(Icons.person),
-                              placeholder: (_, __) => const SizedBox(),
+                          return GestureDetector(
+                            onTap: () {
+                              Get.to(
+                                ResturentDetailsScreen(
+                                  name: name.toString(),
+                                  rating: rating,
+                                  desc: description.toString(),
+                                  openingTime: openingHours.toString(),
+                                  closingTime: closingTime.toString(),
+                                  address: address.toString(),
+                                  image: photoUrl.toString(),
+                                ),
+                                arguments: [lat, lng],
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(left: 15, right: 15),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (photoUrl != null)
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: CachedNetworkImage(
+                                        height: 130,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                        imageUrl: photoUrl,
+                                        errorWidget: (_, __, ___) => const Icon(Icons.person),
+                                        placeholder: (_, __) => const SizedBox(),
+                                      ),
+                                    ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Text(
+                                      name,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          color: Colors.black, fontSize: 12, fontWeight: FontWeight.w600),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Text(
-                            name,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 12, fontWeight: FontWeight.w600),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                          ),
-                        ),
-                      ],
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+                  ],
+                ),
     );
   }
 }

@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:trunriproject/events/postEventScreen.dart';
+
+import 'eventDetailsScreen.dart';
 
 class EventDiscoveryScreen extends StatefulWidget {
   @override
@@ -10,62 +13,221 @@ class EventDiscoveryScreen extends StatefulWidget {
 
 class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
   final List<String> categories = [
-    'Music', 'Traditional', 'Business', 'Community & Culture', 'Health & Fitness', 'Fashion'
+    'Music',
+    'Traditional',
+    'Business',
+    'Community & Culture',
+    'Health & Fitness',
+    'Fashion',
+    'Other & Meetup & Sports',
   ];
+
+  RxString selectedDateFilter = 'any'.obs;
+  RxList<String> selectedCategories = <String>[].obs;
+
+  Widget _buildRadioOption(String text, String value, {bool showArrow = false}) {
+    return Obx(() {
+      return ListTile(
+        title: Text(text),
+        trailing: showArrow ? const Icon(Icons.chevron_right) : null,
+        leading: Radio<String>(
+          value: value,
+          activeColor: Colors.orange,
+          groupValue: selectedDateFilter.value,
+          onChanged: (val) {
+            selectedDateFilter.value = val!;
+          },
+        ),
+      );
+    });
+  }
+
+  Widget _buildCheckboxOption(String text) {
+    return Obx(() {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Checkbox(
+            activeColor: Colors.orange,
+            value: selectedCategories.contains(text),
+            onChanged: (val) {
+              if (val == true) {
+                selectedCategories.add(text);
+              } else {
+                selectedCategories.remove(text);
+              }
+            },
+          ),
+          Text(text),
+        ],
+      );
+    });
+  }
 
   void _showFilterDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Filter Events', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              DropdownButtonFormField(
-                items: categories.map((category) => DropdownMenuItem(value: category, child: Text(category))).toList(),
-                onChanged: (value) {},
-                decoration: InputDecoration(labelText: 'Category'),
-              ),
-              RangeSlider(
-                values: RangeValues(0, 5000),
-                min: 0,
-                max: 5000,
-                divisions: 10,
-                labels: RangeLabels('₹0', '₹5000'),
-                onChanged: (values) {},
-              ),
-              DropdownButtonFormField(
-                items: ['Online', 'Offline', 'Free', 'Paid']
-                    .map((type) => DropdownMenuItem(value: type, child: Text(type)))
-                    .toList(),
-                onChanged: (value) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.9,
+          // Adjust height to match the image
+          minChildSize: 0.5,
+          maxChildSize: 1.0,
+          builder: (context, scrollController) {
+            return SingleChildScrollView(
+              controller: scrollController,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Close button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Filter',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
 
-                },
-                decoration: InputDecoration(labelText: 'Event Type'),
+                    const Text('Date', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    Column(
+                      children: [
+                        _buildRadioOption('Any date', 'any'),
+                        _buildRadioOption('Today', 'today'),
+                        _buildRadioOption('Tomorrow', 'tomorrow'),
+                        _buildRadioOption('This week', 'this_week'),
+                        _buildRadioOption('This weekend', 'this_weekend'),
+                        _buildRadioOption('Choose a date', 'custom_date', showArrow: true),
+                      ],
+                    ),
+                    const Divider(),
+
+                    const Text('Category', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    Wrap(
+                      spacing: 10,
+                      children: [
+                        ...categories.map((category) => _buildCheckboxOption(category)),
+                      ],
+                    ),
+                    const Divider(),
+
+                    // Reset & Apply buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            selectedCategories.clear();
+                            selectedDateFilter.value = 'any';
+                          },
+                          child: const Text('Reset', style: TextStyle(color: Colors.grey)),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {}); // Refresh the list with filters
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          child: const Text(
+                            'Apply filters',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('Apply Filters'),
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
+  Stream<QuerySnapshot> getFilteredEvents() {
+    Query query = FirebaseFirestore.instance.collection('MakeEvent');
+
+    // Apply date filter
+    if (selectedDateFilter.value != 'any') {
+      DateTime now = DateTime.now();
+      String startDateStr, endDateStr;
+
+      switch (selectedDateFilter.value) {
+        case 'today':
+          // Format to 'YYYY-MM-DD'
+          startDateStr = DateFormat('yyyy-MM-dd').format(now);
+          endDateStr = DateFormat('yyyy-MM-dd').format(now.add(const Duration(days: 1)));
+          query =
+              query.where('eventDate', isGreaterThanOrEqualTo: startDateStr).where('eventDate', isLessThan: endDateStr);
+          break;
+        case 'tomorrow':
+          startDateStr = DateFormat('yyyy-MM-dd').format(now.add(const Duration(days: 1)));
+          endDateStr = DateFormat('yyyy-MM-dd').format(now.add(const Duration(days: 2)));
+          query =
+              query.where('eventDate', isGreaterThanOrEqualTo: startDateStr).where('eventDate', isLessThan: endDateStr);
+          break;
+        case 'this_week':
+          // Start from the beginning of this week
+          DateTime startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+          DateTime endOfWeek = startOfWeek.add(const Duration(days: 7));
+          startDateStr = DateFormat('yyyy-MM-dd').format(startOfWeek);
+          endDateStr = DateFormat('yyyy-MM-dd').format(endOfWeek);
+          query =
+              query.where('eventDate', isGreaterThanOrEqualTo: startDateStr).where('eventDate', isLessThan: endDateStr);
+          break;
+        case 'this_weekend':
+          // Start from the upcoming weekend
+          DateTime startOfWeekend = now.subtract(Duration(days: now.weekday - 6)); // Saturday
+          DateTime endOfWeekend = startOfWeekend.add(const Duration(days: 2)); // Sunday
+          startDateStr = DateFormat('yyyy-MM-dd').format(startOfWeekend);
+          endDateStr = DateFormat('yyyy-MM-dd').format(endOfWeekend);
+          query =
+              query.where('eventDate', isGreaterThanOrEqualTo: startDateStr).where('eventDate', isLessThan: endDateStr);
+          break;
+        case 'custom_date':
+          // Handle a custom selected date if needed (you might need a custom date picker here)
+          break;
+      }
+    }
+
+    // Apply category filter
+    if (selectedCategories.isNotEmpty) {
+      query = query.where('category', arrayContainsAny: selectedCategories);
+    }
+
+    // Execute query
+    return query.snapshots();
+  }
+
+  // RxString selectedCategory = ''.obs;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Discover Events'),
+        title: const Text('Discover Events'),
         actions: [
           IconButton(
-            icon: Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list),
             onPressed: () {
               _showFilterDialog(context);
             },
@@ -79,7 +241,7 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search events...',
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
@@ -94,171 +256,107 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Chip(
-                    label: Text(categories[index]),
-                    backgroundColor: Colors.blue.shade100,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (selectedCategories.contains(categories[index])) {
+                          selectedCategories.remove(categories[index]);
+                        } else {
+                          selectedCategories.add(categories[index]);
+                        }
+                      });
+                    },
+                    child: Chip(
+                      label: Text(
+                        categories[index],
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      backgroundColor: selectedCategories.contains(categories[index])
+                          ? Colors.orange // Color when selected
+                          : Colors.grey, // Color when not selected
+                    ),
                   ),
                 );
               },
             ),
           ),
           Expanded(
-            child: StreamBuilder(
-              stream: FirebaseFirestore.instance.collection('MakeEvent').snapshots(),
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+              child: StreamBuilder<QuerySnapshot>(
+            stream: getFilteredEvents(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (snapshot.hasError) {
+                print("Error: ${snapshot.error}");
+
+                if (snapshot.error.toString().contains("FAILED_PRECONDITION")) {
+                  print("Create index here: ${snapshot.error}");
                 }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text("No events available"));
-                }
-                var events = snapshot.data!.docs;
-                return ListView.builder(
-                  itemCount: events.length,
-                  itemBuilder: (context, index) {
-                    var event = events[index];
-                    return Card(
-                      margin: EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+
+                return const Center(child: Text("Error fetching data"));
+              }
+
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text("No events available"));
+              }
+
+              var events = snapshot.data!.docs;
+              return ListView.builder(
+                itemCount: events.length,
+                itemBuilder: (context, index) {
+                  var event = events[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Get.to(EventDetailsScreen(
+                        eventDate: event['eventDate'],
+                        eventName: event['eventName'],
+                        eventTime: event['eventTime'],
+                        location: event['location'],
+                        photo: event['photo'][0],
+                        Price: event['ticketPrice'],
+                      ));
+                    },
+                    child: Card(
+                      margin: const EdgeInsets.all(8.0),
+                      child: Row(
                         children: [
-                          event['photo'].isNotEmpty ?
-                               Image.network( event['photo'][0] , height: 150, width: double.infinity, fit: BoxFit.cover)
-                              : Image.asset("assets/images/singing.jpeg", height: 150, width: double.infinity, fit: BoxFit.cover),
+                          event['photo'].isNotEmpty
+                              ? Image.network(event['photo'][0], height: 150, width: 150, fit: BoxFit.cover)
+                              : Image.asset("assets/images/singing.jpeg", height: 150, width: 150, fit: BoxFit.cover),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(event['eventName'], style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                SizedBox(height: 5),
+                                Text(event['eventName'],
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                                 Text("${event['eventDate']} at ${event['eventTime']}"),
-                                Text(event['location'], style: TextStyle(color: Colors.blue)),
-                                Text('Price: ${event['ticketPrice']}', style: TextStyle(fontWeight: FontWeight.bold)),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    IconButton(icon: Icon(Icons.bookmark_border), onPressed: () {}),
-                                    IconButton(icon: Icon(Icons.share), onPressed: () {}),
-                                    IconButton(icon: Icon(Icons.map), onPressed: () {}),
-                                    GestureDetector(
-                                      onTap: () {},
-                                      child: Container(
-                                        width: 100,
-                                        padding: const EdgeInsets.symmetric(vertical: 12),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xffFF730A),
-                                          borderRadius: BorderRadius.circular(15),
-                                        ),
-                                        child: const Center(
-                                          child: Text(
-                                            "Buy Ticket",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                Text(event['location'], style: const TextStyle(color: Colors.black)),
+
+                                if(event['ticketPrice'] != "")
+                                Text('Price: ${event['ticketPrice']}',
+                                    style: const TextStyle(fontWeight: FontWeight.bold)),
                               ],
                             ),
                           ),
                         ],
                       ),
-                    );
-
-                  },
-                );
-              },
-            ),
-          ),
+                    ),
+                  );
+                },
+              );
+            },
+          )),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Get.to(PostEventScreen());
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         tooltip: "Post Your Event",
-      ),
-    );
-  }
-}
-
-class EventCard extends StatelessWidget {
-  final String eventName;
-  final String eventDate;
-  final String eventTime;
-  final String location;
-  final String price;
-  final String imageUrl;
-
-  EventCard({
-    required this.eventName,
-    required this.eventDate,
-    required this.eventTime,
-    required this.location,
-    required this.price,
-    required this.imageUrl,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          imageUrl.isNotEmpty
-              ? Image.network(imageUrl, height: 150, width: double.infinity, fit: BoxFit.cover)
-              : Image.asset("assets/images/singing.jpeg", height: 150, width: double.infinity, fit: BoxFit.cover),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(eventName, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                SizedBox(height: 5),
-                Text("$eventDate at $eventTime"),
-                Text(location, style: TextStyle(color: Colors.blue)),
-                Text('Price: ₹$price', style: TextStyle(fontWeight: FontWeight.bold)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(icon: Icon(Icons.bookmark_border), onPressed: () {}),
-                    IconButton(icon: Icon(Icons.share), onPressed: () {}),
-                    IconButton(icon: Icon(Icons.map), onPressed: () {}),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        width: 100,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xffFF730A),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Buy Ticket",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

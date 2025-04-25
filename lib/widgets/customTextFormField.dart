@@ -23,6 +23,7 @@ class CommonTextField extends StatefulWidget {
   final String? hintText;
   final Widget? suffixIcon;
   final Widget? prefix;
+  final Widget? prefixicon;
   final List<TextInputFormatter>? inputFormatters;
   final int? minLines;
   final int? maxLines;
@@ -41,6 +42,7 @@ class CommonTextField extends StatefulWidget {
     required this.hintText,
     this.suffixIcon,
     this.prefix,
+    this.prefixicon,
     this.enabled = true,
     this.onEditingCompleted,
     this.onChanged,
@@ -101,7 +103,8 @@ class _CommonTextFieldState extends State<CommonTextField> {
           hintText: widget.hintText,
           errorText: widget.errorText,
           labelText: widget.labelText,
-          prefixIcon: widget.prefix,
+          prefixIcon: widget.prefixicon,
+          prefix: widget.prefix,
           suffixIcon: widget.suffixIcon,
           hintStyle: const TextStyle(
             color: Colors.black45,

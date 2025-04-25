@@ -125,6 +125,7 @@ class _ResturentDetailsScreenState extends State<ResturentDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(widget.name),
         leading: GestureDetector(
@@ -396,18 +397,6 @@ class _ResturentDetailsScreenState extends State<ResturentDetailsScreen> {
                   const SizedBox(height: 10),
                   const Divider(height: 1, color: Colors.grey),
                   const SizedBox(height: 10),
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //       child: CustomOutlineButton(
-                  //         title: 'Get Direction',
-                  //         click: () {
-                  //
-                  //         },
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
                   Container(
                     height: 200,
                     child: GoogleMap(

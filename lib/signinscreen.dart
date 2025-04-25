@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_otp/email_otp.dart';
@@ -14,6 +15,7 @@ import 'package:get/route_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:trunriproject/recoveryPasswordScreen.dart';
 import 'package:trunriproject/signUpScreen.dart';
@@ -22,6 +24,7 @@ import 'package:trunriproject/widgets/customTextFormField.dart';
 import 'package:trunriproject/widgets/helper.dart';
 
 import 'facebook/firebaseservices.dart';
+import 'home/bottom_bar.dart';
 import 'home/home_screen.dart';
 import 'nativAddressScreen.dart';
 import 'otpScreen.dart';
@@ -40,41 +43,55 @@ class _SignInScreenState extends State<SignInScreen> {
   RxBool hide1 = true.obs;
   EmailOTP myauth = EmailOTP();
   bool showOtpField = false;
-  bool value = false;
-  bool showValidation = false;
+
   String code = "+91";
   void loginUser() async {
     OverlayEntry loader = NewHelper.overlayLoader(context);
     Overlay.of(context).insert(loader);
-    String phone = phoneController.text.trim(); // Ensure phone number format
+    String phone = phoneController.text.trim();
     String password = passwordController.text.trim();
 
     if (phone.isEmpty || password.isEmpty) {
       showToast("Please enter both phone number and password");
+      NewHelper.hideLoader(loader);
       return;
     }
 
     try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+      // First check if the phone number exists
+      QuerySnapshot phoneSnapshot = await FirebaseFirestore.instance
+          .collection("User")
+          .where("phoneNumber", isEqualTo: phone)
+          .get();
+
+      if (phoneSnapshot.docs.isEmpty) {
+        NewHelper.hideLoader(loader);
+        showToast("Phone number not found");
+        return;
+      }
+
+      // Now check if password matches for that phone number
+      QuerySnapshot userSnapshot = await FirebaseFirestore.instance
           .collection("User")
           .where("phoneNumber", isEqualTo: phone)
           .where("password", isEqualTo: password)
           .get();
 
-      if (querySnapshot.docs.isNotEmpty) {
-        showToast("Login successful");
+      if (userSnapshot.docs.isEmpty) {
         NewHelper.hideLoader(loader);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()), // Replace with your screen
-        );
-      } else {
-        log("phonephone${phone.toString()}");
-        log(password.toString());
-        NewHelper.hideLoader(loader);
-        // No matching user found
-        showToast("Invalid phone number or password");
+        showToast("Incorrect password");
+        return;
       }
+
+      // Successful login
+      showToast("Login successful");
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      sharedPreferences.setString("myPhone" , phoneController.text.trim());
+      NewHelper.hideLoader(loader);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MyBottomNavBar()),
+      );
     } catch (e) {
       NewHelper.hideLoader(loader);
       showToast("Error: ${e.toString()}");
@@ -87,9 +104,7 @@ class _SignInScreenState extends State<SignInScreen> {
     Overlay.of(context).insert(loader);
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
       final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
@@ -111,15 +126,15 @@ class _SignInScreenState extends State<SignInScreen> {
           },
         ),
       );
-      NewHelper.hideLoader(loader);
 
       return userCredential;
     } on Exception catch (e) {
-      // Handle the exception
       print('exception->$e');
+    } finally {
+      // Ensure the loader is always removed, even if an error occurs
+      NewHelper.hideLoader(loader);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -195,7 +210,7 @@ class _SignInScreenState extends State<SignInScreen> {
               validator: MultiValidator([
                 RequiredValidator(errorText: 'Password is required'),
               ]).call,
-              obSecure: hide.value,
+              obSecure: !hide.value,
               suffixIcon: IconButton(
                 onPressed: () {
                   hide.value = !hide.value;
@@ -226,59 +241,7 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
           ),
           SizedBox(height: size.height * 0.04),
-          Padding(
-            padding: const EdgeInsets.only(left: 20),
-            child: Row(
-              children: [
-                Transform.scale(
-                  scale: 1.1,
-                  child: Theme(
-                    data: ThemeData(unselectedWidgetColor: showValidation == false ? Colors.white : Colors.red),
-                    child: Checkbox(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        value: value,
-                        activeColor: Colors.orange,
-                        visualDensity: const VisualDensity(vertical: 0, horizontal: 0),
-                        onChanged: (newValue) {
-                          setState(() {
-                            value = newValue!;
-                            setState(() {});
-                          });
-                        }),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        // Return the dialog box widget
-                        return const AlertDialog(
-                          title: Text('Terms And Conditions'),
-                          content: Text(
-                              'Terms and conditions are part of a contract that ensure parties understand their contractual rights and obligations. Parties draft them into a legal contract, also called a legal agreement, in accordance with local, state, and federal contract laws. They set important boundaries that all contract principals must uphold.'
-                              'Several contract types utilize terms and conditions. When there is a formal agreement to create with another individual or entity, consider how you would like to structure your deal and negotiate the terms and conditions with the other side before finalizing anything. This strategy will help foster a sense of importance and inclusion on all sides.'),
-                          actions: <Widget>[],
-                        );
-                      },
-                    );
-                  },
-                  child: Row(
-                    children: [
-                      const Text('I Accept',
-                          style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.black)),
-                      Text(
-                        ' Terms And Conditions?',
-                        style: GoogleFonts.poppins(
-                            color: const Color(0xffFF730A), fontWeight: FontWeight.w600, fontSize: 13),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+
           SizedBox(height: size.height * 0.01),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -287,11 +250,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 // for sign in button
                 GestureDetector(
                   onTap: () {
-                    if (value == true) {
-                      loginUser();
-                    } else {
-                      showToast('Select Terms And Conditions');
-                    }
+                    loginUser();
                   },
                   child: Container(
                     width: size.width,
@@ -348,34 +307,36 @@ class _SignInScreenState extends State<SignInScreen> {
                         "assets/images/google.png",
                       ),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        try {
-                          final credential = await SignInWithApple.getAppleIDCredential(
-                            scopes: [
-                              AppleIDAuthorizationScopes.email,
-                              AppleIDAuthorizationScopes.fullName,
-                            ],
-                          );
-                          final OAuthProvider oAuthProvider = OAuthProvider('apple.com');
-                          final OAuthCredential oAuthCredential = oAuthProvider.credential(
-                            idToken: credential.identityToken,
-                            accessToken: credential.authorizationCode,
-                          );
-                          await FirebaseAuth.instance.signInWithCredential(oAuthCredential);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => PickUpAddressScreen()),
-                          );
-                        } catch (error) {
-                          print('Error signing in with Apple: $error');
-                        }
-                      },
-                      child: socialIcon("assets/images/apple.png"),
-                    ),
+                    if (Platform.isIOS)
+                      const SizedBox(
+                        width: 10,
+                      ),
+                    if (Platform.isIOS)
+                      GestureDetector(
+                        onTap: () async {
+                          try {
+                            final credential = await SignInWithApple.getAppleIDCredential(
+                              scopes: [
+                                AppleIDAuthorizationScopes.email,
+                                AppleIDAuthorizationScopes.fullName,
+                              ],
+                            );
+                            final OAuthProvider oAuthProvider = OAuthProvider('apple.com');
+                            final OAuthCredential oAuthCredential = oAuthProvider.credential(
+                              idToken: credential.identityToken,
+                              accessToken: credential.authorizationCode,
+                            );
+                            await FirebaseAuth.instance.signInWithCredential(oAuthCredential);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => PickUpAddressScreen()),
+                            );
+                          } catch (error) {
+                            print('Error signing in with Apple: $error');
+                          }
+                        },
+                        child: socialIcon("assets/images/apple.png"),
+                      ),
                     const SizedBox(
                       width: 10,
                     ),

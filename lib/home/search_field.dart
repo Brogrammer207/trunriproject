@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:trunriproject/accommodation/accommodationHomeScreen.dart';
 import 'package:trunriproject/events/event_list_screen.dart';
 import 'package:trunriproject/home/groceryStoreListScreen.dart';
@@ -8,8 +9,9 @@ import 'package:trunriproject/home/resturentItemListScreen.dart';
 import 'package:trunriproject/job/jobHomePageScreen.dart';
 import 'package:trunriproject/temple/templeHomePageScreen.dart';
 
+import '../notificatioonScreen.dart';
+import '../widgets/appTheme.dart';
 import 'icon_btn_with_counter.dart';
-
 
 class SearchField extends StatefulWidget {
   const SearchField({Key? key}) : super(key: key);
@@ -22,6 +24,7 @@ class _SearchFieldState extends State<SearchField> {
   final TextEditingController _controller = TextEditingController();
   List<String> _allItems = [];
   List<String> _filteredItems = [];
+  RxBool showSuggestions = false.obs;
 
   @override
   void initState() {
@@ -31,8 +34,7 @@ class _SearchFieldState extends State<SearchField> {
 
   Future<void> _fetchItems() async {
     try {
-      final querySnapshot =
-      await FirebaseFirestore.instance.collection('search').get();
+      final querySnapshot = await FirebaseFirestore.instance.collection('search').get();
       final items = querySnapshot.docs.map((doc) => doc['name'] as String).toList();
       setState(() {
         _allItems = items;
@@ -43,9 +45,7 @@ class _SearchFieldState extends State<SearchField> {
   }
 
   void _filterItems(String query) {
-    final filtered = _allItems
-        .where((item) => item.toLowerCase().contains(query.toLowerCase()))
-        .toList();
+    final filtered = _allItems.where((item) => item.toLowerCase().contains(query.toLowerCase())).toList();
     setState(() {
       _filteredItems = filtered;
     });
@@ -75,81 +75,133 @@ class _SearchFieldState extends State<SearchField> {
         Get.snackbar("Error", "No matching screen found for '$selectedItem'");
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Form(
-                child: TextFormField(
-                  controller: _controller,
-                  onChanged: (value) {
-                    _filterItems(value);
-                  },
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Color(0xFF979797).withOpacity(0.1),
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+    return Positioned(
+      top: 0,
+      right: 0,
+      left: 0,
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Form(
+                  child: TextFormField(
+                    controller: _controller,
+                    onChanged: (value) {
+                      if (value.isNotEmpty) {
+                        _filterItems(value);
+                        showSuggestions.value = true;
+                        setState(() {});
+                      } else {
+                        showSuggestions.value = false;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      floatingLabelBehavior:FloatingLabelBehavior.always,
+                      counterStyle: GoogleFonts.roboto(
+                          color: AppTheme.secondaryColor,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400),
+                      counter: const Offstage(),
+                      errorMaxLines: 2,
+                      hintText: "Search product",
+                      labelStyle: GoogleFonts.roboto(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500),
+                      suffixIcon: GestureDetector(
+                        onTap: (){
+                          Get.to(const Notificatioonscreen());
+                        },
+                          child: Icon(Icons.notifications,color: Colors.orange,)),
+                      hintStyle: GoogleFonts.urbanist(
+                          color: Color(0xFF86888A),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400),
+                      contentPadding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.orange.shade300, width: 0.5),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.orange.shade300, width: 0.5),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.orange.shade300, width: 0.5),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Colors.orange.shade300, width: 0.5),
+                          borderRadius: BorderRadius.circular(10)),
                     ),
-                    hintText: "Search product",
-                    prefixIcon: const Icon(Icons.search),
+
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: 16),
-            IconBtnWithCounter(
-              svgSrc: "assets/images/navigation.png",
-              press: () => {},
-            ),
-            const SizedBox(width: 8),
-            IconBtnWithCounter(
-              svgSrc: "assets/images/notification.png",
-              numOfitem: 3,
-              press: () {},
-            ),
-          ],
-        ),
-        SizedBox(height: 10,),
-        if (_filteredItems.isNotEmpty)
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: _filteredItems.length,
-            itemBuilder: (context, index) {
-              return Column(
-                children: [
-
-                  Container(
-                    child: ListTile(
-                      leading: Icon(Icons.search),
-                      title: Text(_filteredItems[index]),
-                      onTap: () {
-                        FocusScope.of(context).unfocus();
-                        String selectedItem = _filteredItems[index];
-                        _controller.text = selectedItem;
-                        setState(() {
-                          _filteredItems.clear();
-                        });
-                        _navigateToScreen(selectedItem);
-                        _controller.clear();
-
-                      },
-                    ),
-                  ),
-                ],
-              );
-            },
+              const SizedBox(
+                width: 10,
+              ),
+            ],
           ),
-      ],
+          const SizedBox(
+            height: 10,
+          ),
+          if (_filteredItems.isNotEmpty)
+            Obx(() {
+              return showSuggestions.value
+                  ? ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _filteredItems.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(left: 15, right: 15),
+                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                              child: ListTile(
+                                leading: const Icon(Icons.search),
+                                title: Text(_filteredItems[index]),
+                                onTap: () {
+                                  FocusScope.of(context).unfocus();
+                                  String selectedItem = _filteredItems[index];
+                                  _controller.text = selectedItem;
+                                  setState(() {
+                                    _filteredItems.clear();
+                                  });
+                                  _navigateToScreen(selectedItem);
+                                  _controller.clear();
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              height: 2,
+                            )
+                          ],
+                        );
+                      },
+                    )
+                  : const SizedBox.shrink();
+            }),
+        ],
+      ),
     );
   }
 }
-
 
 const searchOutlineInputBorder = OutlineInputBorder(
   borderRadius: BorderRadius.all(Radius.circular(12)),

@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/signUpScreen.dart';
 import 'package:trunriproject/signinscreen.dart';
+
+import 'home/bottom_bar.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,6 +16,24 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+
+  void checkAuthStatus() {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      Get.offAll(() => MyBottomNavBar()); // Redirect to Home
+    } else {
+      Get.offAll(() => SignInScreen()); // Redirect to Login
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   checkAuthStatus();
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

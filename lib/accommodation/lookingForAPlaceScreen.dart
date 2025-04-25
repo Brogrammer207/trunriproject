@@ -67,160 +67,220 @@ class _LookingForAPlaceScreenState extends State<LookingForAPlaceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          margin: const EdgeInsets.only(left: 15, right: 15),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 50,
-              ),
-              const SearchField(),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: _showFilterBottomSheet,
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.grey.shade200),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Center(child: Text('Filter')),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Icon(Icons.filter_list)
-                          ],
-                        ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Positioned.fill(
+              top: 10,
+              child: SingleChildScrollView(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 15, right: 15),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 50,
                       ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.grey.shade200),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Center(child: Text('Saved')),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Icon(Icons.save)
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                height: 80,
-                child: ListView.builder(
-                    itemCount: cityList.length,
-                    shrinkWrap: true,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      final imageUrl =
-                      (index < cityImage.length) ? cityImage[index] : 'https://via.placeholder.com/150';
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            print("objectobjectobjectobjectobjectobject");
-                            selectedCity = cityList[index];
-                            fetchAccommodationData();
-                          });
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(right: 5, left: 5),
-                          height: 80,
-                          width: 100,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(11),
-                              color: selectedCity == cityList[index] ? Colors.orange : Colors.black,
-                              image: DecorationImage(image: NetworkImage(imageUrl), fit: BoxFit.fill)),
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Text(
-                              cityList[index],
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: _showFilterBottomSheet,
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.grey.shade200),
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Center(child: Text('Filter')),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Icon(Icons.filter_list)
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    }),
-              ),
-              if (selectedCity != null) ...[
-                GridView.builder(
-                  itemCount: accommodationList.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // Number of columns
-                    crossAxisSpacing: 10, // Spacing between columns
-                    mainAxisSpacing: 10, // Spacing between rows
-                    childAspectRatio: 0.72, // Aspect ratio of each grid item
-                  ),
-                  itemBuilder: (context, index) {
-                    var data = accommodationList[index].data() as Map<String, dynamic>;
-                    String imageUrl = data['images'].toString();
-                    imageUrl = imageUrl.replaceAll('[', '').replaceAll(']', '');
-
-                    return Card(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Image.network(
-                            imageUrl,
-                            height: 130,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Text('Image failed to load');
-                            },
+                          const SizedBox(
+                            width: 15,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      const TextSpan(
-                                        text: 'Address: ',
-                                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                                      ),
-                                      TextSpan(
-                                        text: data['address'] ?? '',
-                                        style: const TextStyle(color: Colors.black),
-                                      ),
-                                    ],
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.grey.shade200),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Center(child: Text('Saved')),
+                                  SizedBox(
+                                    width: 10,
                                   ),
-                                )
-                              ],
+                                  Icon(Icons.save)
+                                ],
+                              ),
                             ),
                           ),
                         ],
                       ),
-                    );
-                  },
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        height: 80,
+                        child: ListView.builder(
+                            itemCount: cityList.length,
+                            shrinkWrap: true,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              final imageUrl =
+                              (index < cityImage.length) ? cityImage[index] : 'https://via.placeholder.com/150';
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    print("objectobjectobjectobjectobjectobject");
+                                    selectedCity = cityList[index];
+                                    fetchAccommodationData();
+                                  });
+                                },
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.symmetric(horizontal: 5),
+                                      height: 80,
+                                      width: 100,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(11),
+                                        color: selectedCity == cityList[index] ? Colors.orange : Colors.black,
+                                        image: DecorationImage(
+                                          image: NetworkImage(imageUrl),
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        color: Colors.black54,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          cityList[index],
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 13,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+        
+        
+                              );
+                            }),
+                      ),
+                      if (selectedCity != null) ...[
+                        GridView.builder(
+                          itemCount: accommodationList.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, // Number of columns
+                            crossAxisSpacing: 10, // Spacing between columns
+                            mainAxisSpacing: 10, // Spacing between rows
+                            childAspectRatio: 0.72, // Aspect ratio of each grid item
+                          ),
+                          itemBuilder: (context, index) {
+                            var data = accommodationList[index].data() as Map<String, dynamic>;
+                            String imageUrl = data['images'].toString();
+                            imageUrl = imageUrl.replaceAll('[', '').replaceAll(']', '');
+        
+                            return Card(
+                              color: Colors.white,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Image.network(
+                                    imageUrl,
+                                    height: 130,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Text('Image failed to load');
+                                    },
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 10.0),
+                                          child: Text(
+                                            "City -  ${data['city'] ?? 'No Address'}",
+                                            textAlign: TextAlign.start,
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14, // Adjust the font size as needed
+                                            ),
+                                            // overflow: TextOverflow.ellipsis,
+                                            maxLines: 1, // Allow text to wrap to 2 lines if needed
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 10.0),
+                                          child: Text(
+                                            "State -  ${data['state'] ?? 'No Address'}",
+                                            textAlign: TextAlign.start,
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14, // Adjust the font size as needed
+                                            ),
+                                            // overflow: TextOverflow.ellipsis,
+                                            maxLines: 1, // Allow text to wrap to 2 lines if needed
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 10.0),
+                                          child: Text(
+                                            "FullAddress -  ${data['fullAddress'] ?? 'No Address'}",
+                                            textAlign: TextAlign.start,
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14, // Adjust the font size as needed
+                                            ),
+                                            // overflow: TextOverflow.ellipsis,
+                                            maxLines: 1, // Allow text to wrap to 2 lines if needed
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
-              ],
-            ],
-          ),
+              ),
+            ),
+            SearchField()
+          ],
         ),
       ),
     );

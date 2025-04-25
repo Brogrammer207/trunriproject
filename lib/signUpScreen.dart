@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -37,10 +39,20 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
   RxBool hide = true.obs;
   RxBool hide1 = true.obs;
   String code = "+91";
+  bool value = false;
+  bool showValidation = false;
   FirebaseAuth auth = FirebaseAuth.instance;
   void checkEmailInFirestore() async {
     if (phoneController.text.isEmpty) {
       showToast("Please enter your phone number");
+      return;
+    }
+
+    final QuerySnapshot result =
+    await FirebaseFirestore.instance.collection('User').where('phoneNumber', isEqualTo: phoneController.text).get();
+
+    if (result.docs.isNotEmpty) {
+      showToast("User is already registered with this phoneNumber");
       return;
     }
 
@@ -81,25 +93,20 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
     );
   }
 
-
   void register() {
     OverlayEntry loader = NewHelper.overlayLoader(context);
     Overlay.of(context).insert(loader);
-    FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: emailController.text.trim(), password: passwordController.text.trim())
-        .then((value) {
-      FirebaseFirestore.instance.collection('User').doc(FirebaseAuth.instance.currentUser!.uid).set({
-        'name': nameController.text.trim(),
-        'email': emailController.text.trim(),
-        'phoneNumber': phoneController.text.trim(),
-        'password': passwordController.text.trim(),
-        'confirmPassword': confirmPasswordController.text.trim(),
-        'address': "",
-        'profile': ""
-      }).then((value) {
-        NewHelper.hideLoader(loader);
-        showToast('User registered successfully');
-      });
+    FirebaseFirestore.instance.collection('User').doc().set({
+      'name': nameController.text.trim(),
+      'email': emailController.text.trim(),
+      'phoneNumber': phoneController.text.trim(),
+      'password': passwordController.text.trim(),
+      'confirmPassword': confirmPasswordController.text.trim(),
+      'address': "",
+      'profile': ""
+    }).then((value) {
+      NewHelper.hideLoader(loader);
+      showToast('OTP sent successfully');
     });
   }
 
@@ -132,12 +139,14 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
           },
         ),
       );
-      NewHelper.hideLoader(loader);
 
       return userCredential;
     } on Exception catch (e) {
       // Handle the exception
       print('exception->$e');
+    } finally {
+      // Ensure the loader is always removed, even if an error occurs
+      NewHelper.hideLoader(loader);
     }
   }
 
@@ -170,7 +179,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
               fit: BoxFit.fitWidth,
             ),
             const Padding(
-              padding: EdgeInsets.only(left: 5, right: 5),
+              padding: EdgeInsets.only(left: 50, right: 50),
               child: Text(
                 "Ready to explore and connect? Let's create your account!",
                 textAlign: TextAlign.center,
@@ -189,8 +198,8 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                 hintText: 'Email',
                 controller: emailController,
                 validator: MultiValidator([
-                  RequiredValidator(errorText: 'email is required'),
-                  EmailValidator(errorText: 'Please enter valid Referral email'.tr),
+                  RequiredValidator(errorText: 'Email is required'),
+                  EmailValidator(errorText: 'Please enter a valid email'.tr),
                 ]).call),
             Padding(
               padding: EdgeInsets.only(left: 25, right: 25),
@@ -242,7 +251,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
               return CommonTextField(
                 hintText: 'Password',
                 controller: passwordController,
-                obSecure: hide.value,
+                obSecure: !hide.value,
                 suffixIcon: IconButton(
                   onPressed: () {
                     hide.value = !hide.value;
@@ -263,7 +272,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
               return CommonTextField(
                 hintText: 'Confirm Password',
                 controller: confirmPasswordController,
-                obSecure: hide1.value,
+                obSecure: !hide1.value,
                 suffixIcon: IconButton(
                   onPressed: () {
                     hide1.value = !hide1.value;
@@ -282,7 +291,72 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
               );
             }),
             const SizedBox(height: 10),
-
+            Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: Row(
+                children: [
+                  Transform.scale(
+                    scale: 1.1,
+                    child: Theme(
+                      data: ThemeData(unselectedWidgetColor: showValidation == false ? Colors.white : Colors.red),
+                      child: Checkbox(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          value: value,
+                          activeColor: Colors.orange,
+                          visualDensity: const VisualDensity(vertical: 0, horizontal: 0),
+                          onChanged: (newValue) {
+                            setState(() {
+                              value = newValue!;
+                              setState(() {});
+                            });
+                          }),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          // Return the dialog box widget
+                          return AlertDialog(
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Terms And Conditions',
+                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Icon(Icons.cancel_outlined))
+                              ],
+                            ),
+                            content: Text(
+                                'Terms and conditions are part of a contract that ensure parties understand their contractual rights and obligations. Parties draft them into a legal contract, also called a legal agreement, in accordance with local, state, and federal contract laws. They set important boundaries that all contract principals must uphold.'
+                                'Several contract types utilize terms and conditions. When there is a formal agreement to create with another individual or entity, consider how you would like to structure your deal and negotiate the terms and conditions with the other side before finalizing anything. This strategy will help foster a sense of importance and inclusion on all sides.'),
+                            actions: <Widget>[],
+                          );
+                        },
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        const Text('I Accept',
+                            style: TextStyle(fontWeight: FontWeight.w300, fontSize: 13, color: Colors.black)),
+                        Text(
+                          ' Terms And Conditions?',
+                          style: GoogleFonts.poppins(
+                              color: const Color(0xffFF730A), fontWeight: FontWeight.w600, fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
             SizedBox(height: size.height * 0.04),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -292,7 +366,11 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                   GestureDetector(
                     onTap: () {
                       if (formKey1.currentState!.validate()) {
-                        checkEmailInFirestore();
+                        if (value == true) {
+                          checkEmailInFirestore();
+                        } else {
+                          showToast('Please select terms & conditions');
+                        }
                       }
                     },
                     child: Container(
@@ -350,34 +428,36 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                           "assets/images/google.png",
                         ),
                       ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      GestureDetector(
-                        onTap: () async {
-                          try {
-                            final credential = await SignInWithApple.getAppleIDCredential(
-                              scopes: [
-                                AppleIDAuthorizationScopes.email,
-                                AppleIDAuthorizationScopes.fullName,
-                              ],
-                            );
-                            final OAuthProvider oAuthProvider = OAuthProvider('apple.com');
-                            final OAuthCredential oAuthCredential = oAuthProvider.credential(
-                              idToken: credential.identityToken,
-                              accessToken: credential.authorizationCode,
-                            );
-                            await FirebaseAuth.instance.signInWithCredential(oAuthCredential);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => PickUpAddressScreen()),
-                            );
-                          } catch (error) {
-                            print('Error signing in with Apple: $error');
-                          }
-                        },
-                        child: socialIcon("assets/images/apple.png"),
-                      ),
+                      if (Platform.isIOS)
+                        const SizedBox(
+                          width: 10,
+                        ),
+                      if (Platform.isIOS)
+                        GestureDetector(
+                          onTap: () async {
+                            try {
+                              final credential = await SignInWithApple.getAppleIDCredential(
+                                scopes: [
+                                  AppleIDAuthorizationScopes.email,
+                                  AppleIDAuthorizationScopes.fullName,
+                                ],
+                              );
+                              final OAuthProvider oAuthProvider = OAuthProvider('apple.com');
+                              final OAuthCredential oAuthCredential = oAuthProvider.credential(
+                                idToken: credential.identityToken,
+                                accessToken: credential.authorizationCode,
+                              );
+                              await FirebaseAuth.instance.signInWithCredential(oAuthCredential);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => PickUpAddressScreen()),
+                              );
+                            } catch (error) {
+                              print('Error signing in with Apple: $error');
+                            }
+                          },
+                          child: socialIcon("assets/images/apple.png"),
+                        ),
                       const SizedBox(
                         width: 10,
                       ),

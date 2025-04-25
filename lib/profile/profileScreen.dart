@@ -1,12 +1,16 @@
+import 'dart:developer';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/route_manager.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trunriproject/home/bottom_bar.dart';
 import 'package:trunriproject/signUpScreen.dart';
+import 'package:trunriproject/signinscreen.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import '../recoveryPasswordScreen.dart';
 import '../widgets/helper.dart';
@@ -35,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         address: address.text.trim(),
         allowChange: image.path.isEmpty ? false : imagePicked,
         context: context,
-        email: email.text.trim(),
+        email: emailController.text.trim(),
         name: nameController.text.trim(),
         profileImage: image,
         updated: (bool value) {
@@ -59,29 +63,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool imagePicked = false;
   bool dataLoaded = true;
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController email = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController address = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  String name = '';
+  String email = '';
+  void fetchUserData() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? phone = sharedPreferences.getString("myPhone");
+    phone = phone?.replaceFirst("+61", "");
+    log("myPhone value: $phone");
+
+    if (phone == null || phone.isEmpty) {
+      showToast("No phone number found in local storage");
+      return;
+    }
+
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('User').where('phoneNumber', isEqualTo: phone).get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot userDoc = querySnapshot.docs.first;
+
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        log("Fetched user data: $userData");
+
+        nameController.text = userData['name'] ?? '';
+        emailController.text = userData['email'] ?? '';
+
+        name = userData['name'] ?? '';
+        email = userData['email'] ?? '';
+
+        log("namename: $name");
+      } else {
+        showToast("User data not found");
+      }
+    } catch (e) {
+      showToast("Error fetching data: ${e.toString()}");
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    if (fireStoreService.userLoggedIn) {
-      dataLoaded = false;
-      fireStoreService.getProfileDetails().then((value) {
-        if (value == null) {
-          dataLoaded = true;
-          setState(() {});
-          return;
-        }
-        nameController.text = value.name.toString();
-        email.text = value.email.toString();
-        address.text = value.address.toString();
-        image = File(value.profile.toString());
-        dataLoaded = true;
-        setState(() {});
-      });
-    }
+    fetchUserData();
   }
 
   @override
@@ -207,9 +233,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Column(
                                 children: [
                                   TextFormField(
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
                                       // border: InputBorder.none,
-                                      hintText: 'Full Name',
+                                      hintText: name,
                                     ),
                                     readOnly: !isEditing,
                                     controller: nameController,
@@ -217,12 +243,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         const TextStyle(fontWeight: FontWeight.w600, fontSize: 20, color: Colors.black),
                                   ),
                                   TextFormField(
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
                                       // border: InputBorder.none,
-                                      hintText: 'Email',
+                                      hintText: email,
                                     ),
                                     readOnly: !isEditing,
-                                    controller: email,
+                                    controller: emailController,
                                     style:
                                         const TextStyle(fontWeight: FontWeight.w400, fontSize: 14, color: Colors.black),
                                   ),
@@ -358,7 +384,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         GestureDetector(
                           onTap: () {
                             FirebaseAuth.instance.signOut().then((value) {
-                              Get.offAll(const SignUpScreen());
+                              Get.offAll(const SignInScreen());
                               showToast("Logged Out Successfully");
                             });
                           },
@@ -396,14 +422,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 60),
+                        const SizedBox(height: 75),
                       ],
                     ),
                   ),
                 ),
               ),
             )
-          : const Center(child: CircularProgressIndicator(color: Colors.orange,)),
+          : const Center(
+              child: CircularProgressIndicator(
+              color: Colors.orange,
+            )),
     );
   }
 }

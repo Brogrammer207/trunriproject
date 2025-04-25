@@ -1,17 +1,14 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dotted_border/dotted_border.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
 import '../multiImageWidget.dart';
 import '../widgets/appTheme.dart';
 import '../widgets/customTextFormField.dart';
@@ -24,7 +21,9 @@ class PostEventScreen extends StatefulWidget {
 }
 
 class _PostEventScreenState extends State<PostEventScreen> {
-
+  String? selectedState;
+  TextEditingController addressController = TextEditingController();
+  TextEditingController pincodeController = TextEditingController();
   TextEditingController eventNameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController ticketPriceController = TextEditingController();
@@ -37,6 +36,7 @@ class _PostEventScreenState extends State<PostEventScreen> {
   var borderColor = Color(0xff99B2C6).obs;
   List<String> selectedCategories = [];
   List<String> selectedEventTypes = [];
+  String selectedEventTypePrice = 'Paid';
   Future<void> pickImage() async {
     print("message");
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -49,6 +49,92 @@ class _PostEventScreenState extends State<PostEventScreen> {
       showToast("No image selected");
     }
   }
+  void showAddressModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 16,
+            right: 16,
+            top: 16,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Enter Address", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                SizedBox(height: 10),
+
+                // Country (Fixed: Australia)
+                TextFormField(
+                  initialValue: "Australia",
+                  enabled: false,
+                  decoration: InputDecoration(labelText: "Country"),
+                ),
+                SizedBox(height: 10),
+
+                // State
+                DropdownButtonFormField<String>(
+                  value: selectedState,
+                  decoration: InputDecoration(labelText: "State"),
+                  items: [
+                    "QLD",
+                    "NSW",
+                    "VICTORIA",
+                    "WA",
+                    "SA",
+                    "TASMANIA",
+                    "Canberra",
+                    "NT"
+                  ].map((state) {
+                    return DropdownMenuItem<String>(
+                      value: state,
+                      child: Text(state),
+                    );
+                  }).toList(),
+                  dropdownColor: Colors.white,
+                  onChanged: (value) {
+                    selectedState = value!;
+                  },
+                ),
+                SizedBox(height: 10),
+
+                TextFormField(
+                  controller: addressController,
+                  decoration: InputDecoration(labelText: "Address"),
+                  maxLines: 3,
+                ),
+                SizedBox(height: 10),
+
+                TextFormField(
+                  controller: pincodeController,
+                  decoration: InputDecoration(labelText: "Pincode"),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                ),
+                SizedBox(height: 20),
+
+                ElevatedButton(
+                  onPressed: () {
+                    locationController.text =
+                    "Country: Australia\nState: ${selectedState.toString()}\nAddress: ${addressController.text}\nPincode: ${pincodeController.text}";
+
+                    Get.back(); // Close modal
+                  },
+                  child: Text("Save Address"),
+                ),
+                SizedBox(height: 20),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
 
   Future<void> _selectDate(BuildContext context) async {
@@ -60,7 +146,7 @@ class _PostEventScreenState extends State<PostEventScreen> {
     );
     if (picked != null) {
       setState(() {
-        selectedDate = DateFormat('yyyy-MM-dd').format(picked);
+        selectedDate = DateFormat('EEE yyyy-MM-dd').format(picked);
       });
     }
   }
@@ -87,7 +173,6 @@ class _PostEventScreenState extends State<PostEventScreen> {
     Overlay.of(context).insert(loader);
 
     try {
-      // Upload images to Firebase Storage
       List<String> imageUrls = [];
       for (var file in selectedFiles) {
         String fileName = 'events/${DateTime.now().millisecondsSinceEpoch}.jpg';
@@ -97,7 +182,6 @@ class _PostEventScreenState extends State<PostEventScreen> {
         imageUrls.add(downloadUrl);
       }
 
-      // Send data to Firestore
       await FirebaseFirestore.instance.collection('MakeEvent').doc().set({
         'eventName': eventNameController.text.trim(),
         'description': descriptionController.text.trim(),
@@ -128,7 +212,11 @@ class _PostEventScreenState extends State<PostEventScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: Icon(Icons.arrow_back_ios),
+        leading: GestureDetector(
+          onTap: (){
+            Get.back();
+          },
+            child: Icon(Icons.arrow_back_ios)),
           title: const Text('Post Your Event')),
       body: SingleChildScrollView(
         child: Padding(
@@ -139,7 +227,6 @@ class _PostEventScreenState extends State<PostEventScreen> {
             CommonTextField(
               controller: eventNameController,
             hintText: 'Event Name',
-            // controller: passwordController,
             keyboardType: TextInputType.text,
             validator: MultiValidator([
               RequiredValidator(errorText: 'Event Name is required'),
@@ -158,9 +245,11 @@ class _PostEventScreenState extends State<PostEventScreen> {
               Padding(
                 padding: const EdgeInsets.only(left: 25,right: 25,top: 8.0,bottom: 8),
                 child: DropdownButtonFormField(
-                  items: ['Music', 'Traditional', 'Business', 'Community & Culture', 'Health & Fitness', 'Fashion']
-                      .map((category) => DropdownMenuItem(value: category, child: Text(category)))
+                  items: ['Music', 'Traditional', 'Business', 'Community & Culture', 'Health & Fitness', 'Fashion','other']
+                      .map((category) => DropdownMenuItem(
+                      value: category, child: Text(category)))
                       .toList(),
+                  dropdownColor: Colors.white,
                   onChanged: (value) {
                     selectedCategories.add(value!);
                   },
@@ -195,21 +284,69 @@ class _PostEventScreenState extends State<PostEventScreen> {
                   ),
                 ),
               ),
-              CommonTextField(
-                controller: ticketPriceController,
-                hintText: 'Ticket Price',
-                // controller: passwordController,
-                keyboardType: TextInputType.number,
-                validator: MultiValidator([
-                  RequiredValidator(errorText: 'Ticket Price is required'),
-                ]).call,
+              Padding(
+                padding: const EdgeInsets.only(left: 25, right: 25, top: 8.0, bottom: 8),
+                child: DropdownButtonFormField<String>(
+                  value: selectedEventTypePrice,
+                  items: ['Free', 'Paid']
+                      .map((category) => DropdownMenuItem(value: category, child: Text(category)))
+                      .toList(),
+                  dropdownColor: Colors.white,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedEventTypePrice = value!;
+                    });
+                  },
+                  decoration: InputDecoration(
+                      fillColor: Colors.grey.shade100,
+                      filled: true,
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      counterStyle:
+                      GoogleFonts.roboto(color: AppTheme.secondaryColor, fontSize: 15, fontWeight: FontWeight.w400),
+                      counter: const Offstage(),
+                      errorMaxLines: 2,
+                      labelStyle: GoogleFonts.roboto(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500),
+                      hintStyle: GoogleFonts.urbanist(
+                          color: const Color(0xFF86888A), fontSize: 13, fontWeight: FontWeight.w400),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey.shade100),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey.shade100),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey.shade100),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey.shade100),
+                          borderRadius: BorderRadius.circular(15)),
+                      hintText: "Event Type"
+                  ),
+                ),
               ),
+
+              // Show TextFormField only if "Paid" is selected
+              if (selectedEventTypePrice == 'Paid')
+                CommonTextField(
+                  controller: ticketPriceController,
+                  hintText: 'Ticket Price',
+                  prefix: Text("\$ ", style: TextStyle(color: Colors.grey)),
+                  keyboardType: TextInputType.number,
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'Ticket Price is required'),
+                  ]).call,
+                ),
               Padding(
                 padding: const EdgeInsets.only(left: 25,right: 25,top: 8.0,bottom: 8),
                 child: DropdownButtonFormField(
-                  items: ['Online', 'Offline', 'Free', 'Paid']
+                  items: ['Online', 'Offline']
                       .map((category) => DropdownMenuItem(value: category, child: Text(category)))
                       .toList(),
+                  dropdownColor: Colors.white,
                   onChanged: (value) {
                     selectedEventTypes.add(value!);
                   },
@@ -268,25 +405,11 @@ class _PostEventScreenState extends State<PostEventScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 25.0,right: 25),
-                child: MultiImageWidget(
-                  files: selectedFiles,
-                  title: 'Upload Business Photos'.tr,
-                  validation: true,
-                  imageOnly: true,
-                  filesPicked: (List<File> pickedFiles) {
-                    setState(() {
-                      selectedFiles = pickedFiles;
-                    });
-                  },
-                ),
-              ),
+
               CommonTextField(
+                onTap: () => showAddressModal(context),
                 controller: locationController,
                 hintText: 'Location',
-                maxLines: 3,
-                minLines: 3,
                 // controller: passwordController,
                 keyboardType: TextInputType.text,
                 validator: MultiValidator([
@@ -301,6 +424,20 @@ class _PostEventScreenState extends State<PostEventScreen> {
                 validator: MultiValidator([
                   RequiredValidator(errorText: 'Contact Information is required'),
                 ]).call,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 25.0,right: 25),
+                child: MultiImageWidget(
+                  files: selectedFiles,
+                  title: 'Upload Business Photos'.tr,
+                  validation: true,
+                  imageOnly: true,
+                  filesPicked: (List<File> pickedFiles) {
+                    setState(() {
+                      selectedFiles = pickedFiles;
+                    });
+                  },
+                ),
               ),
               GestureDetector(
                 onTap: () {

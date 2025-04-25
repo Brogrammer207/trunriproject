@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trunriproject/home/bottom_bar.dart';
 import 'package:trunriproject/signinscreen.dart';
 import 'package:trunriproject/widgets/helper.dart';
@@ -48,19 +49,41 @@ class _NewOtpScreenState extends State<NewOtpScreen> {
   void verifyOTP() async {
     OverlayEntry loader = NewHelper.overlayLoader(context);
     Overlay.of(context).insert(loader);
+    if(otpController.text.trim().isEmpty){
+      showToast("Please enter OTP");
+    }else{
+      try {
 
-    try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: widget.verificationId,
-        smsCode: otpController.text.trim(),
-      );
+        PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: widget.verificationId,
+          smsCode: otpController.text.trim(),
+        );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      showToast("Phone verified successfully");
-      Get.to(SignInScreen());
-    } catch (e) {
-      showToast("Invalid OTP");
+        await FirebaseAuth.instance.signInWithCredential(credential);
+        showToast("User registered successfully");
+        SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+        sharedPreferences.setString("myPhone" , widget.phoneNumber);
+        Navigator.of(context).push(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => PickUpAddressScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.ease;
+              var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+              return SlideTransition(
+                position: offsetAnimation,
+                child: child,
+              );
+            },
+          ),
+        );
+      } catch (e) {
+        showToast("Invalid OTP");
+      }
     }
+
 
     NewHelper.hideLoader(loader);
   }

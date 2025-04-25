@@ -66,7 +66,9 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 3,
         automaticallyImplyLeading: false,
         titleSpacing: 0,
         backgroundColor: Colors.white,
@@ -80,11 +82,11 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
                 style: GoogleFonts.poppins(color: Color(0xff292F45), fontWeight: FontWeight.w600, fontSize: 20),
               ),
             ),
-            Image.asset(
-              "assets/images/location.gif",
-              height: 200.0,
-              width: 50.0,
-            ),
+            // Image.asset(
+            //   "assets/images/location.gif",
+            //   height: 200.0,
+            //   width: 50.0,
+            // ),
           ],
         ),
       ),

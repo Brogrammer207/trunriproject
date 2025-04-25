@@ -149,7 +149,7 @@ class NewHelper {
 showToast(message, {ToastGravity? gravity, bool? center}) {
   Fluttertoast.cancel();
   Fluttertoast.showToast(
-      msg: message.toString().capitalize!,
+      msg: message.toString(),
       toastLength: Toast.LENGTH_LONG,
       gravity: center == true ? ToastGravity.CENTER :  gravity ?? ToastGravity.CENTER,
       timeInSecForIosWeb: 4,

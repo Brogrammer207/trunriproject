@@ -136,7 +136,7 @@ class _GroceryStoreListScreenState extends State<GroceryStoreListScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  hintText: "Search Restaurant",
+                  hintText: "Search grocery store",
                   prefixIcon: const Icon(Icons.search),
                 ),
               ),

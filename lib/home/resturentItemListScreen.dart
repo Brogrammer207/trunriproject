@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -17,8 +18,6 @@ class ResturentItemListScreen extends StatefulWidget {
 
 class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
   Position? _currentPosition;
-  String resturentLat = '';
-  String resturentlong = '';
   List<dynamic> _restaurants = [];
   List<dynamic> _filteredRestaurants = [];
   final apiKey = 'AIzaSyDDl-_JOy_bj4MyQhYbKbGkZ0sfpbTZDNU';
@@ -49,15 +48,97 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
+      List<dynamic> restaurants = data['results'];
+
+      // Fetch additional details for each restaurant
+      for (var restaurant in restaurants) {
+        String placeId = restaurant['place_id'];
+        try {
+          final openingHours = await _fetchRestaurantDetails(placeId);
+          restaurant['opening_hours'] = openingHours; // Add opening hours to restaurant data
+        } catch (e) {
+          print("Failed to fetch details for $placeId: $e");
+        }
+      }
+
       setState(() {
-        _restaurants = data['results'];
-        _filteredRestaurants = _restaurants; // Initialize filtered list
+        _restaurants = restaurants;
+        _filteredRestaurants = _restaurants;
         _isLoading = false;
       });
     } else {
       throw Exception('Failed to fetch data');
     }
   }
+  String _formatTime(dynamic time) {
+    // Check if time is a string or an integer and ensure it's treated as an integer
+    int formattedTime = int.parse(time.toString());
+
+    final hours = formattedTime ~/ 100;
+    final minutes = formattedTime % 100;
+    final period = hours >= 12 ? 'PM' : 'AM';
+    final formattedHours = hours > 12 ? hours - 12 : hours == 0 ? 12 : hours;
+    final formattedMinutes = minutes.toString().padLeft(2, '0');
+    return '$formattedHours:$formattedMinutes $period';
+  }
+
+
+  Future<Map<String, String>> _fetchRestaurantDetails(String placeId) async {
+    final url =
+        'https://maps.googleapis.com/maps/api/place/details/json?placeid=$placeId&fields=opening_hours&key=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      // Log raw opening_hours data to debug
+      final openingHours = data['result']['opening_hours'];
+      log("API Response: $openingHours"); // Log the raw opening_hours data
+
+      if (openingHours != null) {
+        Map<String, String> times = {};
+
+        // Handling weekday_text (e.g., "Monday: 9:00 AM – 10:00 PM")
+        if (openingHours['weekday_text'] != null) {
+          for (var day in openingHours['weekday_text']) {
+            final parts = day.split(':'); // Split "Monday: 9:00 AM – 10:00 PM"
+            if (parts.length > 1) {
+              final timeRange = parts[1].trim().replaceAll('–', '-'); // Replace the special dash
+              final timeParts = timeRange.split(' - '); // Split "9:00 AM - 10:00 PM"
+              if (timeParts.length == 2) {
+                times['opening'] = timeParts[0].trim(); // Extract opening time
+                times['closing'] = timeParts[1].trim(); // Extract closing time
+              }
+            }
+          }
+        }
+
+        // Handling periods (time in 24-hour format, like {open: {time: 0900}})
+        if (openingHours['periods'] != null) {
+          for (var period in openingHours['periods']) {
+            final openTime = period['open'] != null ? _formatTime(period['open']['time']) : '';
+            final closeTime = period['close'] != null ? _formatTime(period['close']['time']) : '';
+
+            if (openTime.isNotEmpty && closeTime.isNotEmpty) {
+              times['opening'] = openTime;
+              times['closing'] = closeTime;
+            }
+          }
+        }
+
+        // Log the formatted opening hours
+        log("Formatted opening hours: $times");
+        return times; // Return formatted opening hours
+      }
+      return {}; // Return empty if no opening hours available
+    } else {
+      throw Exception('Failed to fetch details');
+    }
+  }
+
+
+
+
 
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -172,6 +253,18 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
                     ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey'
                     : defaultImageUrl;
 
+                // Extract opening and closing times from restaurant data
+                final openingHours = restaurant['opening_hours'];
+                String openingTime = 'Not Available';
+                String closingTime = 'Not Available';
+
+                if (openingHours != null && openingHours.isNotEmpty) {
+                  openingTime = openingHours['opening'] ?? 'Not Available';
+                  closingTime = openingHours['closing'] ?? 'Not Available';
+                }
+
+                log('openingTime: $openingTime, closingTime: $closingTime'); // Log the times for debugging
+
                 return GestureDetector(
                   onTap: () {
                     Get.to(
@@ -179,8 +272,8 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
                         name: name.toString(),
                         rating: rating,
                         desc: 'No Description Available',
-                        openingTime: 'Not Available',
-                        closingTime: 'Not Available',
+                        openingTime: openingTime,
+                        closingTime: closingTime,
                         address: address.toString(),
                         image: photoUrl.toString(),
                       ),
@@ -225,4 +318,3 @@ class _ResturentItemListScreenState extends State<ResturentItemListScreen> {
     );
   }
 }
-

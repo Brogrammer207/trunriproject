@@ -6,6 +6,7 @@ import 'package:trunriproject/job/jobHomePageScreen.dart';
 
 import '../accommodation/accommodationHomeScreen.dart';
 import '../accommodation/accommodationOptionScreen.dart';
+import '../events/eventHomeScreen.dart';
 import '../events/event_list_screen.dart';
 import '../temple/templeHomePageScreen.dart';
 import 'groceryStoreListScreen.dart';
@@ -188,7 +189,7 @@ class _ExplorScreenState extends State<ExplorScreen> {
               ),
               child:   ListTile(
                 onTap: (){
-                  Get.to(EventListScreen());
+                  Get.to(EventDiscoveryScreen());
                 },
                 leading: Image.asset('assets/icons/events.png'),
                 title: const Text('Event'),

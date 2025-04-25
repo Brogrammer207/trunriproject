@@ -116,20 +116,20 @@ class _JobFilterOptionScreenState extends State<JobFilterOptionScreen> {
             children: [
               const Padding(
                 padding: EdgeInsets.only(left: 25),
-                child: Text('Position Name'),
+                child: Text('Position Name (Optional)'),
               ),
               CommonTextField(
-                  hintText: 'Position Name',
+                  hintText: 'Position Name (Optional)',
                   controller: positionNameController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'Position Name is required'),
                   ]).call),
               const Padding(
                 padding: EdgeInsets.only(left: 25),
-                child: Text('Company Name'),
+                child: Text('Company Name (Optional)'),
               ),
               CommonTextField(
-                  hintText: 'Company Name',
+                  hintText: 'Company Name (Optional)',
                   controller: companyNameController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'Company Name is required'),
@@ -261,16 +261,7 @@ class _JobFilterOptionScreenState extends State<JobFilterOptionScreen> {
               const SizedBox(
                 height: 10,
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 25),
-                child: Text('How many positions are open ?'),
-              ),
-              CommonTextField(
-                  hintText: '10',
-                  controller: openingsController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'How many positions are open is required'),
-                  ]).call),
+
               const Padding(
                 padding: EdgeInsets.only(left: 25),
                 child: Text('Role'),
@@ -383,39 +374,50 @@ class _JobFilterOptionScreenState extends State<JobFilterOptionScreen> {
               const SizedBox(
                 height: 15,
               ),
+
               const Padding(
                 padding: EdgeInsets.only(left: 25),
-                child: Text('How long should this job posting be active?'),
+                child: Text('How many positions are open ? (Optional)'),
               ),
-              const SizedBox(
-                height: 15,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 25, right: 25),
-                child: Column(
-                  children: [
-                    DropdownButtonFormField<String>(
-                      value: timeOfAdd,
-                      dropdownColor: Colors.white,
-                      items: timeOfAddOption.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        setState(() {
-                          timeOfAdd = newValue!;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        labelText: 'How long this add will show',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              CommonTextField(
+                  hintText: '10',
+                  controller: openingsController,
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'How many positions are open is required'),
+                  ]).call),
+              // const Padding(
+              //   padding: EdgeInsets.only(left: 25),
+              //   child: Text('How long should this job posting be active?'),
+              // ),
+              // const SizedBox(
+              //   height: 15,
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.only(left: 25, right: 25),
+              //   child: Column(
+              //     children: [
+              //       DropdownButtonFormField<String>(
+              //         value: timeOfAdd,
+              //         dropdownColor: Colors.white,
+              //         items: timeOfAddOption.map((String value) {
+              //           return DropdownMenuItem<String>(
+              //             value: value,
+              //             child: Text(value),
+              //           );
+              //         }).toList(),
+              //         onChanged: (newValue) {
+              //           setState(() {
+              //             timeOfAdd = newValue!;
+              //           });
+              //         },
+              //         decoration: const InputDecoration(
+              //           labelText: 'How long this add will show',
+              //           border: OutlineInputBorder(),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               const SizedBox(
                 height: 20,
               ),
