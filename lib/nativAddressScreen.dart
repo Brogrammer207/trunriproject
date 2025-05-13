@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -44,10 +45,12 @@ class _PickUpAddressScreenState extends State<PickUpAddressScreen> {
       'country':'India',
       'zipcode':zipcodeController.text.trim(),
       'town':townController.text.trim(),
+      'userId':FirebaseAuth.instance.currentUser!.uid,
       'specialInstruction':specialInstructionController.text.trim()
     }).then((value) {
        if(formKey1.currentState!.validate()){
          Get.to(CurrentAddress());
+         log("qwerty${FirebaseAuth.instance.currentUser!.uid}");
          showToast('Native Address saved Successfully');
          NewHelper.hideLoader(loader);
        }else{

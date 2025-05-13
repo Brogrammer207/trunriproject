@@ -132,6 +132,7 @@ class _CurrentAddressState extends State<CurrentAddress> {
       'country': country,
       'zipcode': zipcode,
       'town': town,
+      'userId' : FirebaseAuth.instance.currentUser!.uid
     }).
     // then((value) {
     //   String fullAddress = "$street, $city, $state, $country, $zipcode, $town";

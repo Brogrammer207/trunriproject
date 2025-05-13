@@ -1,6 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:trunriproject/widgets/helper.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EventDetailsScreen extends StatefulWidget {
 
@@ -18,6 +23,41 @@ class EventDetailsScreen extends StatefulWidget {
 }
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
+
+  bool issaved = false;
+  bool isFavorite = false;
+
+  // Future<void> _toggleFavorite() async {
+  //   final user = FirebaseAuth.instance.currentUser;
+  //   if (user != null) {
+  //     final docRef = FirebaseFirestore.instance
+  //         .collection('favorite')
+  //         .doc(user.uid)
+  //         .collection('restaurants')
+  //         .doc(widget.eventName);
+  //
+  //     if (isFavorite) {
+  //       await docRef.delete();
+  //     } else {
+  //       await docRef.set({
+  //         'favorite': true,
+  //         'uid': user.uid,
+  //         'name': widget.name,
+  //         'address': widget.address,
+  //         'image': widget.image,
+  //         'rating':widget.rating,
+  //         'openingTime': widget.openingTime,
+  //         'closingTime' : widget.closingTime,
+  //         'desc': widget.desc
+  //       });
+  //     }
+  //
+  //     setState(() {
+  //       isFavorite = !isFavorite;
+  //     });
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,9 +86,33 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(icon: Icon(Icons.bookmark_border), onPressed: () {}),
-                        IconButton(icon: Icon(Icons.share), onPressed: () {}),
-                        IconButton(icon: Icon(Icons.map), onPressed: () {}),
+                        GestureDetector(
+                          onTap: (){},
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              color: Colors.transparent,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.favorite,
+                              color: isFavorite ? Colors.red : Colors.grey,
+                              size: 30,
+                            ),
+                          ),
+                        ),
+                        IconButton(icon: Icon(Icons.share), onPressed: () {
+                        Share.share("${widget.eventName} at ${widget.eventTime}${widget.eventDate}");
+                        }),
+                        IconButton(icon: Icon(Icons.map), onPressed: () async {
+                          final Uri uri = Uri.parse(widget.location.toString());
+
+                          if (await canLaunchUrl(uri)) {
+                          await launchUrl(uri, mode: LaunchMode.externalApplication);
+                          } else {
+                          throw 'Could not open the map.';
+                          }
+                        }),
                         GestureDetector(
                           onTap: () {},
                           child: Container(

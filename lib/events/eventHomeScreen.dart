@@ -24,6 +24,8 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
 
   RxString selectedDateFilter = 'any'.obs;
   RxList<String> selectedCategories = <String>[].obs;
+  TextEditingController searchController = TextEditingController();
+  RxString searchQuery = ''.obs;
 
   Widget _buildRadioOption(String text, String value, {bool showArrow = false}) {
     return Obx(() {
@@ -76,7 +78,6 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
         return DraggableScrollableSheet(
           expand: false,
           initialChildSize: 0.9,
-          // Adjust height to match the image
           minChildSize: 0.5,
           maxChildSize: 1.0,
           builder: (context, scrollController) {
@@ -87,7 +88,6 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Close button
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -102,7 +102,6 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-
                     const Text('Date', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     Column(
                       children: [
@@ -115,17 +114,12 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
                       ],
                     ),
                     const Divider(),
-
                     const Text('Category', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     Wrap(
                       spacing: 10,
-                      children: [
-                        ...categories.map((category) => _buildCheckboxOption(category)),
-                      ],
+                      children: categories.map((category) => _buildCheckboxOption(category)).toList(),
                     ),
                     const Divider(),
-
-                    // Reset & Apply buttons
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -138,17 +132,14 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            setState(() {}); // Refresh the list with filters
+                            setState(() {});
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.orange,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
-                          child: const Text(
-                            'Apply filters',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                          child: const Text('Apply filters', style: TextStyle(color: Colors.white)),
                         ),
                       ],
                     ),
@@ -165,59 +156,64 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
   Stream<QuerySnapshot> getFilteredEvents() {
     Query query = FirebaseFirestore.instance.collection('MakeEvent');
 
-    // Apply date filter
+    // Search by eventName
+    if (searchQuery.value.isNotEmpty) {
+      query = query
+          .where('eventName', isGreaterThanOrEqualTo: searchQuery.value)
+          .where('eventName', isLessThan: searchQuery.value + 'z');
+    }
+
+    // Date Filter
     if (selectedDateFilter.value != 'any') {
       DateTime now = DateTime.now();
       String startDateStr, endDateStr;
 
       switch (selectedDateFilter.value) {
         case 'today':
-          // Format to 'YYYY-MM-DD'
           startDateStr = DateFormat('yyyy-MM-dd').format(now);
-          endDateStr = DateFormat('yyyy-MM-dd').format(now.add(const Duration(days: 1)));
-          query =
-              query.where('eventDate', isGreaterThanOrEqualTo: startDateStr).where('eventDate', isLessThan: endDateStr);
+          endDateStr = DateFormat('yyyy-MM-dd').format(now.add(Duration(days: 1)));
+          query = query
+              .where('eventDate', isGreaterThanOrEqualTo: startDateStr)
+              .where('eventDate', isLessThan: endDateStr);
           break;
         case 'tomorrow':
-          startDateStr = DateFormat('yyyy-MM-dd').format(now.add(const Duration(days: 1)));
-          endDateStr = DateFormat('yyyy-MM-dd').format(now.add(const Duration(days: 2)));
-          query =
-              query.where('eventDate', isGreaterThanOrEqualTo: startDateStr).where('eventDate', isLessThan: endDateStr);
+          startDateStr = DateFormat('yyyy-MM-dd').format(now.add(Duration(days: 1)));
+          endDateStr = DateFormat('yyyy-MM-dd').format(now.add(Duration(days: 2)));
+          query = query
+              .where('eventDate', isGreaterThanOrEqualTo: startDateStr)
+              .where('eventDate', isLessThan: endDateStr);
           break;
         case 'this_week':
-          // Start from the beginning of this week
           DateTime startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-          DateTime endOfWeek = startOfWeek.add(const Duration(days: 7));
+          DateTime endOfWeek = startOfWeek.add(Duration(days: 7));
           startDateStr = DateFormat('yyyy-MM-dd').format(startOfWeek);
           endDateStr = DateFormat('yyyy-MM-dd').format(endOfWeek);
-          query =
-              query.where('eventDate', isGreaterThanOrEqualTo: startDateStr).where('eventDate', isLessThan: endDateStr);
+          query = query
+              .where('eventDate', isGreaterThanOrEqualTo: startDateStr)
+              .where('eventDate', isLessThan: endDateStr);
           break;
         case 'this_weekend':
-          // Start from the upcoming weekend
           DateTime startOfWeekend = now.subtract(Duration(days: now.weekday - 6)); // Saturday
-          DateTime endOfWeekend = startOfWeekend.add(const Duration(days: 2)); // Sunday
+          DateTime endOfWeekend = startOfWeekend.add(Duration(days: 2)); // Sunday
           startDateStr = DateFormat('yyyy-MM-dd').format(startOfWeekend);
           endDateStr = DateFormat('yyyy-MM-dd').format(endOfWeekend);
-          query =
-              query.where('eventDate', isGreaterThanOrEqualTo: startDateStr).where('eventDate', isLessThan: endDateStr);
+          query = query
+              .where('eventDate', isGreaterThanOrEqualTo: startDateStr)
+              .where('eventDate', isLessThan: endDateStr);
           break;
         case 'custom_date':
-          // Handle a custom selected date if needed (you might need a custom date picker here)
           break;
       }
     }
 
-    // Apply category filter
+    // Category Filter
     if (selectedCategories.isNotEmpty) {
       query = query.where('category', arrayContainsAny: selectedCategories);
     }
 
-    // Execute query
     return query.snapshots();
   }
 
-  // RxString selectedCategory = ''.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -228,9 +224,7 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
-            onPressed: () {
-              _showFilterDialog(context);
-            },
+            onPressed: () => _showFilterDialog(context),
           ),
         ],
       ),
@@ -238,17 +232,19 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
+            child: TextFormField(
+              controller: searchController,
               decoration: InputDecoration(
                 hintText: 'Search events...',
                 prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
               ),
+              onChanged: (value) {
+                searchQuery.value = value.trim();
+              },
             ),
           ),
-          Container(
+          SizedBox(
             height: 50,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -267,13 +263,8 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
                       });
                     },
                     child: Chip(
-                      label: Text(
-                        categories[index],
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      backgroundColor: selectedCategories.contains(categories[index])
-                          ? Colors.orange // Color when selected
-                          : Colors.grey, // Color when not selected
+                      label: Text(categories[index], style: const TextStyle(color: Colors.white)),
+                      backgroundColor: selectedCategories.contains(categories[index]) ? Colors.orange : Colors.grey,
                     ),
                   ),
                 );
@@ -281,80 +272,71 @@ class _EventDiscoveryScreenState extends State<EventDiscoveryScreen> {
             ),
           ),
           Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-            stream: getFilteredEvents(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (snapshot.hasError) {
-                print("Error: ${snapshot.error}");
-
-                if (snapshot.error.toString().contains("FAILED_PRECONDITION")) {
-                  print("Create index here: ${snapshot.error}");
+            child: Obx(() => StreamBuilder<QuerySnapshot>(
+              stream: getFilteredEvents(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
                 }
 
-                return const Center(child: Text("Error fetching data"));
-              }
+                if (snapshot.hasError) {
+                  return const Center(child: Text("Error fetching data"));
+                }
 
-              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return const Center(child: Text("No events available"));
-              }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text("No events available"));
+                }
 
-              var events = snapshot.data!.docs;
-              return ListView.builder(
-                itemCount: events.length,
-                itemBuilder: (context, index) {
-                  var event = events[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Get.to(EventDetailsScreen(
-                        eventDate: event['eventDate'],
-                        eventName: event['eventName'],
-                        eventTime: event['eventTime'],
-                        location: event['location'],
-                        photo: event['photo'][0],
-                        Price: event['ticketPrice'],
-                      ));
-                    },
-                    child: Card(
-                      margin: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          event['photo'].isNotEmpty
-                              ? Image.network(event['photo'][0], height: 150, width: 150, fit: BoxFit.cover)
-                              : Image.asset("assets/images/singing.jpeg", height: 150, width: 150, fit: BoxFit.cover),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(event['eventName'],
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                Text("${event['eventDate']} at ${event['eventTime']}"),
-                                Text(event['location'], style: const TextStyle(color: Colors.black)),
-
-                                if(event['ticketPrice'] != "")
-                                Text('Price: ${event['ticketPrice']}',
-                                    style: const TextStyle(fontWeight: FontWeight.bold)),
-                              ],
+                var events = snapshot.data!.docs;
+                return ListView.builder(
+                  itemCount: events.length,
+                  itemBuilder: (context, index) {
+                    var event = events[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Get.to(EventDetailsScreen(
+                          eventDate: event['eventDate'],
+                          eventName: event['eventName'],
+                          eventTime: event['eventTime'],
+                          location: event['location'],
+                          photo: event['photo'][0],
+                          Price: event['ticketPrice'],
+                        ));
+                      },
+                      child: Card(
+                        margin: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            event['photo'].isNotEmpty
+                                ? Image.network(event['photo'][0], height: 150, width: 150, fit: BoxFit.cover)
+                                : Image.asset("assets/images/singing.jpeg", height: 150, width: 150, fit: BoxFit.cover),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(event['eventName'], style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                  Text("${event['eventDate']} at ${event['eventTime']}"),
+                                  Text(event['location'], style: const TextStyle(color: Colors.black)),
+                                  if (event['ticketPrice'] != "")
+                                    Text('Price: ${event['ticketPrice']}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              );
-            },
-          )),
+                    );
+                  },
+                );
+              },
+            )),
+          ),
+
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.to(PostEventScreen());
-        },
+        onPressed: () => Get.to(PostEventScreen()),
         child: const Icon(Icons.add),
         tooltip: "Post Your Event",
       ),
