@@ -71,38 +71,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void fetchUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? phone = sharedPreferences.getString("myPhone");
-    phone = phone?.replaceFirst("+61", "");
-    log("myPhone value: $phone");
+    String? googleName = sharedPreferences.getString("google_name");
+    String? googleEmail = sharedPreferences.getString("google_email");
 
-    if (phone == null || phone.isEmpty) {
-      showToast("No phone number found in local storage");
-      return;
-    }
+    if (googleName != null && googleEmail != null && googleName.isNotEmpty && googleEmail.isNotEmpty) {
+      // 🔹 Google login - use stored name and email
+      nameController.text = googleName;
+      emailController.text = googleEmail;
 
-    try {
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('User').where('phoneNumber', isEqualTo: phone).get();
+      name = googleName;
+      email = googleEmail;
 
-      if (querySnapshot.docs.isNotEmpty) {
-        DocumentSnapshot userDoc = querySnapshot.docs.first;
+      log("Google Login - name: $name, email: $email");
+    } else if (phone != null && phone.isNotEmpty) {
+      // 🔹 Phone login - fetch from Firestore
+      phone = phone.replaceFirst("+61", "");
+      log("Phone Login - phone: $phone");
 
-        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-        log("Fetched user data: $userData");
+      try {
+        QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+            .collection('User')
+            .where('phoneNumber', isEqualTo: phone)
+            .get();
 
-        nameController.text = userData['name'] ?? '';
-        emailController.text = userData['email'] ?? '';
+        if (querySnapshot.docs.isNotEmpty) {
+          DocumentSnapshot userDoc = querySnapshot.docs.first;
+          Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
 
-        name = userData['name'] ?? '';
-        email = userData['email'] ?? '';
+          nameController.text = userData['name'] ?? '';
+          emailController.text = userData['email'] ?? '';
 
-        log("namename: $name");
-      } else {
-        showToast("User data not found");
+          name = userData['name'] ?? '';
+          email = userData['email'] ?? '';
+
+          log("Phone Login - name: $name, email: $email");
+        } else {
+          showToast("User data not found for phone number");
+        }
+      } catch (e) {
+        showToast("Error fetching user data: ${e.toString()}");
       }
-    } catch (e) {
-      showToast("Error fetching data: ${e.toString()}");
+    } else {
+      showToast("No login data found");
     }
   }
+
 
   @override
   void initState() {

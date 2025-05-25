@@ -2,12 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trunriproject/SplashScreen.dart';
-import 'package:trunriproject/profile/profileScreen.dart';
-
-import 'home/bottom_bar.dart';
-import 'home/home_screen.dart';
-import 'home/indian.dart';
-import 'home/resturentDetailsScreen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +12,6 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(

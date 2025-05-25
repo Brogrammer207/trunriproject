@@ -1,12 +1,17 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trunriproject/signUpScreen.dart';
 import 'package:trunriproject/signinscreen.dart';
 
 import 'home/bottom_bar.dart';
+import 'home/firestore_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,22 +21,32 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  next() {
+    Timer(const Duration(seconds: 2), () async {
+      checkLogin();
+    });
+  }
 
-  void checkAuthStatus() {
-    final user = FirebaseAuth.instance.currentUser;
+  checkLogin() async {
+    await Future.delayed(Duration(milliseconds: 500)); // short delay
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    log("qwerty${currentUser.toString()}");
 
-    if (user != null) {
-      Get.offAll(() => MyBottomNavBar()); // Redirect to Home
-    } else {
-      Get.offAll(() => SignInScreen()); // Redirect to Login
+    if (currentUser != null) {
+      bool userExists = await FirebaseFireStoreService().checkUserProfile();
+      if (userExists) {
+        Get.offAll(() => const MyBottomNavBar());
+      } else {
+        Get.offAll(() => const SignInScreen());
+      }
     }
   }
+
+
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   checkAuthStatus();
-    // });
+    next();
   }
 
   @override
@@ -74,11 +89,8 @@ class _SplashScreenState extends State<SplashScreen> {
                     const Text(
                       "Namaste! Unite, Flourish\nTogether, Celebrate!",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
-                          color: Color(0xff353047),
-                          height: 1.2),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: Color(0xff353047), height: 1.2),
                     ),
                     const SizedBox(height: 25),
                     const Text(
@@ -117,11 +129,10 @@ class _SplashScreenState extends State<SplashScreen> {
                           child: Row(
                             children: [
                               GestureDetector(
-                                onTap:(){
+                                onTap: () {
                                   Navigator.of(context).push(
                                     PageRouteBuilder(
-                                      pageBuilder: (context, animation, secondaryAnimation) =>
-                                          const SignUpScreen(),
+                                      pageBuilder: (context, animation, secondaryAnimation) => const SignUpScreen(),
                                       transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                         const begin = Offset(1.0, 0.0);
                                         const end = Offset.zero;
@@ -160,8 +171,7 @@ class _SplashScreenState extends State<SplashScreen> {
                                 onTap: () {
                                   Navigator.of(context).push(
                                     PageRouteBuilder(
-                                      pageBuilder: (context, animation, secondaryAnimation) =>
-                                      const SignInScreen(),
+                                      pageBuilder: (context, animation, secondaryAnimation) => const SignInScreen(),
                                       transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                         const begin = Offset(1.0, 0.0);
                                         const end = Offset.zero;

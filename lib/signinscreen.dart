@@ -88,6 +88,7 @@ class _SignInScreenState extends State<SignInScreen> {
       SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       sharedPreferences.setString("myPhone" , phoneController.text.trim());
       NewHelper.hideLoader(loader);
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => MyBottomNavBar()),
@@ -110,6 +111,11 @@ class _SignInScreenState extends State<SignInScreen> {
         idToken: googleAuth?.idToken,
       );
       UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+      log("wewewewww${userCredential.user!.displayName.toString()}");
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      sharedPreferences.setString("google_name", userCredential.user!.displayName ?? '');
+      sharedPreferences.setString("google_email", userCredential.user!.email ?? '');
       Navigator.of(context).push(
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => PickUpAddressScreen(),

@@ -118,11 +118,21 @@ class _SearchFieldState extends State<SearchField> {
                           color: Colors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w500),
+                      prefixIcon:   Icon(Icons.search,color: Colors.orange,),
                       suffixIcon: GestureDetector(
                         onTap: (){
                           Get.to(const Notificatioonscreen());
                         },
-                          child: Icon(Icons.notifications,color: Colors.orange,)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.notifications,color: Colors.orange,),
+                              SizedBox(width: 10,),
+                              Icon(Icons.location_on,color: Colors.orange,),
+                              SizedBox(width: 10,)
+                            ],
+                          )),
                       hintStyle: GoogleFonts.urbanist(
                           color: Color(0xFF86888A),
                           fontSize: 13,
